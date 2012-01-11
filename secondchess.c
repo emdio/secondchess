@@ -143,7 +143,8 @@ void Gen_PushNormal(int from, int dest, MOVE * pBuf, int *pMCount)
 /* Pawn can promote */
 void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 {
-	/* The 7 and 56 are to limit pawns to the 2nd through 7th ranks */
+	/* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
+	 * means this isn't a promotion*/
     if (dest > 7 && dest < 56) /* this is just a normal move */
     {
         Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
@@ -179,7 +180,8 @@ int Gen(int current_side, MOVE * pBuf)
                 if (current_side == BLACK)
                 {
                     if (color[i + 8] == EMPTY)
-						/* Pawn advances one square */
+						/* Pawn advances one square. We use Gen_PushPawn
+						 * because it can be a promotion  */
                         Gen_PushPawn(i, i + 8, pBuf, &movecount);
                     if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
 						/* Pawn advances two squares */
