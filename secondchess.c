@@ -1,6 +1,6 @@
 /*
         secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
-        Version: beta
+        Version: beta ta
 */
 /*
 
