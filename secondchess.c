@@ -334,7 +334,7 @@ int Gen(int current_side, MOVE * pBuf)
 */
 int Eval()
 {	
-	/* The values of the pieces in centipawns */
+    /* The values of the pieces in centipawns */
     int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
     /* A counter for the board squares */
     int i;
