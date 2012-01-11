@@ -97,7 +97,7 @@ int side;           /* side to move, value = BLACK or WHITE */
 #define MOVE_TYPE_PROMOTION_TO_BISHOP   6
 #define MOVE_TYPE_PROMOTION_TO_KNIGHT   7
 
-/* A move is defined by its origin and final sqares, and by the kind of
+/* A move is defined by its origin and final squares, and by the kind of
  * move it's: normal, castle, enpasant... */
 typedef struct tag_MOVE {
     int             from;
@@ -160,8 +160,8 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
 int Gen(int current_side, MOVE * pBuf)
 {
-    int i;
-    int k;
+    int i; /* Counter for the board squares */
+    int k; /* Counter for cols  */
     int y;
     int row;
     int col;
@@ -179,7 +179,7 @@ int Gen(int current_side, MOVE * pBuf)
                 if (current_side == BLACK)
                 {
                     if (color[i + 8] == EMPTY)
-						/* Pawn advnce one square */
+						/* Pawn advances one square */
                         Gen_PushPawn(i, i + 8, pBuf, &movecount);
                     if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
 						/* Pawn advances two squares */
@@ -557,8 +557,8 @@ int IsAttacked(int current_side, int k)
     //int k; /* The square where the king is placed */
     int h;
     int y;
-    int row;  /* Row where the sqaure is placed */
-    int col;  /* Col where the sqaure is placed */
+    int row;  /* Row where the square is placed */
+    int col;  /* Col where the square is placed */
     int xside;
     xside = (WHITE + BLACK) - current_side;     /* opposite current_side, who may be attaking */
     
@@ -735,7 +735,7 @@ int IsAttacked(int current_side, int k)
 
 int MakeMove(MOVE m)
 {
-    int             r;
+    int r;
     
     hist[hdp].m = m;
     
@@ -885,7 +885,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     return alpha;
 }
 
-MOVE            ComputerThink(int max_depth)
+MOVE ComputerThink(int max_depth)
 {
 	/* It returns the move the computer makes */
 	
@@ -917,20 +917,24 @@ MOVE            ComputerThink(int max_depth)
 * Utilities                                                                *
 ****************************************************************************
 */
-void            PrintBoard()
+void PrintBoard()
 {
-    char            pieceName[] = "PNBRQKpnbrqk";
-    int             i;
-    for (i = 0; i < 64; i++) {
-        if ((i & 7) == 0) {
+    char pieceName[] = "PNBRQKpnbrqk";
+    int i;
+    for (i = 0; i < 64; i++)
+    {
+        if ((i & 7) == 0)
+        {
             printf("   +---+---+---+---+---+---+---+---+\n");
-            if (i <= 56) {
+            if (i <= 56)
+            {
                 printf(" %d |", 8 - (((unsigned)i) >> 3));
             }
         }
         if (piece[i] == EMPTY)
             printf("   |");
-        else {
+        else
+        {
             printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
         }
         if ((i & 7) == 7)
@@ -944,7 +948,7 @@ void            PrintBoard()
 * Main program                                                             *
 ****************************************************************************
 */
-void             main()
+void main()
 {
 	
 	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
