@@ -1,5 +1,5 @@
 /*
-        FirstChess - Freeware, by Pham Hong Nguyen
+        secondchess - gpl, by Emilio Díaz
         Version: beta
 */
 /*
