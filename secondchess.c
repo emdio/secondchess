@@ -822,7 +822,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     int             havemove;
 	int				movecnt;
 	
-    MOVE            moveBuf[200];
+    MOVE            moveBuf[200]; /* List of movements */
     MOVE            tmpMove;
     
     nodes++; 		/* visiting a node, count it */
