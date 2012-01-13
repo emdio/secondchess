@@ -974,7 +974,7 @@ void main()
     MOVE            moveBuf[200];
     int             movecnt;
     
-    printf("First Chess, by Pham Hong Nguyen\n");
+    printf("SecondChess, by Emilio Diaz\n");
     printf("Help\n d: display board\n MOVE: make a move (e.g. b1c3, a7a8q)\n quit: exit\n\n");
     
     side = WHITE;
