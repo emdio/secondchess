@@ -754,6 +754,12 @@ int MakeMove(MOVE m)
     /* The original color becomes empty */
     color[m.from] = EMPTY;
     
+    /* Aqui deberia ir el codigo del enroque 
+    if (m.type == MOVE_TYPE_CASTLE)
+    {
+	}
+    */
+    
     /* Once the move is done we check either this is a promotion */
     if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
     {
