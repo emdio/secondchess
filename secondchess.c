@@ -832,8 +832,10 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     /* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
 	
+	
+	
 	//printf("from and dest: %d, %d\n", tmpMove.from, tmpMove.dest);
-	//printf("# of moves: %d\n", movecnt);
+	
 	
     /* Once we have all the moves available, we loop through the posible
      *  moves and apply an alpha-beta search */
@@ -848,15 +850,23 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
         
         /* This 'if' takes us to the deep of the position */
         if (depth - 1 > 0) /* If depth is still, continue to search deeper */
-			{
-            value = -Search(-beta, -alpha, depth - 1, &tmpMove);
-			}
+		{
+		value = -Search(-beta, -alpha, depth - 1, &tmpMove);
+		}
         else /* If no depth left (leaf node), go to evalute that position 
 			    and apply the alpha-beta search*/
-            {
-            value = -Eval();
-            //printf("eval:%d\n", value);
-			}
+		{
+		value = -Eval();
+		//printf("eval:%d\n", value);
+		}
+		
+		printf("ply: \n", ply);
+		printf("# of moves: %d\n", movecnt);
+		for (i=0; i<movecnt; ++i)
+		{
+			printf ("Move %d: %d -> %d\n", i+1, moveBuf[i].from, moveBuf[i].dest);
+		}
+			
 		/* We go to the move that origins the move we're analyzing and
 		 * apply the alpha-beta search */
         TakeBack();
