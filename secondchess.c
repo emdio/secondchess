@@ -158,6 +158,21 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
     }
 }
 
+/* King*/
+void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
+{
+/* Is it a castle?*/
+    if (from == 60 && dest == 62) /* this is a short castle */
+    {
+		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+	}
+    else /* otherwise it's a normal move */
+    {
+		Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
+        
+    }
+}
+
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
 int Gen(int current_side, MOVE * pBuf)
 {
@@ -180,17 +195,18 @@ int Gen(int current_side, MOVE * pBuf)
                 if (current_side == BLACK)
                 {
                     if (color[i + 8] == EMPTY)
-/* Pawn advances one square. We use Gen_PushPawn
-* because it can be a promotion */
+					/* Pawn advances one square.
+					 * We use Gen_PushPawn
+					 * because it can be a promotion */
                         Gen_PushPawn(i, i + 8, pBuf, &movecount);
                     if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
-/* Pawn advances two squares */
+					/* Pawn advances two squares */
                         Gen_PushNormal(i, i + 16, pBuf, &movecount);
                     if (col && color[i + 7] == WHITE)
-/* Pawn captures */
+					/* Pawn captures */
                         Gen_PushNormal(i, i + 7, pBuf, &movecount);
                     if (col < 7 && color[i + 9] == WHITE)
-/* Pawn captures */
+					/* Pawn captures */
                         Gen_PushNormal(i, i + 9, pBuf, &movecount);
                 }
                 else
@@ -302,6 +318,7 @@ int Gen(int current_side, MOVE * pBuf)
                 break;
 
             case KING:
+				/* the column and rank checks are to make sure it is on the board*/
                 col = COL(i);
                 if (col && color[i - 1] != current_side)
                     Gen_PushNormal(i, i - 1, pBuf, &movecount); /* left */
@@ -319,6 +336,12 @@ int Gen(int current_side, MOVE * pBuf)
                     Gen_PushNormal(i, i + 7, pBuf, &movecount); /* left down */
                 if (col < 7 && i < 56 && color[i + 9] != current_side)
                     Gen_PushNormal(i, i + 9, pBuf, &movecount); /* right down */
+                /* Can we castle? First attempt without checking the legality */
+                if (col && color[i + 1] == EMPTY && color[i + 2] == EMPTY)
+                {
+					/* The king goes 2 sq to the left */
+					Gen_PushKing(i, i + 2, pBuf, &movecount);
+				}
                 break;
             default:
                 puts("piece type unknown");
@@ -573,7 +596,7 @@ int MakeMove(MOVE m)
     /* Once the move is done we check either this is a promotion */
     if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
     {
-/* In this case we put in the destiny sq the chosen piece */
+		/* In this case we put in the destiny sq the chosen piece */
         switch (m.type)
         {
         case MOVE_TYPE_PROMOTION_TO_QUEEN:
@@ -597,6 +620,17 @@ int MakeMove(MOVE m)
             assert(false);
         }
     }
+    
+    if (m.type == MOVE_TYPE_CASTLE)
+    {
+		puts("castle!");
+		printf("%d\n", m.from);
+		printf("%d\n", m.dest);
+		piece[m.dest + 1] = EMPTY;
+		color[m.dest + 1] = EMPTY;
+		piece[m.from + 1] = ROOK;
+		color[m.from + 1] = WHITE;
+	}
     
     /* Update ply and hdp */
     ply++;
@@ -750,7 +784,7 @@ void PrintBoard()
             }
         }
         if (piece[i] == EMPTY)
-            printf("   |");
+            printf("   |"); 
         else
         {
             printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
@@ -785,7 +819,7 @@ void main()
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
-    max_depth = 3;
+    max_depth = 1;
     hdp = 0; /* Current move order */
     for (;;)
     {
