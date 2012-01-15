@@ -1,6 +1,6 @@
 /*
         secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
-        Version: beta ta
+        Version: beta
 */
 /*
 
@@ -64,14 +64,14 @@
 */
 /* Board representation */
 int piece[64] = {
-    ROOK,  KNIGHT, BISHOP, QUEEN,  KING,   BISHOP, KNIGHT, ROOK,
-    PAWN,  PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,
-    EMPTY, EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,
-    EMPTY, EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,
-    EMPTY, EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,
-    EMPTY, EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,  EMPTY,
-    PAWN,  PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,   PAWN,
-    ROOK,  KNIGHT, BISHOP, QUEEN,  KING,   BISHOP, KNIGHT, ROOK
+    ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
+    PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+    PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
+    ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
 };
 
 int color[64] = {
@@ -97,7 +97,7 @@ int side;           /* side to move, value = BLACK or WHITE */
 #define MOVE_TYPE_PROMOTION_TO_BISHOP   6
 #define MOVE_TYPE_PROMOTION_TO_KNIGHT   7
 
-/* A move is defined by its origin and final squares, and by the kind of
+/* A move is defined by its origin and final sqares, and by the kind of
  * move it's: normal, castle, enpasant... */
 typedef struct tag_MOVE {
     int             from;
@@ -143,8 +143,7 @@ void Gen_PushNormal(int from, int dest, MOVE * pBuf, int *pMCount)
 /* Pawn can promote */
 void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 {
-	/* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
-	 * means this isn't a promotion*/
+	/* The 7 and 56 are to limit pawns to the 2nd through 7th ranks */
     if (dest > 7 && dest < 56) /* this is just a normal move */
     {
         Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
@@ -161,8 +160,8 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
 int Gen(int current_side, MOVE * pBuf)
 {
-    int i; /* Counter for the board squares */
-    int k; /* Counter for cols  */
+    int i;
+    int k;
     int y;
     int row;
     int col;
@@ -180,8 +179,7 @@ int Gen(int current_side, MOVE * pBuf)
                 if (current_side == BLACK)
                 {
                     if (color[i + 8] == EMPTY)
-						/* Pawn advances one square. We use Gen_PushPawn
-						 * because it can be a promotion  */
+						/* Pawn advnce one square */
                         Gen_PushPawn(i, i + 8, pBuf, &movecount);
                     if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
 						/* Pawn advances two squares */
@@ -336,7 +334,7 @@ int Gen(int current_side, MOVE * pBuf)
 */
 int Eval()
 {	
-    /* The values of the pieces in centipawns */
+	/* The values of the pieces in centipawns */
     int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
     /* A counter for the board squares */
     int i;
@@ -551,10 +549,193 @@ int IsInCheck(int current_side)
     return 0;
 }
 
+/* Check and return 1 if square k is under attack, 0 otherwise. The idea
+ * is to use it, vg, for checking the squares throw wich the king has to
+ * pass during the castle*/
+int IsAttacked(int current_side, int k)
+{
+    //int k; /* The square where the king is placed */
+    int h;
+    int y;
+    int row;  /* Row where the sqaure is placed */
+    int col;  /* Col where the sqaure is placed */
+    int xside;
+    xside = (WHITE + BLACK) - current_side;     /* opposite current_side, who may be attaking */
+    
+	/* Situation of the sqaure */
+    row = ROW(k);
+    col = COL(k);
+    
+    /* Check Knight attack */
+    if (col > 0 && row > 1 && color[k - 17] == xside && piece[k - 17] == KNIGHT)
+        return 1;
+    if (col < 7 && row > 1 && color[k - 15] == xside && piece[k - 15] == KNIGHT)
+        return 1;
+    if (col > 1 && row > 0 && color[k - 10] == xside && piece[k - 10] == KNIGHT)
+        return 1;
+    if (col < 6 && row > 0 && color[k - 6] == xside && piece[k - 6] == KNIGHT)
+        return 1;
+    if (col > 1 && row < 7 && color[k + 6] == xside && piece[k + 6] == KNIGHT)
+        return 1;
+    if (col < 6 && row < 7 && color[k + 10] == xside && piece[k + 10] == KNIGHT)
+        return 1;
+    if (col > 0 && row < 6 && color[k + 15] == xside && piece[k + 15] == KNIGHT)
+        return 1;
+    if (col < 7 && row < 6 && color[k + 17] == xside && piece[k + 17] == KNIGHT)
+        return 1;
+    
+    /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
+    /* go down */
+    y = k + 8;
+    if (y < 64)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y += 8; y < 64; y += 8)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go left */
+    y = k - 1;
+    h = k - col;
+    if (y >= h)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y--; y >= h; y--)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go right */
+    y = k + 1;
+    h = k - col + 7;
+    if (y <= h)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y++; y <= h; y++)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go up */
+    y = k - 8;
+    if (y >= 0)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y -= 8; y >= 0; y -= 8)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* Check diagonal lines for attacking of Queen, Bishop, King, Pawn */
+    /* go right down */
+    y = k + 9;
+    if (y < 64 && COL(y) != 0)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == BLACK && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y += 9; y < 64 && COL(y) != 0; y += 9)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go left down */
+    y = k + 7;
+    if (y < 64 && COL(y) != 7)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == BLACK && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y += 7; y < 64 && COL(y) != 7; y += 7)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+
+            }
+    }
+    /* go left up */
+    y = k - 9;
+    if (y >= 0 && COL(y) != 7)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == WHITE && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y -= 9; y >= 0 && COL(y) != 7; y -= 9)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+
+            }
+    }
+    /* go right up */
+    y = k - 7;
+    if (y >= 0 && COL(y) != 0)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == WHITE && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y -= 7; y >= 0 && COL(y) != 0; y -= 7)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    return 0;
+}
 
 int MakeMove(MOVE m)
 {
-    int r;
+    int             r;
     
     hist[hdp].m = m;
     
@@ -570,12 +751,6 @@ int MakeMove(MOVE m)
     color[m.dest] = color[m.from];
     /* The original color becomes empty */
     color[m.from] = EMPTY;
-    
-    /* Aqui deberia ir el codigo del enroque 
-    if (m.type == MOVE_TYPE_CASTLE)
-    {
-	}
-    */
     
     /* Once the move is done we check either this is a promotion */
     if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
@@ -645,7 +820,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     int             havemove;
 	int				movecnt;
 	
-    MOVE            moveBuf[200]; /* List of movements */
+    MOVE            moveBuf[200];
     MOVE            tmpMove;
     
     nodes++; 		/* visiting a node, count it */
@@ -655,10 +830,8 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     /* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
 	
-	
-	
 	//printf("from and dest: %d, %d\n", tmpMove.from, tmpMove.dest);
-	
+	//printf("# of moves: %d\n", movecnt);
 	
     /* Once we have all the moves available, we loop through the posible
      *  moves and apply an alpha-beta search */
@@ -673,23 +846,15 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
         
         /* This 'if' takes us to the deep of the position */
         if (depth - 1 > 0) /* If depth is still, continue to search deeper */
-		{
-		value = -Search(-beta, -alpha, depth - 1, &tmpMove);
-		}
+			{
+            value = -Search(-beta, -alpha, depth - 1, &tmpMove);
+			}
         else /* If no depth left (leaf node), go to evalute that position 
 			    and apply the alpha-beta search*/
-		{
-		value = -Eval();
-		//printf("eval:%d\n", value);
-		}
-		
-		printf("ply: \n", ply);
-		printf("# of moves: %d\n", movecnt);
-		for (i=0; i<movecnt; ++i)
-		{
-			printf ("Move %d: %d -> %d\n", i+1, moveBuf[i].from, moveBuf[i].dest);
-		}
-			
+            {
+            value = -Eval();
+            //printf("eval:%d\n", value);
+			}
 		/* We go to the move that origins the move we're analyzing and
 		 * apply the alpha-beta search */
         TakeBack();
@@ -720,7 +885,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     return alpha;
 }
 
-MOVE ComputerThink(int max_depth)
+MOVE            ComputerThink(int max_depth)
 {
 	/* It returns the move the computer makes */
 	
@@ -752,24 +917,20 @@ MOVE ComputerThink(int max_depth)
 * Utilities                                                                *
 ****************************************************************************
 */
-void PrintBoard()
+void            PrintBoard()
 {
-    char pieceName[] = "PNBRQKpnbrqk";
-    int i;
-    for (i = 0; i < 64; i++)
-    {
-        if ((i & 7) == 0)
-        {
+    char            pieceName[] = "PNBRQKpnbrqk";
+    int             i;
+    for (i = 0; i < 64; i++) {
+        if ((i & 7) == 0) {
             printf("   +---+---+---+---+---+---+---+---+\n");
-            if (i <= 56)
-            {
+            if (i <= 56) {
                 printf(" %d |", 8 - (((unsigned)i) >> 3));
             }
         }
         if (piece[i] == EMPTY)
             printf("   |");
-        else
-        {
+        else {
             printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
         }
         if ((i & 7) == 7)
@@ -783,7 +944,7 @@ void PrintBoard()
 * Main program                                                             *
 ****************************************************************************
 */
-void main()
+void             main()
 {
 	
 	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
@@ -797,7 +958,7 @@ void main()
     MOVE            moveBuf[200];
     int             movecnt;
     
-    printf("SecondChess, by Emilio Diaz\n");
+    printf("First Chess, by Pham Hong Nguyen\n");
     printf("Help\n d: display board\n MOVE: make a move (e.g. b1c3, a7a8q)\n quit: exit\n\n");
     
     side = WHITE;
