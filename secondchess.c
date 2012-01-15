@@ -751,7 +751,6 @@ void PrintBoard()
         }
         if (piece[i] == EMPTY)
             printf("   |");
-            printf(" |");
         else
         {
             printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
