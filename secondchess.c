@@ -38,10 +38,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #define PAWN 0
 #define KNIGHT 1
 #define BISHOP 2
-#define ROOK 3
-#define QUEEN 4
-#define KING 5
-#define EMPTY 6
+#define ROOKC 3
+#define ROOKU 4
+#define QUEEN 5
+#define KINGC 6
+#define KINGU 7
+#define EMPTY 8
 #define WHITE 0
 #define BLACK 1
 #define false 0
@@ -49,14 +51,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #define VALUE_PAWN 100
 #define VALUE_KNIGHT 300
 #define VALUE_BISHOP 300
-#define VALUE_ROOK 500
+#define VALUE_ROOKU 500
+#define VALUE_ROOKC 500
 #define VALUE_QUEEN 900
-#define VALUE_KING 10000
+#define VALUE_KINGU 10000
+#define VALUE_KINGC 10000
 
 #define MATE 10000 /* equal value of King, losing King==mate */
 
 #define COL(pos) ((pos)&7)
 #define ROW(pos) (((unsigned)pos)>>3)
+
 /*
 ****************************************************************************
 * Board representation and main varians *
@@ -64,14 +69,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 */
 /* Board representation */
 int piece[64] = {
-    ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
+    ROOKC, KNIGHT, BISHOP, QUEEN, KINGC, BISHOP, KNIGHT, ROOKC,
     PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
     EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
     EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
     EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
     EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
     PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
-    ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
+    ROOKC, KNIGHT, BISHOP, QUEEN, KINGC, BISHOP, KNIGHT, ROOKC
 };
 
 int color[64] = {
@@ -257,7 +262,39 @@ int Gen(int current_side, MOVE * pBuf)
                     break;
 
             /* FALL THROUGH FOR QUEEN {I meant to do that!} ;-) */
-            case ROOK:
+            case ROOKU:
+                col = COL(i);
+                for (k = i - col, y = i - 1; y >= k; y--)
+                { /* go left */
+                    if (color[y] != current_side)
+                        Gen_PushNormal(i, y, pBuf, &movecount);
+                    if (color[y] != EMPTY)
+                        break;
+                }
+                for (k = i - col + 7, y = i + 1; y <= k; y++)
+                { /* go right */
+                    if (color[y] != current_side)
+                        Gen_PushNormal(i, y, pBuf, &movecount);
+                    if (color[y] != EMPTY)
+                        break;
+                }
+                for (y = i - 8; y >= 0; y -= 8)
+                { /* go up */
+                    if (color[y] != current_side)
+                        Gen_PushNormal(i, y, pBuf, &movecount);
+                    if (color[y] != EMPTY)
+                        break;
+                }
+                for (y = i + 8; y < 64; y += 8)
+                { /* go down */
+                    if (color[y] != current_side)
+                        Gen_PushNormal(i, y, pBuf, &movecount);
+                    if (color[y] != EMPTY)
+                        break;
+                }
+                break;
+                
+            case ROOKC:
                 col = COL(i);
                 for (k = i - col, y = i - 1; y >= k; y--)
                 { /* go left */
@@ -317,7 +354,28 @@ int Gen(int current_side, MOVE * pBuf)
                     Gen_PushNormal(i, y, pBuf, &movecount);
                 break;
 
-            case KING:
+            case KINGU:
+				/* the column and rank checks are to make sure it is on the board*/
+                col = COL(i);
+                if (col && color[i - 1] != current_side)
+                    Gen_PushNormal(i, i - 1, pBuf, &movecount); /* left */
+                if (col < 7 && color[i + 1] != current_side)
+                    Gen_PushNormal(i, i + 1, pBuf, &movecount); /* right */
+                if (i > 7 && color[i - 8] != current_side)
+                    Gen_PushNormal(i, i - 8, pBuf, &movecount); /* up */
+                if (i < 56 && color[i + 8] != current_side)
+                    Gen_PushNormal(i, i + 8, pBuf, &movecount); /* down */
+                if (col && i > 7 && color[i - 9] != current_side)
+                    Gen_PushNormal(i, i - 9, pBuf, &movecount); /* left up */
+                if (col < 7 && i > 7 && color[i - 7] != current_side)
+                    Gen_PushNormal(i, i - 7, pBuf, &movecount); /* right up */
+                if (col && i < 56 && color[i + 7] != current_side)
+                    Gen_PushNormal(i, i + 7, pBuf, &movecount); /* left down */
+                if (col < 7 && i < 56 && color[i + 9] != current_side)
+                    Gen_PushNormal(i, i + 9, pBuf, &movecount); /* right down */               
+                break;
+                
+            case KINGC:
 				/* the column and rank checks are to make sure it is on the board*/
                 col = COL(i);
                 if (col && color[i - 1] != current_side)
@@ -360,7 +418,7 @@ int Gen(int current_side, MOVE * pBuf)
 int Eval()
 {
     /* The values of the pieces in centipawns */
-    int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
+    int value_piece[10] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOKU, VALUE_ROOKC, VALUE_QUEEN, VALUE_KINGU, VALUE_KINGC};
     /* A counter for the board squares */
     int i;
     /* The score of the position */
@@ -370,12 +428,12 @@ int Eval()
     {
         if (color[i] == WHITE)
         {
-score += value_piece[piece[i]];
-}
+			score += value_piece[piece[i]];
+		}
         else if (color[i] == BLACK)
         {
-score -= value_piece[piece[i]];
-}
+			score -= value_piece[piece[i]];
+		}
     }
     
     if (side == WHITE)
@@ -401,7 +459,7 @@ int IsInCheck(int current_side)
     
     /* Find King */
     for (k = 0; k < 64; k++)
-        if (piece[k] == KING && color[k] == current_side)
+        if ( (piece[k] == KINGC || piece[k] == KINGU)   && color[k] == current_side )
             break;
 /* Situation of the king */
     row = ROW(k);
@@ -430,12 +488,12 @@ int IsInCheck(int current_side)
     y = k + 8;
     if (y < 64)
     {
-        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+        if (color[y] == xside && (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
             return 1;
         if (piece[y] == EMPTY)
             for (y += 8; y < 64; y += 8)
             {
-                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
                     return 1;
                 if (piece[y] != EMPTY)
                     break;
@@ -446,12 +504,12 @@ int IsInCheck(int current_side)
     h = k - col;
     if (y >= h)
     {
-        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+        if (color[y] == xside && (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
             return 1;
         if (piece[y] == EMPTY)
             for (y--; y >= h; y--)
             {
-                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
                     return 1;
                 if (piece[y] != EMPTY)
                     break;
@@ -462,12 +520,12 @@ int IsInCheck(int current_side)
     h = k - col + 7;
     if (y <= h)
     {
-        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+        if (color[y] == xside && (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
             return 1;
         if (piece[y] == EMPTY)
             for (y++; y <= h; y++)
             {
-                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
                     return 1;
                 if (piece[y] != EMPTY)
                     break;
@@ -477,12 +535,12 @@ int IsInCheck(int current_side)
     y = k - 8;
     if (y >= 0)
     {
-        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+        if (color[y] == xside && (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
             return 1;
         if (piece[y] == EMPTY)
             for (y -= 8; y >= 0; y -= 8)
             {
-                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOKC || piece[y] == ROOKU))
                     return 1;
                 if (piece[y] != EMPTY)
                     break;
@@ -495,7 +553,7 @@ int IsInCheck(int current_side)
     {
         if (color[y] == xside)
         {
-            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+            if (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == BISHOP)
                 return 1;
             if (current_side == BLACK && piece[y] == PAWN)
                 return 1;
@@ -515,7 +573,7 @@ int IsInCheck(int current_side)
     {
         if (color[y] == xside)
         {
-            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+            if (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == BISHOP)
                 return 1;
             if (current_side == BLACK && piece[y] == PAWN)
                 return 1;
@@ -536,7 +594,7 @@ int IsInCheck(int current_side)
     {
         if (color[y] == xside)
         {
-            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+            if (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == BISHOP)
                 return 1;
             if (current_side == WHITE && piece[y] == PAWN)
                 return 1;
@@ -557,7 +615,7 @@ int IsInCheck(int current_side)
     {
         if (color[y] == xside)
         {
-            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+            if (piece[y] == KINGC || piece[y] == KINGU || piece[y] == QUEEN || piece[y] == BISHOP)
                 return 1;
             if (current_side == WHITE && piece[y] == PAWN)
                 return 1;
@@ -604,7 +662,7 @@ int MakeMove(MOVE m)
             break;
 
         case MOVE_TYPE_PROMOTION_TO_ROOK:
-            piece[m.dest] = ROOK;
+            piece[m.dest] = ROOKU;
             break;
 
         case MOVE_TYPE_PROMOTION_TO_BISHOP:
@@ -628,7 +686,7 @@ int MakeMove(MOVE m)
 		printf("%d\n", m.dest);
 		piece[m.dest + 1] = EMPTY;
 		color[m.dest + 1] = EMPTY;
-		piece[m.from + 1] = ROOK;
+		piece[m.from + 1] = ROOKU;
 		color[m.from + 1] = WHITE;
 	}
     
