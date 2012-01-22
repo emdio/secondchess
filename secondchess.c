@@ -182,6 +182,16 @@ void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 		puts("loooong castle");
 		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
 	}
+	if (from == 4 && dest == 6 && piece[7] == ROOKC) /* this is a white short castle */
+    {
+		puts("shooooort castle");
+		Gen_Push(from, dest, MOVE_TYPE_SHORT_CASTLE, pBuf, pMCount);
+	}
+	if (from == 4 && dest == 2 && piece[0] == ROOKC) /* this is a white long castle */
+    {
+		puts("loooong castle");
+		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
+	}
     else /* otherwise it's a normal move */
     {
 		Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
@@ -416,7 +426,7 @@ int Gen(int current_side, MOVE * pBuf)
                 if (col &&
 					color[i + 1] == EMPTY && 
 					color[i + 2] == EMPTY && 
-					piece[63] == ROOKC)
+					piece[i + 3] == ROOKC)
                 {
 					/* The king goes 2 sq to the left */
 					Gen_PushKing(i, i + 2, pBuf, &movecount);
@@ -426,7 +436,7 @@ int Gen(int current_side, MOVE * pBuf)
 					color[i - 1] == EMPTY &&
 					color[i - 2] == EMPTY &&
 					color[i - 2] == EMPTY &&
-					piece[56] == ROOKC)
+					piece[i - 4] == ROOKC)
                 {
 					/* The king goes 2 sq to the left */
 					Gen_PushKing(i, i - 2, pBuf, &movecount);
@@ -722,12 +732,15 @@ int MakeMove(MOVE m)
 		puts("castle!");
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
-		/* h1 becomes empty */
+		/* h1-8 becomes empty */
 		piece[m.from + 3] = EMPTY;
 		color[m.from + 3] = EMPTY;
-		/* rook tof1 */
+		/* rook tof1-8 */
 		piece[m.from + 1] = ROOKU;
-		color[m.from + 1] = WHITE;
+		if (m.from == 60)
+			color[m.from + 1] = WHITE;
+		else
+			color[m.from + 1] = BLACK;
 	}
 	
 	if (m.type == MOVE_TYPE_LONG_CASTLE)
@@ -739,7 +752,10 @@ int MakeMove(MOVE m)
 		piece[m.from - 4] = EMPTY;
 		color[m.from - 4] = EMPTY;
 		piece[m.from - 1] = ROOKU;
-		color[m.from - 1] = WHITE;
+		if (m.from == 60)
+			color[m.from - 1] = WHITE;
+		else
+			color[m.from - 1] = BLACK;
 	}
     
     /* Update ply and hdp */
