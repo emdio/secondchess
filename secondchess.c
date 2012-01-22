@@ -95,12 +95,17 @@ int side; /* side to move, value = BLACK or WHITE */
 /* For move generation */
 #define MOVE_TYPE_NONE 0
 #define MOVE_TYPE_NORMAL 1
-#define MOVE_TYPE_CASTLE 2
-#define MOVE_TYPE_ENPASANT 3
-#define MOVE_TYPE_PROMOTION_TO_QUEEN 4
-#define MOVE_TYPE_PROMOTION_TO_ROOK 5
-#define MOVE_TYPE_PROMOTION_TO_BISHOP 6
-#define MOVE_TYPE_PROMOTION_TO_KNIGHT 7
+#define MOVE_TYPE_SHORT_CASTLE 2
+#define MOVE_TYPE_LONG_CASTLE 3
+#define MOVE_TYPE_ENPASANT 4
+#define MOVE_TYPE_ROOKU 5
+#define MOVE_TYPE_ROOKC 6
+#define MOVE_TYPE_KINGC 7
+#define MOVE_TYPE_KINGU 8
+#define MOVE_TYPE_PROMOTION_TO_QUEEN 9
+#define MOVE_TYPE_PROMOTION_TO_ROOK 10
+#define MOVE_TYPE_PROMOTION_TO_BISHOP 11
+#define MOVE_TYPE_PROMOTION_TO_KNIGHT 12
 
 /* A move is defined by its origin and final squares, and by the kind of
 * move it's: normal, castle, enpasant... */
@@ -167,15 +172,28 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
-    if (from == 60 && dest == 62) /* this is a short castle */
+    if (from == 60 && dest == 62 && piece[63] == ROOKC) /* this is a white short castle */
     {
-		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+		puts("shooooort castle");
+		Gen_Push(from, dest, MOVE_TYPE_SHORT_CASTLE, pBuf, pMCount);
+	}
+	if (from == 60 && dest == 58 && piece[56] == ROOKC) /* this is a white long castle */
+    {
+		puts("loooong castle");
+		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
 	}
     else /* otherwise it's a normal move */
     {
 		Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
         
     }
+}
+
+void Gen_PushRookC(int from, int dest, MOVE * pBuf, int *pMCount)
+{
+	/* A rook that can castle moves, so the destiny piece is rook that
+	 * can't castle */
+	Gen_Push(from, dest, MOVE_TYPE_ROOKC, pBuf, pMCount);
 }
 
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
@@ -299,28 +317,28 @@ int Gen(int current_side, MOVE * pBuf)
                 for (k = i - col, y = i - 1; y >= k; y--)
                 { /* go left */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, pBuf, &movecount);
+                        Gen_PushRookC(i, y, pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (k = i - col + 7, y = i + 1; y <= k; y++)
                 { /* go right */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, pBuf, &movecount);
+                        Gen_PushRookC(i, y, pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i - 8; y >= 0; y -= 8)
                 { /* go up */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, pBuf, &movecount);
+                        Gen_PushRookC(i, y, pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i + 8; y < 64; y += 8)
                 { /* go down */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, pBuf, &movecount);
+                        Gen_PushRookC(i, y, pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
@@ -394,12 +412,26 @@ int Gen(int current_side, MOVE * pBuf)
                     Gen_PushNormal(i, i + 7, pBuf, &movecount); /* left down */
                 if (col < 7 && i < 56 && color[i + 9] != current_side)
                     Gen_PushNormal(i, i + 9, pBuf, &movecount); /* right down */
-                /* Can we castle? First attempt without checking the legality */
-                if (col && color[i + 1] == EMPTY && color[i + 2] == EMPTY)
+                /* Can white short castle */
+                if (col &&
+					color[i + 1] == EMPTY && 
+					color[i + 2] == EMPTY && 
+					piece[63] == ROOKC)
                 {
 					/* The king goes 2 sq to the left */
 					Gen_PushKing(i, i + 2, pBuf, &movecount);
 				}
+				/* Can white long castle */
+                if (col &&
+					color[i - 1] == EMPTY &&
+					color[i - 2] == EMPTY &&
+					color[i - 2] == EMPTY &&
+					piece[56] == ROOKC)
+                {
+					/* The king goes 2 sq to the left */
+					Gen_PushKing(i, i - 2, pBuf, &movecount);
+				}
+				
                 break;
             default:
                 puts("piece type unknown");
@@ -679,15 +711,35 @@ int MakeMove(MOVE m)
         }
     }
     
-    if (m.type == MOVE_TYPE_CASTLE)
+    if (m.type == MOVE_TYPE_ROOKC)
+    {
+		piece[m.dest] = ROOKU;
+	}
+    
+    
+    if (m.type == MOVE_TYPE_SHORT_CASTLE)
     {
 		puts("castle!");
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
-		piece[m.dest + 1] = EMPTY;
-		color[m.dest + 1] = EMPTY;
+		/* h1 becomes empty */
+		piece[m.from + 3] = EMPTY;
+		color[m.from + 3] = EMPTY;
+		/* rook tof1 */
 		piece[m.from + 1] = ROOKU;
 		color[m.from + 1] = WHITE;
+	}
+	
+	if (m.type == MOVE_TYPE_LONG_CASTLE)
+    {
+		puts("castle!");
+		printf("%d\n", m.from);
+		printf("%d\n", m.dest);
+		/* a1 becomes empty */
+		piece[m.from - 4] = EMPTY;
+		color[m.from - 4] = EMPTY;
+		piece[m.from - 1] = ROOKU;
+		color[m.from - 1] = WHITE;
 	}
     
     /* Update ply and hdp */
@@ -845,7 +897,44 @@ void PrintBoard()
             printf("   |"); 
         else
         {
-            printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
+			if (color[i] == BLACK)
+			{
+				if (piece[i] == PAWN)
+					printf(" p |");
+				if (piece[i] == KNIGHT)
+					printf(" n |");
+				if (piece[i] == BISHOP)
+					printf(" b |");
+				if (piece[i] == ROOKC)
+					printf(" r |");
+				if (piece[i] == ROOKU)
+					printf(" r |");
+				if (piece[i] == QUEEN)
+					printf(" q |");
+				if (piece[i] == KINGC)
+					printf(" k |");
+				if (piece[i] == KINGU)
+					printf(" k |");
+			}
+            if (color[i] == WHITE)
+			{
+				if (piece[i] == PAWN)
+					printf(" P |");
+				if (piece[i] == KNIGHT)
+					printf(" N |");
+				if (piece[i] == BISHOP)
+					printf(" B |");
+				if (piece[i] == ROOKC)
+					printf(" R |");
+				if (piece[i] == ROOKU)
+					printf(" R |");
+				if (piece[i] == QUEEN)
+					printf(" Q |");
+				if (piece[i] == KINGC)
+					printf(" K |");
+				if (piece[i] == KINGU)
+					printf(" K |");
+			}
         }
         if ((i & 7) == 7)
             printf("\n");
@@ -896,6 +985,11 @@ void main()
         if (!strcmp(s, "d"))
         {
             PrintBoard();
+            continue;
+        }
+        if (!strcmp(s, "on"))
+        {
+            computer_side = (WHITE + BLACK) - computer_side;
             continue;
         }
         if (!strcmp(s, "quit"))
