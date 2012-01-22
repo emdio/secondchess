@@ -977,8 +977,11 @@ void main()
     MOVE moveBuf[200];
     int movecnt;
     
-    printf("First Chess, by Pham Hong Nguyen\n");
-    printf("Help\n d: display board\n MOVE: make a move (e.g. b1c3, a7a8q)\n quit: exit\n\n");
+    puts("First Chess, by Emilio Diaz\n");
+    puts("Help\n d: display board\n"
+    puts("MOVE: make a move (e.g. b1c3, a7a8q)\n")
+    puts("on: force computer to move\n")
+    puts(" quit: exit\n\n");
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
