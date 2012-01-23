@@ -172,29 +172,29 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
-    if (from == 60 && dest == 62 && piece[63] == ROOKC) /* this is a white short castle */
+    if (from == 60 && dest == 62 && piece[60] == KINGC && piece[63] == ROOKC) /* this is a white short castle */
     {
 		puts("shooooort castle");
 		Gen_Push(from, dest, MOVE_TYPE_SHORT_CASTLE, pBuf, pMCount);
 	}
-	if (from == 60 && dest == 58 && piece[56] == ROOKC) /* this is a white long castle */
+	if (from == 60 && dest == 58 && piece[60] == KINGC && piece[56] == ROOKC) /* this is a white long castle */
     {
 		puts("loooong castle");
 		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
 	}
-	if (from == 4 && dest == 6 && piece[7] == ROOKC) /* this is a white short castle */
+	if (from == 4 && dest == 6 && piece[4] == KINGC && piece[7] == ROOKC) /* this is a white short castle */
     {
 		puts("shooooort castle");
 		Gen_Push(from, dest, MOVE_TYPE_SHORT_CASTLE, pBuf, pMCount);
 	}
-	if (from == 4 && dest == 2 && piece[0] == ROOKC) /* this is a white long castle */
+	if (from == 4 && dest == 2 && piece[4] == KINGC && piece[0] == ROOKC) /* this is a white long castle */
     {
 		puts("loooong castle");
 		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
 	}
-    else /* otherwise it's a normal move */
+    else /* otherwise it's a normal king's move */
     {
-		Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
+		Gen_Push(from, dest, MOVE_TYPE_KINGC, pBuf, pMCount);
         
     }
 }
@@ -407,21 +407,21 @@ int Gen(int current_side, MOVE * pBuf)
 				/* the column and rank checks are to make sure it is on the board*/
                 col = COL(i);
                 if (col && color[i - 1] != current_side)
-                    Gen_PushNormal(i, i - 1, pBuf, &movecount); /* left */
+                    Gen_PushKing(i, i - 1, pBuf, &movecount); /* left */
                 if (col < 7 && color[i + 1] != current_side)
-                    Gen_PushNormal(i, i + 1, pBuf, &movecount); /* right */
+                    Gen_PushKing(i, i + 1, pBuf, &movecount); /* right */
                 if (i > 7 && color[i - 8] != current_side)
-                    Gen_PushNormal(i, i - 8, pBuf, &movecount); /* up */
+                    Gen_PushKing(i, i - 8, pBuf, &movecount); /* up */
                 if (i < 56 && color[i + 8] != current_side)
-                    Gen_PushNormal(i, i + 8, pBuf, &movecount); /* down */
+                    Gen_PushKing(i, i + 8, pBuf, &movecount); /* down */
                 if (col && i > 7 && color[i - 9] != current_side)
-                    Gen_PushNormal(i, i - 9, pBuf, &movecount); /* left up */
+                    Gen_PushKing(i, i - 9, pBuf, &movecount); /* left up */
                 if (col < 7 && i > 7 && color[i - 7] != current_side)
-                    Gen_PushNormal(i, i - 7, pBuf, &movecount); /* right up */
+                    Gen_PushKing(i, i - 7, pBuf, &movecount); /* right up */
                 if (col && i < 56 && color[i + 7] != current_side)
-                    Gen_PushNormal(i, i + 7, pBuf, &movecount); /* left down */
+                    Gen_PushKing(i, i + 7, pBuf, &movecount); /* left down */
                 if (col < 7 && i < 56 && color[i + 9] != current_side)
-                    Gen_PushNormal(i, i + 9, pBuf, &movecount); /* right down */
+                    Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
                 /* Can white short castle */
                 if (col &&
 					color[i + 1] == EMPTY && 
@@ -725,7 +725,11 @@ int MakeMove(MOVE m)
     {
 		piece[m.dest] = ROOKU;
 	}
-    
+	
+	if (m.type == MOVE_TYPE_KINGC)
+    {
+		piece[m.dest] = KINGU;
+	}
     
     if (m.type == MOVE_TYPE_SHORT_CASTLE)
     {
@@ -897,13 +901,12 @@ MOVE ComputerThink(int max_depth)
 */
 void PrintBoard()
 {
-    char pieceName[] = "PNBRQKpnbrqk";
     int i;
     for (i = 0; i < 64; i++)
     {
         if ((i & 7) == 0)
         {
-            printf(" +---+---+---+---+---+---+---+---+\n");
+            printf("   +---+---+---+---+---+---+---+---+\n");
             if (i <= 56)
             {
                 printf(" %d |", 8 - (((unsigned)i) >> 3));
@@ -955,7 +958,7 @@ void PrintBoard()
         if ((i & 7) == 7)
             printf("\n");
     }
-    printf(" +---+---+---+---+---+---+---+---+\n a b c d e f g h\n");
+    printf("   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
 /*
@@ -977,12 +980,13 @@ void main()
     MOVE moveBuf[200];
     int movecnt;
     
-    puts("First Chess, by Emilio Diaz");
+    puts("Second Chess, by Emilio Diaz");
     puts(" Help");
     puts(" d: display board");
     puts(" MOVE: make a move (e.g. b1c3, a7a8q)");
     puts(" on: force computer to move");
     puts(" quit: exit");
+    puts(" undo: take back last move");
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
@@ -1005,6 +1009,12 @@ void main()
         if (!strcmp(s, "d"))
         {
             PrintBoard();
+            continue;
+        }
+        if (!strcmp(s, "undo"))
+        {
+            TakeBack();
+            computer_side = (WHITE + BLACK) - computer_side;
             continue;
         }
         if (!strcmp(s, "on"))
