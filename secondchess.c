@@ -685,13 +685,16 @@ int MakeMove(MOVE m)
     
     /* dest piece is the original piece */
     piece[m.dest] = piece[m.from];
-    /* The original sqaure becomes empty */
+    
+    /* The original square becomes empty */
     piece[m.from] = EMPTY;
     
     /* The dest square color is the one of the origin piece */
     color[m.dest] = color[m.from];
+    
     /* The original color becomes empty */
     color[m.from] = EMPTY;
+    
     
     /* Once the move is done we check either this is a promotion */
     if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
@@ -736,6 +739,15 @@ int MakeMove(MOVE m)
 		puts("castle!");
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
+		
+		//ply++;
+		//hdp++;
+		//MOVE m_short_castle;
+		//m_short_castle.from = 63;
+		//m_short_castle.dest = 61;
+		//m_short_castle.type = MOVE_TYPE_ROOKC;
+		//MakeMove(m_short_castle);
+		
 		/* h1-8 becomes empty */
 		piece[m.from + 3] = EMPTY;
 		color[m.from + 3] = EMPTY;
@@ -767,8 +779,10 @@ int MakeMove(MOVE m)
     hdp++;
     
     r = !IsInCheck(side);
-    side = (WHITE + BLACK) - side; /* After making move, give turn to
-* opponent */
+    
+    /* After making move, give turn to opponent */
+    side = (WHITE + BLACK) - side;
+    
     return r;
 }
 
@@ -781,11 +795,30 @@ void TakeBack() /* undo what MakeMove did */
     piece[hist[hdp].m.dest] = hist[hdp].cap;
     color[hist[hdp].m.from] = side;
     if (hist[hdp].cap != EMPTY)
+    {
         color[hist[hdp].m.dest] = (WHITE + BLACK) - side;
+	}
     else
+    {
         color[hist[hdp].m.dest] = EMPTY;
-    if (hist[hdp].m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN) /* Promotion */
+	}
+    /* Promotion */
+    if (hist[hdp].m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
+    {
         piece[hist[hdp].m.from] = PAWN;
+	}
+	/* Castle */
+	if (hist[hdp].m.type == MOVE_TYPE_SHORT_CASTLE)
+    {
+        //hdp--;
+        //side = (WHITE + BLACK) - side;
+		//ply++;
+		piece[63] = ROOKC;
+		color[63] = WHITE;
+		piece[61] = EMPTY;
+		color[61] = EMPTY;
+		//side = (WHITE + BLACK) - side;
+	}
 }
 
 /*
