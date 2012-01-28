@@ -172,6 +172,7 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
+	/* We don't need to take care of all the empty sqaures because it's checked when the king's move is done */
     if (from == 60 && dest == 62 && piece[60] == KINGC && piece[63] == ROOKC) /* this is a white short castle */
     {
 		puts("shooooort castle");
@@ -179,7 +180,7 @@ void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 	}
 	if (from == 60 && dest == 58 && piece[60] == KINGC && piece[56] == ROOKC) /* this is a white long castle */
     {
-		puts("loooong castle");
+		puts("loooong castle**");
 		Gen_Push(from, dest, MOVE_TYPE_LONG_CASTLE, pBuf, pMCount);
 	}
 	if (from == 4 && dest == 6 && piece[4] == KINGC && piece[7] == ROOKC) /* this is a white short castle */
@@ -435,7 +436,7 @@ int Gen(int current_side, MOVE * pBuf)
                 if (col &&
 					color[i - 1] == EMPTY &&
 					color[i - 2] == EMPTY &&
-					color[i - 2] == EMPTY &&
+					color[i - 3] == EMPTY &&
 					piece[i - 4] == ROOKC)
                 {
 					/* The king goes 2 sq to the left */
@@ -726,6 +727,7 @@ int MakeMove(MOVE m)
     
     if (m.type == MOVE_TYPE_ROOKC)
     {
+		puts("MOVE_TYPE_ROOKC");
 		piece[m.dest] = ROOKU;
 	}
 	
@@ -748,15 +750,21 @@ int MakeMove(MOVE m)
 		//m_short_castle.type = MOVE_TYPE_ROOKC;
 		//MakeMove(m_short_castle);
 		
-		/* h1-8 becomes empty */
+		/* h1-h8 becomes empty */
 		piece[m.from + 3] = EMPTY;
 		color[m.from + 3] = EMPTY;
-		/* rook tof1-8 */
+		/* rook to f1-f8 */
 		piece[m.from + 1] = ROOKU;
 		if (m.from == 60)
+		{
 			color[m.from + 1] = WHITE;
+			piece[m.dest] = KINGU;
+		}
 		else
+		{
 			color[m.from + 1] = BLACK;
+			piece[m.dest] = KINGU;
+		}
 	}
 	
 	if (m.type == MOVE_TYPE_LONG_CASTLE)
@@ -807,17 +815,43 @@ void TakeBack() /* undo what MakeMove did */
     {
         piece[hist[hdp].m.from] = PAWN;
 	}
-	/* Castle */
+	/* Short Castle */
 	if (hist[hdp].m.type == MOVE_TYPE_SHORT_CASTLE)
     {
-        //hdp--;
-        //side = (WHITE + BLACK) - side;
-		//ply++;
-		piece[63] = ROOKC;
-		color[63] = WHITE;
-		piece[61] = EMPTY;
-		color[61] = EMPTY;
-		//side = (WHITE + BLACK) - side;
+		if (side == WHITE)
+		{
+			piece[63] = ROOKC;
+			color[63] = WHITE;
+			piece[61] = EMPTY;
+			color[61] = EMPTY;
+			piece[60] = KINGC;
+		}
+		else
+		{
+			piece[7] = ROOKC;
+			color[7] = BLACK;
+			piece[5] = EMPTY;
+			color[5] = EMPTY;
+			piece[4] = KINGC;
+		}
+	}
+	/* Long Castle */
+	if (hist[hdp].m.type == MOVE_TYPE_LONG_CASTLE)
+    {
+		if (side == WHITE)
+		{
+			piece[56] = ROOKC;
+			color[56] = WHITE;
+			piece[59] = EMPTY;
+			color[59] = EMPTY;
+		}
+		else
+		{
+			piece[0] = ROOKC;
+			color[0] = BLACK;
+			piece[3] = EMPTY;
+			color[3] = EMPTY;
+		}
 	}
 }
 
@@ -958,15 +992,15 @@ void PrintBoard()
 				if (piece[i] == BISHOP)
 					printf(" b |");
 				if (piece[i] == ROOKC)
-					printf(" r |");
+					printf(" rc|");
 				if (piece[i] == ROOKU)
-					printf(" r |");
+					printf(" ru|");
 				if (piece[i] == QUEEN)
 					printf(" q |");
 				if (piece[i] == KINGC)
-					printf(" k |");
+					printf(" kc|");
 				if (piece[i] == KINGU)
-					printf(" k |");
+					printf(" ku|");
 			}
             if (color[i] == WHITE)
 			{
@@ -977,15 +1011,15 @@ void PrintBoard()
 				if (piece[i] == BISHOP)
 					printf(" B |");
 				if (piece[i] == ROOKC)
-					printf(" R |");
+					printf(" RC|");
 				if (piece[i] == ROOKU)
-					printf(" R |");
+					printf(" RU|");
 				if (piece[i] == QUEEN)
 					printf(" Q |");
 				if (piece[i] == KINGC)
-					printf(" K |");
+					printf(" KC|");
 				if (piece[i] == KINGU)
-					printf(" K |");
+					printf(" KU|");
 			}
         }
         if ((i & 7) == 7)
@@ -1070,12 +1104,12 @@ void main()
         movecnt = Gen(side, moveBuf);
         
         /* loop through the moves to see if it's legal */
-        for (i = 0; i < movecnt; i++)
-        {
+        for (i = 0; i < movecnt; i++)      
             if (moveBuf[i].from == from && moveBuf[i].dest == dest)
             {
+				/* Promotion move? */
                 if (piece[from] == PAWN && (dest < 8 || dest > 55))
-                { /* Promotion move? */
+                {
                     switch (s[4])
                     {
                     case 'q':
@@ -1107,6 +1141,5 @@ void main()
                 break;
 
             }
-}
     }
 }
