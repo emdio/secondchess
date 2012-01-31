@@ -58,9 +58,27 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #define COL(pos) ((pos)&7)
 #define ROW(pos) (((unsigned)pos)>>3)
 
+/* Some  useful squares */
+#define A1				56
+#define B1				57
+#define C1				58
+#define D1				59
+#define E1				60
+#define F1				61
+#define G1				62
+#define H1				63
+#define A8				0
+#define B8				1
+#define C8				2
+#define D8				3
+#define E8				4
+#define F8				5
+#define G8				6
+#define H8				7
+
 /*
 ****************************************************************************
-* Board representation and main varians *
+* Board representation and main variants *
 ****************************************************************************
 */
 /* Board representation */
@@ -109,14 +127,46 @@ typedef struct tag_MOVE {
 /* For storing all moves of game */
 typedef struct tag_HIST {
     MOVE m;
-    CASTLE c;
     int cap;
 } HIST;
 
 HIST hist[6000]; /* Game length < 6000 */
 
-/* For catle rights we use a bitfield, like in TSCP */
-int castle;
+/* For catle rights we use a bitfield, like in TSCP 
+ * 15 = 1111  = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
+ * 
+ * 0001 White can short castle
+ * 0010 White can long castle
+ * 0100 Black can short castle
+ * 1000 Black can long castle
+ * 
+ */
+int castle = 15;
+
+/* This mask is applied like this
+ * 
+ * castle &= castle_mask[from] & castle_mask[dest]
+ * 
+ * When from and dest are whatever pieces, then nothing happens, otherwise
+ * the values are chosen in such a way that if vg the white king moves
+ * to F1 then
+ * 
+ * castle = castle & (12 & 15)
+ * 1111 & (1100 & 1111) == 1111 & 1100 == 1100
+ * 
+ * and white's lost its castle rights
+ * 
+ *  */
+int castle_mask[64] = {
+	 7, 15, 15, 15,  3, 15, 15, 11,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	13, 15, 15, 15, 12, 15, 15, 14
+};
 
 int hdp; /* Current move order */
 
@@ -130,7 +180,7 @@ int ply; /* ply of search */
 * Lack: no enpassant, no castle *
 ****************************************************************************
 */
-void Gen_Push(int from, int dest, int castle, int type, MOVE * pBuf, int *pMCount)
+void Gen_Push(int from, int dest, int type, MOVE * pBuf, int *pMCount)
 {
     MOVE move;
     move.from = from;
@@ -140,13 +190,13 @@ void Gen_Push(int from, int dest, int castle, int type, MOVE * pBuf, int *pMCoun
     *pMCount = *pMCount + 1;
 }
 
-void Gen_PushNormal(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushNormal(int from, int dest, MOVE * pBuf, int *pMCount)
 {
     Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
 }
 
 /* Pawn can promote */
-void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 /* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
 * means this isn't a promotion*/
@@ -164,27 +214,15 @@ void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 }
 
 /* King*/
-void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
-{
-	/* If we move the king we loose the castle rights */
-	if (from == 60)
-	{
-		white_long_castle = 0;
-		white_short_castle = 0;
-	}
-	if (from == 4)
-	{
-		black_long_castle = 0;
-		black_short_castle = 0;
-	}
-	
+void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
+{	
 /* Is it a castle?*/
-    if (from == 60 && dest == 62 && piece[60] == KING && piece[63] == ROOK) /* this is a white short castle */
+    if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
     {
 		puts("shooooort castle");
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	if (from == 60 && dest == 58 && piece[60] == KING && piece[56] == ROOK) /* this is a white long castle */
+	if (from == E1 && dest == C1 && piece[E1] == KING && piece[A1] == ROOK) /* this is a white long castle */
     {
 		puts("loooong castle**");
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
@@ -206,7 +244,7 @@ void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
     }
 }
 
-void Gen_PushRook(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushRook(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* A rook that can castle moves, so the destiny piece is rook that
 	 * can't castle */
@@ -378,7 +416,7 @@ int Gen(int current_side, MOVE * pBuf)
                     Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
                 
                 /* Can white short castle? */
-                if (white_short_castle==1)
+                if (castle & 1)
                 {
 					puts("White can short castle!");
 					/* If white can castle the white king has to be in square 60 */
@@ -396,7 +434,7 @@ int Gen(int current_side, MOVE * pBuf)
 					puts("White can't short castle!");
 				}
 				/* Can white long castle? */
-				if (white_long_castle)
+				if (castle & 2)
                 {
 					if (col &&
 						color[i - 1] == EMPTY &&
@@ -697,13 +735,14 @@ int MakeMove(MOVE m)
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
 		
+		
 		/* h1-h8 becomes empty */
 		piece[m.from + 3] = EMPTY;
 		color[m.from + 3] = EMPTY;
 		
 		/* rook to f1-f8 */
 		piece[m.from + 1] = ROOK;
-		if (m.from == 60)
+		if (m.from == E1)
 		{
 			color[m.from + 1] = WHITE;
 			piece[m.dest] = KING;
@@ -719,6 +758,9 @@ int MakeMove(MOVE m)
     /* Update ply and hdp */
     ply++;
     hdp++;
+    
+    /* Update the castle */
+	castle &= castle_mask[(int)m.from] & castle_mask[(int)m.dest];
     
     r = !IsInCheck(side);
     
@@ -916,7 +958,7 @@ void main()
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
-    max_depth = 1;
+    max_depth = 0;
     hdp = 0; /* Current move order */
     for (;;)
     {
