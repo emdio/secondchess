@@ -420,28 +420,38 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                 /* Can white short castle? */
                 if (castle & 1)
                 {
-					//puts("White can short castle!");
-					/* If white can castle the white king has to be in square 60 */
-					if (col &&
-						color[i + 1] == EMPTY && 
-						color[i + 2] == EMPTY && 
-						piece[i + 3] == ROOK)
+					if (!IsInCheck(current_side))
 					{
-						/* The king goes 2 sq to the left */
-						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+						//puts("White can short castle!");
+						/* If white can castle the white king has to be in square 60 */
+						if (col &&
+							color[i + 1] == EMPTY && 
+							color[i + 2] == EMPTY
+							 //&& 
+							//piece[i + 3] == ROOK
+							)
+						{
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+						}
 					}
 				}
 				/* Can white long castle? */
 				if (castle & 2)
                 {
-					if (col &&
-						color[i - 1] == EMPTY &&
-						color[i - 2] == EMPTY &&
-						color[i - 3] == EMPTY &&
-						piece[i - 4] == ROOK)
+					if (!IsInCheck(current_side))
 					{
-						/* The king goes 2 sq to the left */
-						Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+						if (col &&
+							color[i - 1] == EMPTY &&
+							color[i - 2] == EMPTY &&
+							color[i - 3] == EMPTY
+							 //&&
+							//piece[i - 4] == ROOK
+							)
+						{
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+						}
 					}
 				}
 				
@@ -452,8 +462,10 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 					/* If white can castle the white king has to be in square 60 */
 					if (col &&
 						color[i + 1] == EMPTY && 
-						color[i + 2] == EMPTY && 
-						piece[i + 3] == ROOK)
+						color[i + 2] == EMPTY
+						 //&& 
+						//piece[i + 3] == ROOK
+						)
 					{
 						/* The king goes 2 sq to the left */
 						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
@@ -465,8 +477,10 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 					if (col &&
 						color[i - 1] == EMPTY &&
 						color[i - 2] == EMPTY &&
-						color[i - 3] == EMPTY &&
-						piece[i - 4] == ROOK)
+						color[i - 3] == EMPTY
+						 //&&
+						//piece[i - 4] == ROOK
+						)
 					{
 						/* The king goes 2 sq to the left */
 						Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
