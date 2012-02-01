@@ -418,74 +418,71 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                     Gen_PushKing(i, i + 9,  castle, pBuf, &movecount); /* right down */
                 
                 /* Can white short castle? */
-                if (castle & 1)
-                {
-					if (!IsInCheck(current_side))
+                if (!IsInCheck(current_side))
 					{
-						//puts("White can short castle!");
-						/* If white can castle the white king has to be in square 60 */
-						if (col &&
-							color[i + 1] == EMPTY && 
-							color[i + 2] == EMPTY
-							 //&& 
-							//piece[i + 3] == ROOK
-							)
+						if (castle & 1)
 						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+							//puts("White can short castle!");
+							/* If white can castle the white king has to be in square 60 */
+							if (col &&
+								color[i + 1] == EMPTY && 
+								color[i + 2] == EMPTY
+								 //&& 
+								//piece[i + 3] == ROOK
+								)
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+							}
+						}
+						/* Can white long castle? */
+						if (castle & 2)
+						{
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY
+								 //&&
+								//piece[i - 4] == ROOK
+								)
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							}
+						}
+						
+						/* Can black short castle? */
+						if (castle & 3)
+						{
+							//puts("White can short castle!");
+							/* If white can castle the white king has to be in square 60 */
+							if (col &&
+								color[i + 1] == EMPTY && 
+								color[i + 2] == EMPTY
+								 //&& 
+								//piece[i + 3] == ROOK
+								)
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+							}
+						}
+						/* Can black long castle? */
+						if (castle & 4)
+						{
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY
+								 //&&
+								//piece[i - 4] == ROOK
+								)
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							}
 						}
 					}
-				}
-				/* Can white long castle? */
-				if (castle & 2)
-                {
-					if (!IsInCheck(current_side))
-					{
-						if (col &&
-							color[i - 1] == EMPTY &&
-							color[i - 2] == EMPTY &&
-							color[i - 3] == EMPTY
-							 //&&
-							//piece[i - 4] == ROOK
-							)
-						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
-						}
-					}
-				}
-				
-				/* Can black short castle? */
-                if (castle & 3)
-                {
-					//puts("White can short castle!");
-					/* If white can castle the white king has to be in square 60 */
-					if (col &&
-						color[i + 1] == EMPTY && 
-						color[i + 2] == EMPTY
-						 //&& 
-						//piece[i + 3] == ROOK
-						)
-					{
-						/* The king goes 2 sq to the left */
-						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
-					}
-				}
-				/* Can black long castle? */
-				if (castle & 4)
-                {
-					if (col &&
-						color[i - 1] == EMPTY &&
-						color[i - 2] == EMPTY &&
-						color[i - 3] == EMPTY
-						 //&&
-						//piece[i - 4] == ROOK
-						)
-					{
-						/* The king goes 2 sq to the left */
-						Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
-					}
-				}
 				
                 break;
             default:
