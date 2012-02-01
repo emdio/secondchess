@@ -431,10 +431,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
 					}
 				}
-				else
-				{
-					puts("White can't short castle!");
-				}
+
 				/* Can white long castle? */
 				if (castle & 2)
                 {
