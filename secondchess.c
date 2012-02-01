@@ -760,7 +760,7 @@ int MakeMove(MOVE m)
     hdp++;
     
     /* Update the castle */
-	castle &= castle_mask[(int)m.from] & castle_mask[(int)m.dest];
+	castle &= castle_mask[m.from] & castle_mask[m.dest];
     
     r = !IsInCheck(side);
     
@@ -794,6 +794,15 @@ void TakeBack() /* undo what MakeMove did */
         piece[hist[hdp].m.from] = PAWN;
 	}
 	
+	/* Castle */
+    if (hist[hdp].m.type >= MOVE_TYPE_CASTLE)
+    {
+        piece[H1] = ROOK;
+        color[H1] = WHITE;
+        piece[F1] = EMPTY;
+        color[F1] = EMPTY;
+        castle = 15;
+	}
 }
 
 /*
@@ -958,7 +967,7 @@ void main()
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
-    max_depth = 0;
+    max_depth = 4;
     hdp = 0; /* Current move order */
     for (;;)
     {
