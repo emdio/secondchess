@@ -221,24 +221,24 @@ void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 /* Is it a castle?*/
     if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
     {
-		//puts("shooooort castle");
+		puts("shooooort castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
 	if (from == E1 && dest == C1 && piece[E1] == KING && piece[A1] == ROOK) /* this is a white long castle */
     {
-		//puts("loooong castle**");
+		puts("loooong castle**");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	if (from == E8 && dest == G8 && piece[E8] == KING && piece[H8] == ROOK) /* this is a white short castle */
-    {
+	//if (from == 4 && dest == 6 && piece[4] == KINGC && piece[7] == ROOKC) /* this is a white short castle */
+    //{
 		//puts("shooooort castle");
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
-	}
-	if (from == E8 && dest == C8 && piece[E8] == KING && piece[A8] == ROOK) /* this is a white long castle */
-    {
+		//Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+	//}
+	//if (from == 4 && dest == 2 && piece[4] == KINGC && piece[0] == ROOKC) /* this is a white long castle */
+    //{
 		//puts("loooong castle");
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
-	}
+		//Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+	//}
     else /* otherwise it's a normal king's move */
     {
 		Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
@@ -418,76 +418,40 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                     Gen_PushKing(i, i + 9,  castle, pBuf, &movecount); /* right down */
                 
                 /* Can white short castle? */
-                if (!IsInCheck(current_side))
+                if (castle & 1)
+                {
+					puts("White can short castle!");
+					/* If white can castle the white king has to be in square 60 */
+					if (col &&
+						color[i + 1] == EMPTY && 
+						color[i + 2] == EMPTY && 
+						piece[i + 3] == ROOK)
 					{
-						if (castle & 1)
-						{
-							//puts("White can short castle!");
-							/* If white can castle the white king has to be in square 60 */
-							if (col &&
-								color[i + 1] == EMPTY && 
-								color[i + 2] == EMPTY
-								 //&& 
-								//piece[i + 3] == ROOK
-								)
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
-							}
-						}
-						/* Can white long castle? */
-						if (castle & 2)
-						{
-							if (col &&
-								color[i - 1] == EMPTY &&
-								color[i - 2] == EMPTY &&
-								color[i - 3] == EMPTY
-								 //&&
-								//piece[i - 4] == ROOK
-								)
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
-							}
-						}
-						
-						/* Can black short castle? */
-						if (castle & 3)
-						{
-							//puts("White can short castle!");
-							/* If white can castle the white king has to be in square 60 */
-							if (col &&
-								color[i + 1] == EMPTY && 
-								color[i + 2] == EMPTY
-								 //&& 
-								//piece[i + 3] == ROOK
-								)
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
-							}
-						}
-						/* Can black long castle? */
-						if (castle & 4)
-						{
-							if (col &&
-								color[i - 1] == EMPTY &&
-								color[i - 2] == EMPTY &&
-								color[i - 3] == EMPTY
-								 //&&
-								//piece[i - 4] == ROOK
-								)
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
-							}
-						}
+						/* The king goes 2 sq to the left */
+						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
 					}
+				}
+				else
+				{
+					puts("White can't short castle!");
+				}
+				/* Can white long castle? */
+				if (castle & 2)
+                {
+					if (col &&
+						color[i - 1] == EMPTY &&
+						color[i - 2] == EMPTY &&
+						color[i - 3] == EMPTY &&
+						piece[i - 4] == ROOK)
+					{
+						/* The king goes 2 sq to the left */
+						Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+					}
+				}
 				
                 break;
             default:
                 puts("piece type unknown");
-                printf ("%c\n", piece[i]);
                 assert(false);
             }
         }
@@ -774,45 +738,22 @@ int MakeMove(MOVE m)
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
 		
-		if (m.dest == G1)
+		
+		/* h1-h8 becomes empty */
+		piece[m.from + 3] = EMPTY;
+		color[m.from + 3] = EMPTY;
+		
+		/* rook to f1-f8 */
+		piece[m.from + 1] = ROOK;
+		if (m.from == E1)
 		{
-			/* h1-h8 becomes empty */
-			piece[m.from + 3] = EMPTY;
-			color[m.from + 3] = EMPTY;
-			/* rook to f1-f8 */
-			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = WHITE;
 			piece[m.dest] = KING;
 		}
-		if (m.dest == C1)
+		else
 		{
-			/* h1-h8 becomes empty */
-			piece[A1] = EMPTY;
-			color[A1] = EMPTY;
-			/* rook to f1-f8 */
-			piece[D1] = ROOK;
-			color[D1] = WHITE;
-			piece[C1] = KING;
-		}
-		if (m.dest == G8)
-		{
-			/* h1-h8 becomes empty */
-			piece[H8] = EMPTY;
-			color[H8] = EMPTY;
-			/* rook to f1-f8 */
-			piece[F8] = ROOK;
-			color[F8] = BLACK;
-			piece[G8] = KING;
-		}
-		if (m.dest == C8)
-		{
-			/* h1-h8 becomes empty */
-			piece[A8] = EMPTY;
-			color[A8] = EMPTY;
-			/* rook to f1-f8 */
-			piece[D8] = ROOK;
-			color[D8] = BLACK;
-			piece[C8] = KING;
+			color[m.from + 1] = BLACK;
+			piece[m.dest] = KING;
 		}
 	}
 	
@@ -862,34 +803,11 @@ void TakeBack() /* undo what MakeMove did */
 	/* Castle */
     if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
     {
-		if (hist[hdp].m.dest == G1)
-		{
-			piece[H1] = ROOK;
-			color[H1] = WHITE;
-			piece[F1] = EMPTY;
-			color[F1] = EMPTY;
-		}
-		if (hist[hdp].m.dest == C1)
-		{
-			piece[A1] = ROOK;
-			color[A1] = WHITE;
-			piece[D1] = EMPTY;
-			color[D1] = EMPTY;
-		}
-		if (hist[hdp].m.dest == G8)
-		{
-			piece[H8] = ROOK;
-			color[H8] = BLACK;
-			piece[F8] = EMPTY;
-			color[F8] = EMPTY;
-		}
-		if (hist[hdp].m.dest == C8)
-		{
-			piece[A8] = ROOK;
-			color[A8] = BLACK;
-			piece[D8] = EMPTY;
-			color[D8] = EMPTY;
-		}
+        piece[H1] = ROOK;
+        color[H1] = WHITE;
+        piece[F1] = EMPTY;
+        color[F1] = EMPTY;
+        //castle = 15;
 	}
 }
 
@@ -1055,7 +973,7 @@ void main()
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
-    max_depth = 1;
+    max_depth = 4;
     hdp = 0; /* Current move order */
     for (;;)
     {
@@ -1065,6 +983,7 @@ void main()
             MOVE bestMove = ComputerThink(max_depth);
             MakeMove(bestMove);
             PrintBoard();
+            printf("CASTLE: %d\n", castle);
             continue;
         }
         
