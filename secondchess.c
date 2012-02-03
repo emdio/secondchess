@@ -677,7 +677,6 @@ int MakeMove(MOVE m)
     
     hist[hdp].m = m;
     
-    
     /* store in history the piece of the dest square */
     hist[hdp].cap = piece[m.dest];
     
@@ -728,8 +727,6 @@ int MakeMove(MOVE m)
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
 
-
-		
 		if (m.from == E1 && m.dest == G1)
 		{
 			/* h1-h8 becomes empty */
@@ -750,11 +747,6 @@ int MakeMove(MOVE m)
 			color[m.from - 1] = WHITE;
 			piece[m.dest] = KING;
 		}
-//		else
-//		{
-//			color[m.from + 1] = BLACK;
-//			piece[m.dest] = KING;
-//		}
 	}
 	
     
@@ -861,15 +853,15 @@ movecnt = Gen(side, castle, moveBuf);
         
         /* This 'if' takes us to the deep of the position */
         if (depth - 1 > 0) /* If depth is still, continue to search deeper */
-{
+        {
             value = -Search(-beta, -alpha, depth - 1, &tmpMove);
-}
+        }
         else /* If no depth left (leaf node), go to evalute that position
 and apply the alpha-beta search*/
             {
             value = -Eval();
             //printf("eval:%d\n", value);
-}
+            }
 /* We go to the move that origins the move we're analyzing and
 * apply the alpha-beta search */
         TakeBack();
@@ -879,7 +871,7 @@ and apply the alpha-beta search*/
             if (value >= beta)
             {
                 return beta;
-}
+            }
             alpha = value;
             *pBestMove = moveBuf[i]; /* so far, current move is the best reaction
 * for current position */
