@@ -205,7 +205,7 @@ void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
     if (dest > 7 && dest < 56) /* this is just a normal move */
     {
         Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
-}
+    }
     else /* otherwise it's a promotion */
     {
         Gen_Push(from, dest, castle, MOVE_TYPE_PROMOTION_TO_QUEEN, pBuf, pMCount);
@@ -217,7 +217,7 @@ void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 
 /* King*/
 void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
-{	
+{
 /* Is it a castle?*/
     if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
     {
@@ -424,10 +424,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
 					}
 				}
-				else
-				{
-					puts("White can't short castle!");
-				}
+
 				/* Can white long castle? */
 				if (castle & 2)
                 {
@@ -806,6 +803,7 @@ void TakeBack() /* undo what MakeMove did */
 	/* Castle */
     if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
     {
+    	/* Take the tower to its poriginal place */
     	if (hist[hdp].m.dest == G1)
     	{
 			piece[H1] = ROOK;
