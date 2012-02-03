@@ -246,13 +246,6 @@ void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
     }
 }
 
-void Gen_PushRook(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
-{
-	/* A rook that can castle moves, so the destiny piece is rook that
-	 * can't castle */
-	Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
-}
-
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
 int Gen(int current_side, int castle, MOVE * pBuf)
 {
@@ -431,7 +424,10 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 						Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
 					}
 				}
-
+				else
+				{
+					puts("White can't short castle!");
+				}
 				/* Can white long castle? */
 				if (castle & 2)
                 {
@@ -734,8 +730,8 @@ int MakeMove(MOVE m)
 		puts("castle!");
 		printf("%d\n", m.from);
 		printf("%d\n", m.dest);
-		
-		
+
+
 		/* h1-h8 becomes empty */
 		piece[m.from + 3] = EMPTY;
 		color[m.from + 3] = EMPTY;
