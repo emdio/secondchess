@@ -732,22 +732,32 @@ int MakeMove(MOVE m)
 		printf("%d\n", m.dest);
 
 
-		/* h1-h8 becomes empty */
-		piece[m.from + 3] = EMPTY;
-		color[m.from + 3] = EMPTY;
 		
-		/* rook to f1-f8 */
-		piece[m.from + 1] = ROOK;
-		if (m.from == E1)
+		if (m.from == E1 && m.dest == G1)
 		{
+			/* h1-h8 becomes empty */
+			piece[m.from + 3] = EMPTY;
+			color[m.from + 3] = EMPTY;
+			/* rook to f1-f8 */
+			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = WHITE;
 			piece[m.dest] = KING;
 		}
-		else
+		if (m.from == E1 && m.dest == C1)
 		{
-			color[m.from + 1] = BLACK;
+			/* h1-h8 becomes empty */
+			piece[m.from - 4] = EMPTY;
+			color[m.from - 4] = EMPTY;
+			/* rook to f1-f8 */
+			piece[m.from - 1] = ROOK;
+			color[m.from - 1] = WHITE;
 			piece[m.dest] = KING;
 		}
+//		else
+//		{
+//			color[m.from + 1] = BLACK;
+//			piece[m.dest] = KING;
+//		}
 	}
 	
     
@@ -796,11 +806,20 @@ void TakeBack() /* undo what MakeMove did */
 	/* Castle */
     if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
     {
-        piece[H1] = ROOK;
-        color[H1] = WHITE;
-        piece[F1] = EMPTY;
-        color[F1] = EMPTY;
-        //castle = 15;
+    	if (hist[hdp].m.dest == G1)
+    	{
+			piece[H1] = ROOK;
+			color[H1] = WHITE;
+			piece[F1] = EMPTY;
+			color[F1] = EMPTY;
+    	}
+    	if (hist[hdp].m.dest == C1)
+		{
+			piece[A1] = ROOK;
+			color[A1] = WHITE;
+			piece[D1] = EMPTY;
+			color[D1] = EMPTY;
+		}
 	}
 }
 
