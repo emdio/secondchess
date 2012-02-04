@@ -82,6 +82,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 ****************************************************************************
 */
 /* Board representation */
+	/* Piece in each square */
 int piece[64] = {
     ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
     PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
@@ -93,6 +94,7 @@ int piece[64] = {
     ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK
 };
 
+	/* Color of each square */
 int color[64] = {
     BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
     BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
@@ -104,7 +106,7 @@ int color[64] = {
     WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE
 };
 
-int side; /* side to move, value = BLACK or WHITE */
+int side; /* Side to move, value = BLACK or WHITE */
 
 /* For move generation */
 #define MOVE_TYPE_NONE 0
@@ -932,7 +934,6 @@ movecnt = Gen(side, castle, moveBuf);
 and apply the alpha-beta search*/
             {
             value = -Eval();
-            //printf("eval:%d\n", value);
             }
 /* We go to the move that origins the move we're analyzing and
 * apply the alpha-beta search */
@@ -971,14 +972,14 @@ MOVE ComputerThink(int max_depth)
     MOVE m;
     int score;
     
-/* reset some values before searching */
+/* Reset some values before searching */
     ply = 0;
     nodes = 0;
     
-/* search now */
+/* Search now */
     score = Search(-MATE, MATE, max_depth, &m);
     
-/* after searching, print results */
+/* After searching, print results */
     printf("Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d\n",
            'a' + COL(m.from),
            8 - ROW(m.from),
@@ -1040,7 +1041,7 @@ void main()
     puts("Second Chess, by Emilio Diaz");
     puts(" Help");
     puts(" d: display board");
-    puts(" MOVE: make a move (e.g. b1c3, a7a8q)");
+    puts(" MOVE: make a move (e.g. b1c3, a7a8q, e1g1)");
     puts(" on: force computer to move");
     puts(" quit: exit");
     puts(" undo: take back last move");
@@ -1061,7 +1062,7 @@ void main()
             continue;
         }
         
-        /* get user input */
+        /* Get user input */
         printf("fc> ");
         if (scanf("%s", s) == EOF) /* close program */
             return;
