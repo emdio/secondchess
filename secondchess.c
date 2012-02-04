@@ -219,24 +219,28 @@ void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
-    if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
+//    if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
+    if (from == E1 && dest == G1) /* this is a white short castle */
     {
-		puts("shooooort castle");
+//		puts("shooooort castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	if (from == E1 && dest == C1 && piece[E1] == KING && piece[A1] == ROOK) /* this is a white long castle */
+//	if (from == E1 && dest == C1 && piece[E1] == KING && piece[A1] == ROOK) /* this is a white long castle */
+	if (from == E1 && dest == C1) /* this is a white long castle */
     {
-		puts("loooong castle**");
+//		puts("loooong castle**");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	if (from == E8 && dest == G8 && piece[E8] == KING && piece[H8] == ROOK) /* this is a white short castle */
+//	if (from == E8 && dest == G8 && piece[E8] == KING && piece[H8] == ROOK) /* this is a white short castle */
+	if (from == E8 && dest == G8) /* this is a white short castle */
     {
-		puts("shooooort castle");
+//		puts("shooooort castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	if (from == E8 && dest == C8 && piece[E8] == KING && piece[A8] == ROOK) /* this is a white long castle */
+//	if (from == E8 && dest == C8 && piece[E8] == KING && piece[A8] == ROOK) /* this is a white long castle */
+	if (from == E8 && dest == C8) /* this is a white long castle */
     {
-		puts("loooong castle");
+//		puts("loooong castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
     else /* otherwise it's a normal king's move */
@@ -415,7 +419,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 					/* Can white short castle? */
 					if (castle & 1)
 					{
-						puts("White can short castle!");
+//						puts("White can short castle!");
 						/* If white can castle the white king has to be in square 60 */
 						if (col &&
 							color[i + 1] == EMPTY &&
@@ -446,7 +450,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 					 /* Can black short castle? */
 					if (castle & 4)
 					{
-						puts("Black can short castle!");
+//						puts("Black can short castle!");
 						/* If white can castle the white king has to be in square 60 */
 						if (col &&
 							color[i + 1] == EMPTY &&
@@ -475,7 +479,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 				
                 break;
             default:
-                puts("piece type unknown");
+                puts("Piece type unknown");
                 assert(false);
             }
         }
@@ -750,18 +754,19 @@ int MakeMove(MOVE m)
             break;
 
         default:
-            puts("impossible to get here...");
+            puts("Impossible to get here...");
             assert(false);
         }
     }
     
     if (m.type == MOVE_TYPE_CASTLE)
     {
-		puts("castle!");
-		printf("%d\n", m.from);
-		printf("%d\n", m.dest);
+//		puts("castle!");
+//		printf("%d\n", m.from);
+//		printf("%d\n", m.dest);
 
-		if (m.from == E1 && m.dest == G1)
+//		if (m.from == E1 && m.dest == G1)
+		if (m.dest == G1)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from + 3] = EMPTY;
@@ -769,9 +774,9 @@ int MakeMove(MOVE m)
 			/* rook to f1-f8 */
 			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = WHITE;
-			piece[m.dest] = KING;
 		}
-		if (m.from == E1 && m.dest == C1)
+//		if (m.from == E1 && m.dest == C1)
+		if (m.dest == C1)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from - 4] = EMPTY;
@@ -779,9 +784,9 @@ int MakeMove(MOVE m)
 			/* rook to f1-f8 */
 			piece[m.from - 1] = ROOK;
 			color[m.from - 1] = WHITE;
-			piece[m.dest] = KING;
 		}
-		if (m.from == E8 && m.dest == G8)
+//		if (m.from == E8 && m.dest == G8)
+		if (m.dest == G8)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from + 3] = EMPTY;
@@ -789,9 +794,9 @@ int MakeMove(MOVE m)
 			/* rook to f1-f8 */
 			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = BLACK;
-			piece[m.dest] = KING;
 		}
-		if (m.from == E8 && m.dest == C8)
+//		if (m.from == E8 && m.dest == C8)
+		if (m.dest == C8)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from - 4] = EMPTY;
@@ -799,7 +804,6 @@ int MakeMove(MOVE m)
 			/* rook to f1-f8 */
 			piece[m.from - 1] = ROOK;
 			color[m.from - 1] = BLACK;
-			piece[m.dest] = KING;
 		}
 	}
 	
