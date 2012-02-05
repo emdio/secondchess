@@ -193,14 +193,14 @@ int pst_pawn[64] = {
 };
 
 int pst_knight[64] = {
-	-30,-20,-20,-20,-20,-20,-20,-30,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-20,  0,  0, 20, 20,  0,  0,-20,
-	-20,  0,  0, 15, 15,  0,  0,-20,
-	-20,  0,  0, 15, 15,  0,  0,-20,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-30,-20,-20,-20,-20,-20,-20,-30
+	-40,-25,-25,-25,-25,-25,-25,-40,
+	-25,  0,  0,  0,  0,  0,  0,-25,
+	-25,  0,  0, 25, 25,  0,  0,-25,
+	-25,  0,  0, 15, 15,  0,  0,-25,
+	-25,  0,  0, 15, 15,  0,  0,-25,
+	-25,  0,  0,  0,  0,  0,  0,-25,
+	-25,  0,  0,  0,  0,  0,  0,-25,
+	-40,-35,-25,-25,-25,-25,-35,-40
 };
 
 int pst_bishop[64] = {
@@ -309,7 +309,6 @@ void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
     else /* otherwise it's a normal king's move */
     {
 		Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
-        
     }
 }
 
@@ -1074,7 +1073,8 @@ MOVE ComputerThink(int max_depth)
     ply = 0;
     nodes = 0;
     
-    clock_t start, stop;
+    clock_t start;
+    clock_t stop;
     double t = 0.0;
 
     /* Start timer */
@@ -1188,6 +1188,7 @@ void main()
         if (!strcmp(s, "undo"))
         {
             TakeBack();
+            PrintBoard();
             computer_side = (WHITE + BLACK) - computer_side;
             continue;
         }
