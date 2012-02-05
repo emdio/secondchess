@@ -30,6 +30,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 /*
 ****************************************************************************
 * Some definitions *
@@ -177,6 +178,74 @@ int hdp; /* Current move order */
 int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
 
+/* * * * * * * * * * * * *
+ * Piece Square Tables
+ * * * * * * * * * * * * */
+int pst_pawn[64] = {
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0, 10, 10,  0,  0,  0,
+	 0,  0,  0, 10, 10,  0,  0,  0,
+	 0,  0,  0, 10, 10,  0,  0,  0,
+	 0,  0,  0,  5,  5,  0,  0,  0,
+	 0,  0,  0, -5, -5,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0
+};
+
+int pst_knight[64] = {
+	-30,-20,-20,-20,-20,-20,-20,-30,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-20,  0,  0, 20, 20,  0,  0,-20,
+	-20,  0,  0, 15, 15,  0,  0,-20,
+	-20,  0,  0, 15, 15,  0,  0,-20,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-30,-20,-20,-20,-20,-20,-20,-30
+};
+
+int pst_bishop[64] = {
+	-30,-20,-20,-20,-20,-20,-20,-30,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-20,  0,  0, 15, 15,  0,  0,-20,
+	-20,  0,  0, 15, 15,  0,  0,-20,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-20,  0,  0,  0,  0,  0,  0,-20,
+	-30,-20,-20,-20,-20,-20,-20,-30
+};
+
+int pst_king[64] = {
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-25,-25,-25,-25,-25,-25,-25,-25,
+	-15,-15,-15,-15,-15,-15,-15,-15,
+	 10, 25,  0,  0,  0,  0, 25, 10
+};
+int pst_rook[64] = {
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	10, 10, 10, 10, 10, 10, 10, 10,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	 0,  0,  0,  0,  0,  0,  0,  0,
+	-5, -5, -5, -5, -5, -5, -5, -5,
+	 0,  0,  0,  5,  5,  0,  0,  0
+};
+
+/* Utility vector: allows to use the same pst for black and white */
+int flip[64] = {
+	 56,  57,  58,  59,  60,  61,  62,  63,
+	 48,  49,  50,  51,  52,  53,  54,  55,
+	 40,  41,  42,  43,  44,  45,  46,  47,
+	 32,  33,  34,  35,  36,  37,  38,  39,
+	 24,  25,  26,  27,  28,  29,  30,  31,
+	 16,  17,  18,  19,  20,  21,  22,  23,
+	  8,   9,  10,  11,  12,  13,  14,  15,
+	  0,   1,   2,   3,   4,   5,   6,   7
+};
 /*
 ****************************************************************************
 * Move generator *
@@ -203,7 +272,7 @@ void Gen_PushNormal(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 {
 /* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
-* means this isn't a promotion*/
+* means this isn't a promotion, i.e., a normal pawn move */
     if (dest > 7 && dest < 56) /* this is just a normal move */
     {
         Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
@@ -221,28 +290,20 @@ void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
-//    if (from == E1 && dest == G1 && piece[E1] == KING && piece[H1] == ROOK) /* this is a white short castle */
     if (from == E1 && dest == G1) /* this is a white short castle */
     {
-//		puts("shooooort castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-//	if (from == E1 && dest == C1 && piece[E1] == KING && piece[A1] == ROOK) /* this is a white long castle */
 	if (from == E1 && dest == C1) /* this is a white long castle */
     {
-//		puts("loooong castle**");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-//	if (from == E8 && dest == G8 && piece[E8] == KING && piece[H8] == ROOK) /* this is a white short castle */
 	if (from == E8 && dest == G8) /* this is a white short castle */
     {
-//		puts("shooooort castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-//	if (from == E8 && dest == C8 && piece[E8] == KING && piece[A8] == ROOK) /* this is a white long castle */
 	if (from == E8 && dest == C8) /* this is a white long castle */
     {
-//		puts("loooong castle");
 		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
     else /* otherwise it's a normal king's move */
@@ -497,7 +558,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 int Eval()
 {
     /* The values of the pieces in centipawns */
-    int value_piece[10] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
+    int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
     /* A counter for the board squares */
     int i;
     /* The score of the position */
@@ -505,13 +566,53 @@ int Eval()
     
     for (i = 0; i < 64; i++)
     {
+    	if (color[i] == EMPTY)
+    		continue;
         if (color[i] == WHITE)
         {
 			score += value_piece[piece[i]];
+
+			switch (piece[i])
+				{
+				case PAWN:
+					score += pst_pawn[i];
+					break;
+				case KNIGHT:
+					score += pst_knight[i];
+					break;
+				case BISHOP:
+					score += pst_bishop[i];
+					break;
+				case ROOK:
+					score += pst_rook[i];
+					break;
+				case KING:
+					score += pst_king[i];
+					break;
+				}
 		}
-        else if (color[i] == BLACK)
+        else
         {
 			score -= value_piece[piece[i]];
+
+			switch (piece[i])
+				{
+				case PAWN:
+					score -= pst_pawn[flip[i]];
+					break;
+				case KNIGHT:
+					score -= pst_knight[flip[i]];
+					break;
+				case BISHOP:
+					score -= pst_bishop[flip[i]];
+					break;
+				case ROOK:
+					score -= pst_rook[flip[i]];
+					break;
+				case KING:
+					score -= pst_king[flip[i]];
+					break;
+				}
 		}
     }
     
@@ -899,7 +1000,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     int i;
     int value;
     int havemove;
-int movecnt;
+    int movecnt;
 
     MOVE moveBuf[200]; /* List of movements */
     MOVE tmpMove;
@@ -909,47 +1010,46 @@ int movecnt;
     pBestMove->type = MOVE_TYPE_NONE;
     
     /* Generate and count all moves for current position */
-movecnt = Gen(side, castle, moveBuf);
+    movecnt = Gen(side, castle, moveBuf);
 
-//printf("from and dest: %d, %d\n", tmpMove.from, tmpMove.dest);
-//printf("# of moves: %d\n", movecnt);
 
     /* Once we have all the moves available, we loop through the posible
 * moves and apply an alpha-beta search */
     for (i = 0; i < movecnt; ++i)
-    {
-        if (!MakeMove(moveBuf[i]))
-        {
-            TakeBack();
-            continue;
-        }
-        havemove = 1;
-        
-        /* This 'if' takes us to the deep of the position */
-        if (depth - 1 > 0) /* If depth is still, continue to search deeper */
-        {
-            value = -Search(-beta, -alpha, depth - 1, &tmpMove);
-        }
-        else /* If no depth left (leaf node), go to evalute that position
-and apply the alpha-beta search*/
-            {
-            value = -Eval();
-            }
-/* We go to the move that origins the move we're analyzing and
-* apply the alpha-beta search */
-        TakeBack();
-        if (value > alpha)
-        {
-            /* This move is so good and caused a cutoff */
-            if (value >= beta)
-            {
-                return beta;
-            }
-            alpha = value;
-            *pBestMove = moveBuf[i]; /* so far, current move is the best reaction
-* for current position */
-        }
-    }
+	{
+		if (!MakeMove(moveBuf[i]))
+		{
+			TakeBack();
+			continue;
+		}
+		havemove = 1;
+
+		/* This 'if' takes us to the deep of the position */
+		if (depth - 1 > 0) /* If depth is still, continue to search deeper */
+		{
+			value = -Search(-beta, -alpha, depth - 1, &tmpMove);
+		}
+		else /* If no depth left (leaf node), go to evalute that position
+		 and apply the alpha-beta search*/
+		{
+			value = -Eval();
+		}
+
+		/* Once we have an evaluation, we use it in in an alpha-beta search */
+		TakeBack();
+		if (value > alpha)
+		{
+			/* This move is so good and caused a cutoff */
+			if (value >= beta)
+			{
+				return beta;
+			}
+			alpha = value;
+			/* So far, current move is the best reaction
+			 * for current position */
+			*pBestMove = moveBuf[i];
+		}
+	}
  
     /* If no legal moves, that is checkmate or stalemate */
     if (!havemove)
@@ -959,16 +1059,14 @@ and apply the alpha-beta search*/
         else
             return 0;
     }
-    
-    //printf("from and dest: %d, %d\n", tmpMove.from, tmpMove.dest);
-    
+
+    /* We return alpha, the score value */
     return alpha;
 }
 
 MOVE ComputerThink(int max_depth)
 {
 /* It returns the move the computer makes */
-
     MOVE m;
     int score;
     
@@ -976,18 +1074,34 @@ MOVE ComputerThink(int max_depth)
     ply = 0;
     nodes = 0;
     
-/* Search now */
+    clock_t start, stop;
+    double t = 0.0;
+
+    /* Start timer */
+    assert((start = clock())!=-1);
+
+    /* Search now */
     score = Search(-MATE, MATE, max_depth, &m);
+
+    /* Stop timer */
+    stop = clock();
+    t = (double) (stop-start)/CLOCKS_PER_SEC;
+
+    double nps = nodes/t;
+
+
     
 /* After searching, print results */
-    printf("Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d\n",
+    printf("Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d, time = %f, nps = %f\n",
            'a' + COL(m.from),
            8 - ROW(m.from),
            'a' + COL(m.dest),
            8 - ROW(m.dest),
            nodes,
            max_depth,
-           score
+           score,
+           t,
+           nps
         );
     return m;
 }
@@ -1048,7 +1162,7 @@ void main()
     
     side = WHITE;
     computer_side = BLACK; /* Human is white side */
-    max_depth = 4;
+    max_depth = 6;
     hdp = 0; /* Current move order */
     for (;;)
     {
@@ -1132,7 +1246,6 @@ void main()
                     printf("Illegal move.\n");
                 }
                 break;
-
             }
     }
 }
