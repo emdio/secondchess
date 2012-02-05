@@ -1092,7 +1092,7 @@ MOVE ComputerThink(int max_depth)
 
     
 /* After searching, print results */
-    printf("Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d, time = %f, nps = %f\n",
+    printf("Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d, time = %.2fs, nps = %.0f\n",
            'a' + COL(m.from),
            8 - ROW(m.from),
            'a' + COL(m.dest),
