@@ -476,65 +476,72 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                 if (col < 7 && i < 56 && color[i + 9] != current_side)
                     Gen_PushKing(i, i + 9,  castle, pBuf, &movecount); /* right down */
                 
-                if (current_side == WHITE)
+                if (!IsInCheck(current_side))
                 {
-					/* Can white short castle? */
-					if (castle & 1)
+					if (current_side == WHITE)
 					{
-//						puts("White can short castle!");
-						/* If white can castle the white king has to be in square 60 */
-						if (col &&
-							color[i + 1] == EMPTY &&
-							color[i + 2] == EMPTY &&
-							piece[i + 3] == ROOK)
+						/* Can white short castle? */
+						if (castle & 1)
 						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+	//						puts("White can short castle!");
+							/* If white can castle the white king has to be in square 60 */
+							if (col &&
+								color[i + 1] == EMPTY &&
+								color[i + 2] == EMPTY &&
+								piece[i + 3] == ROOK  &&
+								!IsAttacked(current_side, i + 1))
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+							}
 						}
-					}
 
-					/* Can white long castle? */
-					if (castle & 2)
-					{
-						if (col &&
-							color[i - 1] == EMPTY &&
-							color[i - 2] == EMPTY &&
-							color[i - 3] == EMPTY &&
-							piece[i - 4] == ROOK)
+						/* Can white long castle? */
+						if (castle & 2)
 						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY &&
+								piece[i - 4] == ROOK  &&
+								!IsAttacked(current_side, i - 1))
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							}
 						}
 					}
-                }
-                if (current_side == BLACK)
-                {
-					 /* Can black short castle? */
-					if (castle & 4)
+					if (current_side == BLACK)
 					{
-//						puts("Black can short castle!");
-						/* If white can castle the white king has to be in square 60 */
-						if (col &&
-							color[i + 1] == EMPTY &&
-							color[i + 2] == EMPTY &&
-							piece[i + 3] == ROOK)
+						 /* Can black short castle? */
+						if (castle & 4)
 						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+	//						puts("Black can short castle!");
+							/* If white can castle the white king has to be in square 60 */
+							if (col &&
+								color[i + 1] == EMPTY &&
+								color[i + 2] == EMPTY &&
+								piece[i + 3] == ROOK  &&
+								!IsAttacked(current_side, i + 1))
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+							}
 						}
-					}
 
-					/* Can black long castle? */
-					if (castle & 8)
-					{
-						if (col &&
-							color[i - 1] == EMPTY &&
-							color[i - 2] == EMPTY &&
-							color[i - 3] == EMPTY &&
-							piece[i - 4] == ROOK)
+						/* Can black long castle? */
+						if (castle & 8)
 						{
-							/* The king goes 2 sq to the left */
-							Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY &&
+								piece[i - 4] == ROOK  &&
+								!IsAttacked(current_side, i - 1))
+							{
+								/* The king goes 2 sq to the left */
+								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+							}
 						}
 					}
                 }
@@ -662,6 +669,191 @@ int IsInCheck(int current_side)
     if (col < 7 && row < 6 && color[k + 17] == xside && piece[k + 17] == KNIGHT)
         return 1;
     
+    /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
+    /* go down */
+    y = k + 8;
+    if (y < 64)
+    {
+        if (color[y] == xside && (piece[y] == KING  || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y += 8; y < 64; y += 8)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go left */
+    y = k - 1;
+    h = k - col;
+    if (y >= h)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y--; y >= h; y--)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go right */
+    y = k + 1;
+    h = k - col + 7;
+    if (y <= h)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y++; y <= h; y++)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go up */
+    y = k - 8;
+    if (y >= 0)
+    {
+        if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
+            return 1;
+        if (piece[y] == EMPTY)
+            for (y -= 8; y >= 0; y -= 8)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == ROOK))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* Check diagonal lines for attacking of Queen, Bishop, King, Pawn */
+    /* go right down */
+    y = k + 9;
+    if (y < 64 && COL(y) != 0)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == BLACK && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y += 9; y < 64 && COL(y) != 0; y += 9)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    /* go left down */
+    y = k + 7;
+    if (y < 64 && COL(y) != 7)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == BLACK && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y += 7; y < 64 && COL(y) != 7; y += 7)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+
+            }
+    }
+    /* go left up */
+    y = k - 9;
+    if (y >= 0 && COL(y) != 7)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == WHITE && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y -= 9; y >= 0 && COL(y) != 7; y -= 9)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+
+            }
+    }
+    /* go right up */
+    y = k - 7;
+    if (y >= 0 && COL(y) != 0)
+    {
+        if (color[y] == xside)
+        {
+            if (piece[y] == KING || piece[y] == QUEEN || piece[y] == BISHOP)
+                return 1;
+            if (current_side == WHITE && piece[y] == PAWN)
+                return 1;
+        }
+        if (piece[y] == EMPTY)
+            for (y -= 7; y >= 0 && COL(y) != 0; y -= 7)
+            {
+                if (color[y] == xside && (piece[y] == QUEEN || piece[y] == BISHOP))
+                    return 1;
+                if (piece[y] != EMPTY)
+                    break;
+            }
+    }
+    return 0;
+}
+
+/* Check and return 1 if square k is attacked, 0 otherwise */
+int IsAttacked(int current_side, int k)
+{
+    int h;
+    int y;
+    int row; /* Row where the sqaure is placed */
+    int col; /* Col where the square is placed */
+    int xside;
+    xside = (WHITE + BLACK) - current_side; /* opposite current_side, who may be attacking */
+
+    /* Find square */
+//    for (k = 0; k < 64; k++)
+//        if ( (piece[k] == KING)   && color[k] == current_side )
+//            break;
+    /* Situation of the square*/
+    row = ROW(k);
+    col = COL(k);
+
+    /* Check Knight attack */
+    if (col > 0 && row > 1 && color[k - 17] == xside && piece[k - 17] == KNIGHT)
+        return 1;
+    if (col < 7 && row > 1 && color[k - 15] == xside && piece[k - 15] == KNIGHT)
+        return 1;
+    if (col > 1 && row > 0 && color[k - 10] == xside && piece[k - 10] == KNIGHT)
+        return 1;
+    if (col < 6 && row > 0 && color[k - 6] == xside && piece[k - 6] == KNIGHT)
+        return 1;
+    if (col > 1 && row < 7 && color[k + 6] == xside && piece[k + 6] == KNIGHT)
+        return 1;
+    if (col < 6 && row < 7 && color[k + 10] == xside && piece[k + 10] == KNIGHT)
+        return 1;
+    if (col > 0 && row < 6 && color[k + 15] == xside && piece[k + 15] == KNIGHT)
+        return 1;
+    if (col < 7 && row < 6 && color[k + 17] == xside && piece[k + 17] == KNIGHT)
+        return 1;
+
     /* Check horizontal and vertical lines for attacking of Queen, Rook, King */
     /* go down */
     y = k + 8;
