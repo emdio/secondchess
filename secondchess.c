@@ -120,7 +120,7 @@ int side; /* Side to move, value = BLACK or WHITE */
 #define MOVE_TYPE_PROMOTION_TO_KNIGHT 7
 
 /* A move is defined by its origin and final squares, and by the kind of
-* move it's: normal, castle, enpasant... */
+* move it's: normal,  enpasant... */
 typedef struct tag_MOVE {
     int from;
     int dest;
@@ -249,10 +249,10 @@ int flip[64] = {
 /*
 ****************************************************************************
 * Move generator *
-* Lack: no enpassant, no castle *
+* Lack: no enpassant *
 ****************************************************************************
 */
-void Gen_Push(int from, int dest, int castle, int type, MOVE * pBuf, int *pMCount)
+void Gen_Push(int from, int dest,  int type, MOVE * pBuf, int *pMCount)
 {
     MOVE move;
     move.from = from;
@@ -263,57 +263,57 @@ void Gen_Push(int from, int dest, int castle, int type, MOVE * pBuf, int *pMCoun
     *pMCount = *pMCount + 1;
 }
 
-void Gen_PushNormal(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushNormal(int from, int dest,  MOVE * pBuf, int *pMCount)
 {
-    Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
+    Gen_Push(from, dest,  MOVE_TYPE_NORMAL, pBuf, pMCount);
 }
 
 /* Pawn can promote */
-void Gen_PushPawn(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushPawn(int from, int dest,  MOVE * pBuf, int *pMCount)
 {
 /* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
 * means this isn't a promotion, i.e., a normal pawn move */
     if (dest > 7 && dest < 56) /* this is just a normal move */
     {
-        Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
+        Gen_Push(from, dest,  MOVE_TYPE_NORMAL, pBuf, pMCount);
     }
     else /* otherwise it's a promotion */
     {
-        Gen_Push(from, dest, castle, MOVE_TYPE_PROMOTION_TO_QUEEN, pBuf, pMCount);
-        Gen_Push(from, dest, castle, MOVE_TYPE_PROMOTION_TO_ROOK, pBuf, pMCount);
-        Gen_Push(from, dest, castle, MOVE_TYPE_PROMOTION_TO_BISHOP, pBuf, pMCount);
-        Gen_Push(from, dest, castle, MOVE_TYPE_PROMOTION_TO_KNIGHT, pBuf, pMCount);
+        Gen_Push(from, dest,  MOVE_TYPE_PROMOTION_TO_QUEEN, pBuf, pMCount);
+        Gen_Push(from, dest,  MOVE_TYPE_PROMOTION_TO_ROOK, pBuf, pMCount);
+        Gen_Push(from, dest,  MOVE_TYPE_PROMOTION_TO_BISHOP, pBuf, pMCount);
+        Gen_Push(from, dest,  MOVE_TYPE_PROMOTION_TO_KNIGHT, pBuf, pMCount);
     }
 }
 
 /* King*/
-void Gen_PushKing(int from, int dest, int castle, MOVE * pBuf, int *pMCount)
+void Gen_PushKing(int from, int dest,  MOVE * pBuf, int *pMCount)
 {
 /* Is it a castle?*/
     if (from == E1 && dest == G1) /* this is a white short castle */
     {
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
+		Gen_Push(from, dest,  MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
 	if (from == E1 && dest == C1) /* this is a white long castle */
     {
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
+		Gen_Push(from, dest,  MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
 	if (from == E8 && dest == G8) /* this is a white short castle */
     {
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
+		Gen_Push(from, dest,  MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
 	if (from == E8 && dest == C8) /* this is a white long castle */
     {
-		Gen_Push(from, dest, castle, MOVE_TYPE_CASTLE, pBuf, pMCount);
+		Gen_Push(from, dest,  MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
     else /* otherwise it's a normal king's move */
     {
-		Gen_Push(from, dest, castle, MOVE_TYPE_NORMAL, pBuf, pMCount);
+		Gen_Push(from, dest,  MOVE_TYPE_NORMAL, pBuf, pMCount);
     }
 }
 
 /* Gen all moves of current_side to move and push them to pBuf, return number of moves */
-int Gen(int current_side, int castle, MOVE * pBuf)
+int Gen(int current_side,  MOVE * pBuf)
 {
     int i; /* Counter for the board squares */
     int k; /* Counter for cols */
@@ -337,27 +337,27 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 					/* Pawn advances one square.
 					 * We use Gen_PushPawn
 					 * because it can be a promotion */
-                        Gen_PushPawn(i, i + 8, castle, pBuf, &movecount);
+                        Gen_PushPawn(i, i + 8,  pBuf, &movecount);
                     if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
 					/* Pawn advances two squares */
-                        Gen_PushNormal(i, i + 16, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i + 16,  pBuf, &movecount);
                     if (col && color[i + 7] == WHITE)
 					/* Pawn captures */
-                        Gen_PushNormal(i, i + 7, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i + 7,  pBuf, &movecount);
                     if (col < 7 && color[i + 9] == WHITE)
 					/* Pawn captures */
-                        Gen_PushNormal(i, i + 9, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i + 9,  pBuf, &movecount);
                 }
                 else
                 {
                     if (color[i - 8] == EMPTY)
-                        Gen_PushPawn(i, i - 8, castle, pBuf, &movecount);
+                        Gen_PushPawn(i, i - 8,  pBuf, &movecount);
                     if (row == 6 && color[i - 8] == EMPTY && color[i - 16] == EMPTY)
-                        Gen_PushNormal(i, i - 16, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i - 16,  pBuf, &movecount);
                     if (col && color[i - 9] == BLACK)
-                        Gen_PushNormal(i, i - 9, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i - 9,  pBuf, &movecount);
                     if (col < 7 && color[i - 7] == BLACK)
-                        Gen_PushNormal(i, i - 7, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, i - 7,  pBuf, &movecount);
                 }
                 break;
                 
@@ -367,28 +367,28 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                 for (y = i - 9; y >= 0 && COL(y) != 7; y -= 9)
                 { /* go left up */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,  pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i - 7; y >= 0 && COL(y) != 0; y -= 7)
                 { /* go right up */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,  pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i + 9; y < 64 && COL(y) != 0; y += 9)
                 { /* go right down */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y, castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,  pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i + 7; y < 64 && COL(y) != 7; y += 7)
                 { /* go left down */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,   pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
@@ -401,28 +401,28 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                 for (k = i - col, y = i - 1; y >= k; y--)
                 { /* go left */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,   pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (k = i - col + 7, y = i + 1; y <= k; y++)
                 { /* go right */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,   pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i - 8; y >= 0; y -= 8)
                 { /* go up */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,   pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
                 for (y = i + 8; y < 64; y += 8)
                 { /* go down */
                     if (color[y] != current_side)
-                        Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                        Gen_PushNormal(i, y,   pBuf, &movecount);
                     if (color[y] != EMPTY)
                         break;
                 }
@@ -432,49 +432,49 @@ int Gen(int current_side, int castle, MOVE * pBuf)
                 col = COL(i);
                 y = i - 6;
                 if (y >= 0 && col < 6 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i - 10;
                 if (y >= 0 && col > 1 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i - 15;
                 if (y >= 0 && col < 7 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i - 17;
                 if (y >= 0 && col > 0 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i + 6;
                 if (y < 64 && col > 1 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i + 10;
                 if (y < 64 && col < 6 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i + 15;
                 if (y < 64 && col > 0 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 y = i + 17;
                 if (y < 64 && col < 7 && color[y] != current_side)
-                    Gen_PushNormal(i, y,  castle, pBuf, &movecount);
+                    Gen_PushNormal(i, y,   pBuf, &movecount);
                 break;
 
             case KING:
 				/* the column and rank checks are to make sure it is on the board*/
                 col = COL(i);
                 if (col && color[i - 1] != current_side)
-                    Gen_PushKing(i, i - 1,  castle, pBuf, &movecount); /* left */
+                    Gen_PushKing(i, i - 1,   pBuf, &movecount); /* left */
                 if (col < 7 && color[i + 1] != current_side)
-                    Gen_PushKing(i, i + 1,  castle, pBuf, &movecount); /* right */
+                    Gen_PushKing(i, i + 1,   pBuf, &movecount); /* right */
                 if (i > 7 && color[i - 8] != current_side)
-                    Gen_PushKing(i, i - 8,  castle, pBuf, &movecount); /* up */
+                    Gen_PushKing(i, i - 8,   pBuf, &movecount); /* up */
                 if (i < 56 && color[i + 8] != current_side)
-                    Gen_PushKing(i, i + 8,  castle, pBuf, &movecount); /* down */
+                    Gen_PushKing(i, i + 8,   pBuf, &movecount); /* down */
                 if (col && i > 7 && color[i - 9] != current_side)
-                    Gen_PushKing(i, i - 9,  castle, pBuf, &movecount); /* left up */
+                    Gen_PushKing(i, i - 9,   pBuf, &movecount); /* left up */
                 if (col < 7 && i > 7 && color[i - 7] != current_side)
-                    Gen_PushKing(i, i - 7,  castle, pBuf, &movecount); /* right up */
+                    Gen_PushKing(i, i - 7,   pBuf, &movecount); /* right up */
                 if (col && i < 56 && color[i + 7] != current_side)
-                    Gen_PushKing(i, i + 7,  castle, pBuf, &movecount); /* left down */
+                    Gen_PushKing(i, i + 7,   pBuf, &movecount); /* left down */
                 if (col < 7 && i < 56 && color[i + 9] != current_side)
-                    Gen_PushKing(i, i + 9,  castle, pBuf, &movecount); /* right down */
+                    Gen_PushKing(i, i + 9,   pBuf, &movecount); /* right down */
                 
                 if (!IsInCheck(current_side))
                 {
@@ -492,7 +492,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 								!IsAttacked(current_side, i + 1))
 							{
 								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+								Gen_PushKing(i, i + 2,   pBuf, &movecount);
 							}
 						}
 
@@ -507,7 +507,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 								!IsAttacked(current_side, i - 1))
 							{
 								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+								Gen_PushKing(i, i - 2,   pBuf, &movecount);
 							}
 						}
 					}
@@ -525,7 +525,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 								!IsAttacked(current_side, i + 1))
 							{
 								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2,  castle, pBuf, &movecount);
+								Gen_PushKing(i, i + 2,   pBuf, &movecount);
 							}
 						}
 
@@ -540,7 +540,7 @@ int Gen(int current_side, int castle, MOVE * pBuf)
 								!IsAttacked(current_side, i - 1))
 							{
 								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2,  castle, pBuf, &movecount);
+								Gen_PushKing(i, i - 2,   pBuf, &movecount);
 							}
 						}
 					}
@@ -818,7 +818,8 @@ int IsInCheck(int current_side)
     return 0;
 }
 
-/* Check and return 1 if square k is attacked, 0 otherwise */
+/* Check and return 1 if square k is attacked, 0 otherwise. Necesary, vg, to check
+ * castle rules (if king goes from e1 to g1, f1 can't be attacked by an enemy piece) */
 int IsAttacked(int current_side, int k)
 {
     int h;
@@ -1201,7 +1202,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     pBestMove->type = MOVE_TYPE_NONE;
     
     /* Generate and count all moves for current position */
-    movecnt = Gen(side, castle, moveBuf);
+    movecnt = Gen(side,  moveBuf);
 
 
     /* Once we have all the moves available, we loop through the posible
@@ -1401,7 +1402,7 @@ void main()
         dest = s[2] - 'a';
         dest += 8 * (8 - (s[3] - '0'));
         ply = 0;
-        movecnt = Gen(side, castle, moveBuf);
+        movecnt = Gen(side,  moveBuf);
         
         /* Loop through the moves to see if it's legal */
         for (i = 0; i < movecnt; i++)      
