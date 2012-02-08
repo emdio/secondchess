@@ -48,8 +48,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #define false 0
 
 #define VALUE_PAWN 100
-#define VALUE_KNIGHT 300
-#define VALUE_BISHOP 300
+#define VALUE_KNIGHT 310
+#define VALUE_BISHOP 320
 #define VALUE_ROOK 500
 #define VALUE_QUEEN 900
 #define VALUE_KING 10000
@@ -178,6 +178,9 @@ int hdp; /* Current move order */
 int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
 
+/* The values of the pieces in centipawns */
+int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
+
 /* * * * * * * * * * * * *
  * Piece Square Tables
  * * * * * * * * * * * * */
@@ -204,14 +207,14 @@ int pst_knight[64] = {
 };
 
 int pst_bishop[64] = {
-	-30,-20,-20,-20,-20,-20,-20,-30,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-20,  0,  0, 15, 15,  0,  0,-20,
-	-20,  0,  0, 15, 15,  0,  0,-20,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-20,  0,  0,  0,  0,  0,  0,-20,
-	-30,-20,-20,-20,-20,-20,-20,-30
+	-10,-10,-10,-10,-10,-10,-10,-10,
+	-10,  5,  0,  0,  0,  0,  5,-10,
+	-10,  0,  5,  0,  0,  5,  0,-10,
+	-10,  0,  0, 15, 15,  0,  0,-10,
+	-10,  0,  0, 15, 15,  0,  0,-10,
+	-10,  0,  5,  0,  0,  5,  0,-10,
+	-10,  5,  0,  0,  0,  0,  5,-10,
+	-10,-20,-20,-20,-20,-20,-20,-10
 };
 
 int pst_king[64] = {
@@ -222,7 +225,7 @@ int pst_king[64] = {
 	-25,-25,-25,-25,-25,-25,-25,-25,
 	-25,-25,-25,-25,-25,-25,-25,-25,
 	-15,-15,-15,-15,-15,-15,-15,-15,
-	 10, 25, 10,  0,  0,  0, 25, 10
+	 10, 25,-10,-25,-25,-10, 25, 10
 };
 int pst_rook[64] = {
 	 0,  0,  0,  0,  0,  0,  0,  0,
@@ -231,7 +234,7 @@ int pst_rook[64] = {
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  0,  0,  0,  0,  0,
-	-5, -5, -5, -5, -5, -5, -5, -5,
+	 0,  0,  0,  0,  0,  0,  0,  0,
 	 0,  0,  0,  5,  5,  0,  0,  0
 };
 
@@ -563,8 +566,6 @@ int Gen(int current_side,  MOVE * pBuf)
 */
 int Eval()
 {
-    /* The values of the pieces in centipawns */
-    int value_piece[6] = {VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING};
     /* A counter for the board squares */
     int i;
     /* The score of the position */
