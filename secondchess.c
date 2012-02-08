@@ -1205,7 +1205,6 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
     /* Generate and count all moves for current position */
     movecnt = Gen(side,  moveBuf);
 
-
     /* Once we have all the moves available, we loop through the posible
 * moves and apply an alpha-beta search */
     for (i = 0; i < movecnt; ++i)
@@ -1396,6 +1395,7 @@ void main()
             printf("Good bye!\n");
             return;
         }
+
         
         /* Maybe the user entered a move? */
         from = s[0] - 'a';
