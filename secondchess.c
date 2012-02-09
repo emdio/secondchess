@@ -1351,6 +1351,7 @@ void main()
     puts(" MOVE: make a move (e.g. b1c3, a7a8q, e1g1)");
     puts(" on: force computer to move");
     puts(" quit: exit");
+    puts(" sd n: set engine depth to n plies");
     puts(" undo: take back last move");
     
     side = WHITE;
@@ -1390,11 +1391,17 @@ void main()
             computer_side = (WHITE + BLACK) - computer_side;
             continue;
         }
+        if (!strcmp(s, "sd"))
+        {
+			scanf("%d", &max_depth);
+			continue;
+        }
         if (!strcmp(s, "quit"))
         {
             printf("Good bye!\n");
             return;
         }
+
 
         
         /* Maybe the user entered a move? */
