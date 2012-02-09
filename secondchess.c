@@ -1388,7 +1388,7 @@ void main()
         }
         if (!strcmp(s, "on"))
         {
-            computer_side = (WHITE + BLACK) - computer_side;
+            computer_side = side;
             continue;
         }
         if (!strcmp(s, "sd"))
