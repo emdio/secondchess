@@ -179,14 +179,14 @@ int value_piece[6] =
  * Piece Square Tables
  * * * * * * * * * * * * */
 int pst_pawn[64] ={
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0,10,10, 0, 0, 0,
-		0, 0, 0,10,10, 0, 0, 0,
-		0, 0, 0,10,10, 0, 0, 0,
-		0, 0, 0, 5, 5, 0, 0, 0,
-		0, 0, 0,-5,-5, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0 };
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0, 10, 10,  0,  0,  0,
+		0,  0,  0, 10, 10,  0,  0,  0,
+		0,  0,  0, 10, 10,  0,  0,  0,
+		0,  0,  0,  5,  5,  0,  0,  0,
+		0,  0,  0, -5, -5,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0  };
 
 int pst_knight[64] = {
 		-40,-25,-25,-25,-25,-25,-25,-40,
@@ -202,8 +202,8 @@ int pst_bishop[64] = {
 		-10,-10,-10,-10,-10,-10,-10,-10,
 		-10,  5,  0,  0,  0,  0,  5,-10,
 		-10,  0,  5,  0,  0,  5,  0,-10,
-		-10,  0,  0, 15, 15,  0,  0,-10,
-		-10,  0,  0, 15, 15,  0,  0,-10,
+		-10,  0,  0, 10, 10,  0,  0,-10,
+		-10,  0,  0, 10, 10,  0,  0,-10,
 		-10,  0,  5,  0,  0,  5,  0,-10,
 		-10,  5,  0,  0,  0,  0,  5,-10,
 		-10,-20,-20,-20,-20,-20,-20,-10 };
@@ -216,7 +216,7 @@ int pst_king[64] = {
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-15,-15,-15,-15,-15,-15,-15,-15,
-		 10, 25,-10,-25,-25,-10, 125, 10};
+		 10, 25,-10,-25,-25,-10, 25, 10};
 int pst_rook[64] = {
 		0, 0, 0, 0, 0, 0, 0, 0,
 	   10,10,10,10,10,10,10,10,
@@ -334,11 +334,11 @@ int Gen(int current_side, MOVE * pBuf)
 						/* Pawn advances two squares */
 						Gen_PushNormal(i, i + 16, pBuf, &movecount);
 					if (col && color[i + 7] == WHITE)
-						/* Pawn captures */
-						Gen_PushNormal(i, i + 7, pBuf, &movecount);
+						/* Pawn captures and it can be a promotion*/
+						Gen_PushPawn(i, i + 7, pBuf, &movecount);
 					if (col < 7 && color[i + 9] == WHITE)
-						/* Pawn captures */
-						Gen_PushNormal(i, i + 9, pBuf, &movecount);
+						/* Pawn captures and can be a promotion*/
+						Gen_PushPawn(i, i + 9, pBuf, &movecount);
 				}
 				else
 				{
@@ -348,9 +348,9 @@ int Gen(int current_side, MOVE * pBuf)
 							== EMPTY)
 						Gen_PushNormal(i, i - 16, pBuf, &movecount);
 					if (col && color[i - 9] == BLACK)
-						Gen_PushNormal(i, i - 9, pBuf, &movecount);
+						Gen_PushPawn(i, i - 9, pBuf, &movecount);
 					if (col < 7 && color[i - 7] == BLACK)
-						Gen_PushNormal(i, i - 7, pBuf, &movecount);
+						Gen_PushPawn(i, i - 7, pBuf, &movecount);
 				}
 				break;
 
@@ -469,17 +469,20 @@ int Gen(int current_side, MOVE * pBuf)
 				if (col < 7 && i < 56 && color[i + 9] != current_side)
 					Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
 
-				if (!IsInCheck(current_side))
-				{
+//				if (!IsInCheck(current_side))
+//				{
 					if (current_side == WHITE)
 					{
 						/* Can white short castle? */
 						if (castle & 1)
 						{
 							/* If white can castle the white king has to be in square 60 */
-							if (col && color[i + 1] == EMPTY && color[i + 2]
-									== EMPTY && piece[i + 3] == ROOK
-									&& !IsAttacked(current_side, i + 1))
+							if (col &&
+								color[i + 1] == EMPTY &&
+								color[i + 2] == EMPTY &&
+								piece[i + 3] == ROOK &&
+								!IsInCheck(current_side) &&
+								!IsAttacked(current_side, i + 1))
 							{
 								/* The king goes 2 sq to the left */
 								Gen_PushKing(i, i + 2, pBuf, &movecount);
@@ -489,10 +492,13 @@ int Gen(int current_side, MOVE * pBuf)
 						/* Can white long castle? */
 						if (castle & 2)
 						{
-							if (col && color[i - 1] == EMPTY && color[i - 2]
-									== EMPTY && color[i - 3] == EMPTY
-									&& piece[i - 4] == ROOK && !IsAttacked(
-									current_side, i - 1))
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY &&
+								piece[i - 4] == ROOK &&
+								!IsInCheck(current_side) &&
+								!IsAttacked(current_side, i - 1))
 							{
 								/* The king goes 2 sq to the left */
 								Gen_PushKing(i, i - 2, pBuf, &movecount);
@@ -505,9 +511,12 @@ int Gen(int current_side, MOVE * pBuf)
 						if (castle & 4)
 						{
 							/* If white can castle the white king has to be in square 60 */
-							if (col && color[i + 1] == EMPTY && color[i + 2]
-									== EMPTY && piece[i + 3] == ROOK
-									&& !IsAttacked(current_side, i + 1))
+							if (col &&
+								color[i + 1] == EMPTY &&
+								color[i + 2] == EMPTY &&
+								piece[i + 3] == ROOK &&
+								!IsInCheck(current_side) &&
+								!IsAttacked(current_side, i + 1))
 							{
 								/* The king goes 2 sq to the left */
 								Gen_PushKing(i, i + 2, pBuf, &movecount);
@@ -516,17 +525,20 @@ int Gen(int current_side, MOVE * pBuf)
 						/* Can black long castle? */
 						if (castle & 8)
 						{
-							if (col && color[i - 1] == EMPTY && color[i - 2]
-									== EMPTY && color[i - 3] == EMPTY
-									&& piece[i - 4] == ROOK && !IsAttacked(
-									current_side, i - 1))
+							if (col &&
+								color[i - 1] == EMPTY &&
+								color[i - 2] == EMPTY &&
+								color[i - 3] == EMPTY &&
+								piece[i - 4] == ROOK &&
+								!IsInCheck(current_side) &&
+								!IsAttacked(current_side, i - 1))
 							{
 								/* The king goes 2 sq to the left */
 								Gen_PushKing(i, i - 2, pBuf, &movecount);
 							}
 						}
 					}
-				}
+//				}
 
 				break;
 			default:
