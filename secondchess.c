@@ -84,24 +84,26 @@
  */
 /* Board representation */
 /* Piece in each square */
-int piece[64] =
-{ ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK, PAWN, PAWN, PAWN,
-		PAWN, PAWN, PAWN, PAWN, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, PAWN, PAWN, PAWN, PAWN, PAWN,
-		PAWN, PAWN, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT,
-		ROOK };
+int piece[64] = {
+		ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
+		PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		PAWN, PAWN, PAWN, PAWN, PAWN,PAWN, PAWN, PAWN,
+		ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT,ROOK };
 
 /* Color of each square */
-int color[64] =
-{ BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
-		BLACK, BLACK, BLACK, BLACK, BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, WHITE, WHITE,
-		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-		WHITE, WHITE, WHITE };
+int color[64] = {
+		BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
+		BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
+		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 int side; /* Side to move, value = BLACK or WHITE */
 
@@ -159,10 +161,14 @@ int castle = 15;
  * and white's lost its castle rights
  * 
  *  */
-int castle_mask[64] =
-{ 7, 15, 15, 15, 3, 15, 15, 11, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-		15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+int castle_mask[64] = {
+		7, 15, 15, 15, 3, 15, 15, 11,
+		15, 15, 15, 15, 15, 15, 15, 15,
+		15, 15, 15, 15, 15, 15, 15, 15,
+		15, 15, 15, 15, 15, 15, 15, 15,
+		15, 15, 15, 15, 15, 15, 15, 15,
+		15, 15, 15, 15, 15, 15, 15, 15,
+		15, 15, 15, 15, 15, 15, 15, 15,
 		13, 15, 15, 15, 12, 15, 15, 14 };
 
 int hdp; /* Current move order */
@@ -176,12 +182,12 @@ int value_piece[6] =
 { VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING };
 
 /* * * * * * * * * * * * *
- * Piece Square Tables
+ * White Piece Square Tables
  * * * * * * * * * * * * */
 int pst_pawn[64] ={
 		0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0, 10, 10,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0, 10, 10,  0,  0,  0,
 		0,  0,  0, 10, 10,  0,  0,  0,
 		0,  0,  0,  5,  5,  0,  0,  0,
@@ -191,7 +197,7 @@ int pst_pawn[64] ={
 int pst_knight[64] = {
 		-40,-25,-25,-25,-25,-25,-25,-40,
 		-25,  0,  0,  0,  0,  0,  0,-25,
-		-25,  0,  0, 25, 25,  0,  0,-25,
+		-25,  0,  0,  0,  0,  0,  0,-25,
 		-25,  0,  0, 15, 15,  0,  0,-25,
 		-25,  0,  0, 15, 15,  0,  0,-25,
 		-25,  0,  0,  0,  0,  0,  0,-25,
@@ -206,7 +212,17 @@ int pst_bishop[64] = {
 		-10,  0,  0, 10, 10,  0,  0,-10,
 		-10,  0,  5,  0,  0,  5,  0,-10,
 		-10,  5,  0,  0,  0,  0,  5,-10,
-		-10,-20,-20,-20,-20,-20,-20,-10 };
+		-10,-20,-30,-20,-20,-30,-20,-10 };
+
+int pst_rook[64] = {
+		0,  0,  0,  0,  0,  0,  0,  0,
+	   10, 10, 10, 10, 10, 10, 10, 10,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  0,  0,  0,  0,  0,
+		0,  0,  0,  5,  5,  0,  0,  0 };
 
 int pst_king[64] = {
 		-25,-25,-25,-25,-25,-25,-25,-25,
@@ -215,28 +231,23 @@ int pst_king[64] = {
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-25,-25,-25,-25,-25,-25,-25,-25,
-		-15,-15,-15,-15,-15,-15,-15,-15,
-		 10, 25,-10,-25,-25,-10, 25, 10};
-int pst_rook[64] = {
-		0, 0, 0, 0, 0, 0, 0, 0,
-	   10,10,10,10,10,10,10,10,
-	    0, 0, 0, 0, 0, 0, 0, 0,
-	    0, 0, 0, 0, 0, 0, 0, 0,
-	    0, 0, 0, 0, 0, 0, 0, 0,
-	    0, 0, 0, 0, 0, 0, 0, 0,
-	    0, 0, 0, 0, 0, 0, 0, 0,
-	    0, 0, 0, 5, 5, 0, 0, 0 };
+		-25,-25,-25,-25,-25,-25,-25,-25,
+		 10, 15,-15,-15,-15,-15, 15, 10};
 
-/* Utility vector: allows to use the same pst for black and white */
+/* The flip array is used to calculate the piece/square
+   values for DARK pieces. The piece/square value of a
+   LIGHT pawn is pawn_pcsq[sq] and the value of a DARK
+   pawn is pawn_pcsq[flip[sq]] */
 int flip[64] = {
-		56, 57, 58, 59, 60, 61, 62, 63,
-		48, 49, 50, 51, 52, 53, 54, 55,
-		40, 41, 42, 43, 44, 45, 46, 47,
-		32, 33, 34, 35, 36, 37, 38, 39,
-		24, 25, 26, 27, 28, 29, 30, 31,
-		16, 17, 18, 19, 20, 21, 22, 23,
-		 8,  9, 10, 11, 12, 13, 14, 15,
-		 0,  1,  2,  3,  4,  5,  6,  7 };
+	 56,  57,  58,  59,  60,  61,  62,  63,
+	 48,  49,  50,  51,  52,  53,  54,  55,
+	 40,  41,  42,  43,  44,  45,  46,  47,
+	 32,  33,  34,  35,  36,  37,  38,  39,
+	 24,  25,  26,  27,  28,  29,  30,  31,
+	 16,  17,  18,  19,  20,  21,  22,  23,
+	  8,   9,  10,  11,  12,  13,  14,  15,
+	  0,   1,   2,   3,   4,   5,   6,   7
+};
 /*
  ****************************************************************************
  * Move generator *
@@ -564,8 +575,6 @@ int Eval()
 
 	for (i = 0; i < 64; i++)
 	{
-		if (color[i] == EMPTY)
-			continue;
 		if (color[i] == WHITE)
 		{
 			score += value_piece[piece[i]];
@@ -589,7 +598,7 @@ int Eval()
 				break;
 			}
 		}
-		else
+		else if (color[i] == BLACK)
 		{
 			score -= value_piece[piece[i]];
 
