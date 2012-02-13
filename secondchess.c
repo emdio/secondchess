@@ -147,6 +147,8 @@ HIST hist[6000]; /* Game length < 6000 */
  */
 int castle = 15;
 
+int allmoves = 0;
+
 /* This mask is applied like this
  * 
  * castle &= castle_mask[from] & castle_mask[dest]
@@ -516,7 +518,7 @@ int Gen(int current_side, MOVE * pBuf)
 							}
 						}
 					}
-					if (current_side == BLACK)
+					else if (current_side == BLACK)
 					{
 						/* Can black short castle? */
 						if (castle & 4)
@@ -1084,7 +1086,7 @@ int MakeMove(MOVE m)
 			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = WHITE;
 		}
-		if (m.dest == C1)
+		else if (m.dest == C1)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from - 4] = EMPTY;
@@ -1093,7 +1095,7 @@ int MakeMove(MOVE m)
 			piece[m.from - 1] = ROOK;
 			color[m.from - 1] = WHITE;
 		}
-		if (m.dest == G8)
+		else if (m.dest == G8)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from + 3] = EMPTY;
@@ -1102,7 +1104,7 @@ int MakeMove(MOVE m)
 			piece[m.from + 1] = ROOK;
 			color[m.from + 1] = BLACK;
 		}
-		if (m.dest == C8)
+		else if (m.dest == C8)
 		{
 			/* h1-h8 becomes empty */
 			piece[m.from - 4] = EMPTY;
@@ -1166,21 +1168,21 @@ void TakeBack() /* undo what MakeMove did */
 			piece[F1] = EMPTY;
 			color[F1] = EMPTY;
 		}
-		if (hist[hdp].m.dest == C1)
+		else if (hist[hdp].m.dest == C1)
 		{
 			piece[A1] = ROOK;
 			color[A1] = WHITE;
 			piece[D1] = EMPTY;
 			color[D1] = EMPTY;
 		}
-		if (hist[hdp].m.dest == G8)
+		else if (hist[hdp].m.dest == G8)
 		{
 			piece[H8] = ROOK;
 			color[H8] = BLACK;
 			piece[F8] = EMPTY;
 			color[F8] = EMPTY;
 		}
-		if (hist[hdp].m.dest == C8)
+		else if (hist[hdp].m.dest == C8)
 		{
 			piece[A8] = ROOK;
 			color[A8] = BLACK;
@@ -1213,6 +1215,15 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 
 	/* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
+//	assert (movecnt < 201);
+
+//	allmoves += movecnt;
+//
+//	printf ("There are %d moves.\n", allmoves);
+//	for (i=0; i<movecnt; i++)
+//	{
+//		printf ("from: %d dest: %d\n", moveBuf[i].from, moveBuf[i].dest);
+//	}
 
 	/* Once we have all the moves available, we loop through the posible
 	 * moves and apply an alpha-beta search */
