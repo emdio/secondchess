@@ -294,19 +294,19 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* Is it a castle?*/
-	if (from == E1 && dest == G1) /* this is a white short castle */
+	if (from == E1 && (dest == G1 || dest == C1)) /* this is a white short castle */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	else if (from == E1 && dest == C1) /* this is a white long castle */
-	{
-		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
-	}
-	else if (from == E8 && dest == G8) /* this is a white short castle */
-	{
-		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
-	}
-	else if (from == E8 && dest == C8) /* this is a white long castle */
+//	else if (from == E1 && dest == C1) /* this is a white long castle */
+//	{
+//		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+//	}
+//	else if (from == E8 && dest == G8) /* this is a white short castle */
+//	{
+//		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
+//	}
+	else if (from == E8 && (dest == G8 || dest == C8)) /* this is a white long castle */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
@@ -493,7 +493,7 @@ int Gen(int current_side, MOVE * pBuf)
 							if (col &&
 								color[i + 1] == EMPTY &&
 								color[i + 2] == EMPTY &&
-								piece[i + 3] == ROOK &&
+//								piece[i + 3] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i + 1))
 							{
@@ -509,7 +509,7 @@ int Gen(int current_side, MOVE * pBuf)
 								color[i - 1] == EMPTY &&
 								color[i - 2] == EMPTY &&
 								color[i - 3] == EMPTY &&
-								piece[i - 4] == ROOK &&
+//								piece[i - 4] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i - 1))
 							{
@@ -1219,7 +1219,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 
 //	allmoves += movecnt;
 //
-//	printf ("There are %d moves.\n", allmoves);
+	printf ("There are %d moves.\n", movecnt);
 //	for (i=0; i<movecnt; i++)
 //	{
 //		printf ("from: %d dest: %d\n", moveBuf[i].from, moveBuf[i].dest);
