@@ -184,7 +184,7 @@ int value_piece[6] =
 { VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING };
 
 /* * * * * * * * * * * * *
- * White Piece Square Tables
+ * Piece Square Tables
  * * * * * * * * * * * * */
 int pst_pawn[64] ={
 		0,  0,  0,  0,  0,  0,  0,  0,
@@ -298,14 +298,6 @@ void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-//	else if (from == E1 && dest == C1) /* this is a white long castle */
-//	{
-//		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
-//	}
-//	else if (from == E8 && dest == G8) /* this is a white short castle */
-//	{
-//		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
-//	}
 	else if (from == E8 && (dest == G8 || dest == C8)) /* this is a white long castle */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
@@ -482,8 +474,7 @@ int Gen(int current_side, MOVE * pBuf)
 				if (col < 7 && i < 56 && color[i + 9] != current_side)
 					Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
 
-//				if (!IsInCheck(current_side))
-//				{
+
 					if (current_side == WHITE)
 					{
 						/* Can white short castle? */
@@ -493,7 +484,6 @@ int Gen(int current_side, MOVE * pBuf)
 							if (col &&
 								color[i + 1] == EMPTY &&
 								color[i + 2] == EMPTY &&
-//								piece[i + 3] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i + 1))
 							{
@@ -509,7 +499,6 @@ int Gen(int current_side, MOVE * pBuf)
 								color[i - 1] == EMPTY &&
 								color[i - 2] == EMPTY &&
 								color[i - 3] == EMPTY &&
-//								piece[i - 4] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i - 1))
 							{
@@ -551,7 +540,6 @@ int Gen(int current_side, MOVE * pBuf)
 							}
 						}
 					}
-//				}
 
 				break;
 			default:
@@ -844,10 +832,6 @@ int IsAttacked(int current_side, int k)
 	int xside;
 	xside = (WHITE + BLACK) - current_side; /* opposite current_side, who may be attacking */
 
-	/* Find square */
-	//    for (k = 0; k < 64; k++)
-	//        if ( (piece[k] == KING)   && color[k] == current_side )
-	//            break;
 	/* Situation of the square*/
 	row = ROW(k);
 	col = COL(k);
