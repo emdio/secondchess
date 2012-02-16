@@ -1372,7 +1372,7 @@ void main()
 		}
 
 		/* Get user input */
-		printf("fc> ");
+		printf("sc> ");
 		if (scanf("%s", s) == EOF) /* close program */
 			return;
 		if (!strcmp(s, "d"))
