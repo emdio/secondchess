@@ -1215,11 +1215,11 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 
 	/* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
-//	assert (movecnt < 201);
+	assert (movecnt < 201);
 
 //	allmoves += movecnt;
 //
-	printf ("There are %d moves.\n", movecnt);
+//	printf ("There are %d moves.\n", movecnt);
 //	for (i=0; i<movecnt; i++)
 //	{
 //		printf ("from: %d dest: %d\n", moveBuf[i].from, moveBuf[i].dest);
@@ -1291,7 +1291,8 @@ MOVE ComputerThink(int max_depth)
 	double t = 0.0;
 
 	/* Start timer */
-	assert((start = clock()) != -1);
+	start = clock();
+	assert(start != -1);
 
 	/* Search now */
 	score = Search(-MATE, MATE, max_depth, &m);
