@@ -29,8 +29,11 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include <time.h>
+
+//#define NDEBUG
+#include <assert.h>
+
 /*
  ****************************************************************************
  * Some definitions *
@@ -42,7 +45,8 @@
 #define ROOK 3
 #define QUEEN 4
 #define KING 5
-#define EMPTY 6
+#define EPS_SQUARE 6
+#define EMPTY 7
 #define WHITE 0
 #define BLACK 1
 #define false 0
@@ -112,10 +116,11 @@ int side; /* Side to move, value = BLACK or WHITE */
 #define MOVE_TYPE_NORMAL 1
 #define MOVE_TYPE_CASTLE 2
 #define MOVE_TYPE_ENPASANT 3
-#define MOVE_TYPE_PROMOTION_TO_QUEEN 4
-#define MOVE_TYPE_PROMOTION_TO_ROOK 5
-#define MOVE_TYPE_PROMOTION_TO_BISHOP 6
-#define MOVE_TYPE_PROMOTION_TO_KNIGHT 7
+#define MOVE_TYPE_PAWN_TWO 4
+#define MOVE_TYPE_PROMOTION_TO_QUEEN 5
+#define MOVE_TYPE_PROMOTION_TO_ROOK 6
+#define MOVE_TYPE_PROMOTION_TO_BISHOP 7
+#define MOVE_TYPE_PROMOTION_TO_KNIGHT 8
 
 /* A move is defined by its origin and final squares, and by the kind of
  * move it's: normal,  enpasant... */
@@ -290,6 +295,18 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 	}
 }
 
+/* When a pawn moves two squares then appears the possibility of the en passanta capture*/
+void Gen_PushPawnTwo(int from, int dest, MOVE * pBuf, int *pMCount)
+{
+	Gen_Push(from, dest, MOVE_TYPE_PAWN_TWO, pBuf, pMCount);
+}
+
+/* For en passant capture */
+//void Gen_PushPawnEPS(int from, int dest, MOVE * pBuf, int *pMCount)
+//{
+//	Gen_Push(from, dest, MOVE_TYPE_ENPASANT, pBuf, pMCount);
+//}
+
 /* King*/
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
@@ -319,11 +336,14 @@ int Gen(int current_side, MOVE * pBuf)
 	int movecount;
 	movecount = 0;
 
+	assert (movecount < 201);
+
 	for (i = 0; i < 64; i++) /* Scan all board */
 		if (color[i] == current_side)
 		{
 			switch (piece[i])
 			{
+
 			case PAWN:
 				col = COL(i);
 				row = ROW(i);
@@ -331,17 +351,22 @@ int Gen(int current_side, MOVE * pBuf)
 				{
 					if (color[i + 8] == EMPTY)
 						/* Pawn advances one square.
-						 * We use Gen_PushPawn
-						 * because it can be a promotion */
+						 * We use Gen_PushPawn because it can be a promotion */
 						Gen_PushPawn(i, i + 8, pBuf, &movecount);
-					if (row == 1 && color[i + 8] == EMPTY && color[i + 16]
-							== EMPTY)
+					if (row == 1 && color[i + 8] == EMPTY && color[i + 16] == EMPTY)
 						/* Pawn advances two squares */
-						Gen_PushNormal(i, i + 16, pBuf, &movecount);
+						Gen_PushPawnTwo(i, i + 16, pBuf, &movecount);
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
 						Gen_PushPawn(i, i + 7, pBuf, &movecount);
 					if (col < 7 && color[i + 9] == WHITE)
+						/* Pawn captures and can be a promotion*/
+						Gen_PushPawn(i, i + 9, pBuf, &movecount);
+					/* For en passant capture */
+					if (col && piece[i + 7] == EPS_SQUARE)
+						/* Pawn captures and it can be a promotion*/
+						Gen_PushPawn(i, i + 7, pBuf, &movecount);
+					if (col < 7 && piece[i + 9] == EPS_SQUARE)
 						/* Pawn captures and can be a promotion*/
 						Gen_PushPawn(i, i + 9, pBuf, &movecount);
 				}
@@ -349,12 +374,17 @@ int Gen(int current_side, MOVE * pBuf)
 				{
 					if (color[i - 8] == EMPTY)
 						Gen_PushPawn(i, i - 8, pBuf, &movecount);
-					if (row == 6 && color[i - 8] == EMPTY && color[i - 16]
-							== EMPTY)
-						Gen_PushNormal(i, i - 16, pBuf, &movecount);
+					/* Pawn moves 2 squares */
+					if (row == 6 && color[i - 8] == EMPTY && color[i - 16] == EMPTY)
+						Gen_PushPawnTwo(i, i - 16, pBuf, &movecount);
 					if (col && color[i - 9] == BLACK)
 						Gen_PushPawn(i, i - 9, pBuf, &movecount);
 					if (col < 7 && color[i - 7] == BLACK)
+						Gen_PushPawn(i, i - 7, pBuf, &movecount);
+					/* For en passant capture */
+					if (col && piece[i - 9] == EPS_SQUARE)
+						Gen_PushPawn(i, i - 9, pBuf, &movecount);
+					if (col < 7 && piece[i - 7] == EPS_SQUARE)
 						Gen_PushPawn(i, i - 7, pBuf, &movecount);
 				}
 				break;
@@ -542,9 +572,9 @@ int Gen(int current_side, MOVE * pBuf)
 					}
 
 				break;
-			default:
-				puts("Piece type unknown");
-				assert(false);
+//			default:
+//				printf("Piece type unknown");
+//				assert(false);
 			}
 		}
 	return movecount;
@@ -1018,6 +1048,19 @@ int IsAttacked(int current_side, int k)
 int MakeMove(MOVE m)
 {
 	int r;
+	int i;
+
+	/* Remove possible eps piece, remaining from former move*/
+//	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
+//	{
+		for (i = 0; i < 63; i++)
+		{
+			if (piece[i] == EPS_SQUARE)
+			{
+				piece[i] = EMPTY;
+			}
+		}
+//	}
 
 	hist[hdp].m = m;
 	/* store in history the piece of the dest square */
@@ -1030,6 +1073,7 @@ int MakeMove(MOVE m)
 	color[m.dest] = color[m.from];
 	/* The original color becomes empty */
 	color[m.from] = EMPTY;
+
 
 	/* Once the move is done we check either this is a promotion */
 	if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
@@ -1056,6 +1100,18 @@ int MakeMove(MOVE m)
 		default:
 			puts("Impossible to get here...");
 			assert(false);
+		}
+	}
+
+	if (m.type == MOVE_TYPE_PAWN_TWO)
+	{
+		if (side == BLACK)
+		{
+			piece[m.from + 8] = EPS_SQUARE;
+		}
+		else if (side == WHITE)
+		{
+			piece[m.from - 8] = EPS_SQUARE;
 		}
 	}
 
@@ -1116,12 +1172,25 @@ int MakeMove(MOVE m)
 
 void TakeBack() /* undo what MakeMove did */
 {
+
+	int i;
+
 	side = (WHITE + BLACK) - side;
 	hdp--;
 	ply--;
 	piece[hist[hdp].m.from] = piece[hist[hdp].m.dest];
 	piece[hist[hdp].m.dest] = hist[hdp].cap;
 	color[hist[hdp].m.from] = side;
+
+	/* For undoing pawn 2 squares, remove eps square*/
+	for (i = 0; i < 63; i++)
+	{
+		if (piece[i] == EPS_SQUARE)
+		{
+			piece[i] == EMPTY;
+		}
+	}
+
 
 	/* Castle */
 	castle = hist[hdp].m.castle;
@@ -1141,7 +1210,7 @@ void TakeBack() /* undo what MakeMove did */
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
-	/* Castle */
+	/* Castle: return rook to its original square */
 	if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
 	{
 		/* Take the tower to its poriginal place */
@@ -1316,6 +1385,8 @@ void PrintBoard()
 		}
 		if (piece[i] == EMPTY)
 			printf("   |");
+		else if (piece[i] == EPS_SQUARE)
+			printf(" * |");
 		else
 		{
 			printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
@@ -1449,5 +1520,6 @@ void main()
 				}
 				break;
 			}
+		PrintBoard();
 	}
 }
