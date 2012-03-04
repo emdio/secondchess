@@ -377,6 +377,7 @@ int Gen(int current_side, MOVE * pBuf)
 					/* Pawn moves 2 squares */
 					if (row == 6 && color[i - 8] == EMPTY && color[i - 16] == EMPTY)
 						Gen_PushPawnTwo(i, i - 16, pBuf, &movecount);
+					/* For captures */
 					if (col && color[i - 9] == BLACK)
 						Gen_PushPawn(i, i - 9, pBuf, &movecount);
 					if (col < 7 && color[i - 7] == BLACK)
@@ -1175,6 +1176,12 @@ void TakeBack() /* undo what MakeMove did */
 
 	int i;
 
+	/* Pawn moves two squares */
+//		if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
+//		{
+
+//		}
+
 	side = (WHITE + BLACK) - side;
 	hdp--;
 	ply--;
@@ -1182,17 +1189,7 @@ void TakeBack() /* undo what MakeMove did */
 	piece[hist[hdp].m.dest] = hist[hdp].cap;
 	color[hist[hdp].m.from] = side;
 
-	/* For undoing pawn 2 squares, remove eps square*/
-	for (i = 0; i < 63; i++)
-	{
-		if (piece[i] == EPS_SQUARE)
-		{
-			piece[i] == EMPTY;
-		}
-	}
-
-
-	/* Castle */
+	/* Castle rights */
 	castle = hist[hdp].m.castle;
 
 	if (hist[hdp].cap != EMPTY)
@@ -1208,6 +1205,15 @@ void TakeBack() /* undo what MakeMove did */
 	if (hist[hdp].m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
 	{
 		piece[hist[hdp].m.from] = PAWN;
+	}
+
+	if (hist[hdp].m.from - hist[hdp].m.dest == 16)
+	{
+		piece[hist[hdp].m.from - 8] = EMPTY;
+	}
+	if (hist[hdp].m.from - hist[hdp].m.dest == -16)
+	{
+		piece[hist[hdp].m.from + 8] = EMPTY;
 	}
 
 	/* Castle: return rook to its original square */
