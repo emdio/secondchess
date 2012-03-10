@@ -1092,7 +1092,7 @@ int MakeMove(MOVE m)
 		}
 	}
 
-	/* Remove possible eps piece, remaining from former move*/
+	/* Remove possible eps piece, remaining from former move */
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		for (i = 16; i <= 23; i++)
