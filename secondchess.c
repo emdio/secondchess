@@ -1051,27 +1051,6 @@ int MakeMove(MOVE m)
 	int r;
 	int i;
 
-	/* Remove possible eps piece, remaining from former move*/
-	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
-	{
-		for (i = 16; i <= 23; i++)
-		{
-			if (piece[i] == EPS_SQUARE)
-			{
-				piece[i] = EMPTY;
-				break;
-			}
-		}
-		for (i = 40; i <= 47; i++)
-		{
-			if (piece[i] == EPS_SQUARE)
-			{
-				piece[i] = EMPTY;
-				break;
-			}
-		}
-	}
-
 	hist[hdp].m = m;
 	/* store in history the piece of the dest square */
 	hist[hdp].cap = piece[m.dest];
@@ -1113,6 +1092,28 @@ int MakeMove(MOVE m)
 		}
 	}
 
+	/* Remove possible eps piece, remaining from former move*/
+	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
+	{
+		for (i = 16; i <= 23; i++)
+		{
+			if (piece[i] == EPS_SQUARE)
+			{
+				piece[i] = EMPTY;
+				break;
+			}
+		}
+		for (i = 40; i <= 47; i++)
+		{
+			if (piece[i] == EPS_SQUARE)
+			{
+				piece[i] = EMPTY;
+				break;
+			}
+		}
+	}
+
+	/* Add the eps square when a pawn moves two sqaures */
 	if (m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == BLACK)
@@ -1192,20 +1193,6 @@ void TakeBack() /* undo what MakeMove did */
 	piece[hist[hdp].m.dest] = hist[hdp].cap;
 	color[hist[hdp].m.from] = side;
 
-	/* Pawn moves two in the former move, so we hace to replace
-	 * the eps square */
-	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
-		{
-		if (side == BLACK)
-			{
-			piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
-			}
-		else if (side == WHITE)
-		{
-			piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
-		}
-	}
-
 	/* Update castle rights */
 	castle = hist[hdp].m.castle;
 
@@ -1224,7 +1211,22 @@ void TakeBack() /* undo what MakeMove did */
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
-	/* To remove the eps square */
+	/* Pawn moves two in the former move, so we hace to replace
+		 * the eps square */
+	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
+	{
+		if (side == BLACK)
+			{
+			piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
+			}
+		else if (side == WHITE)
+		{
+			piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
+		}
+	}
+
+	/* To remove the eps square after unmaking a pawn
+	 * movein two sqaures*/
 	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == WHITE)
