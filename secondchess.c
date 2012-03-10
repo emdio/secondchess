@@ -1054,11 +1054,20 @@ int MakeMove(MOVE m)
 	/* Remove possible eps piece, remaining from former move*/
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 	{
-		for (i = 0; i < 63; i++)
+		for (i = 16; i <= 23; i++)
 		{
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
+				break;
+			}
+		}
+		for (i = 40; i <= 47; i++)
+		{
+			if (piece[i] == EPS_SQUARE)
+			{
+				piece[i] = EMPTY;
+				break;
 			}
 		}
 	}
@@ -1215,6 +1224,7 @@ void TakeBack() /* undo what MakeMove did */
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
+	/* To remove the eps square */
 	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == WHITE)
@@ -1226,18 +1236,6 @@ void TakeBack() /* undo what MakeMove did */
 			piece[hist[hdp].m.from + 8] = EMPTY;
 		}
 	}
-
-//	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
-//	{
-//		if (hist[hdp].m.from - hist[hdp].m.dest == 16)
-//		{
-//			piece[hist[hdp].m.from - 8] = EMPTY;
-//		}
-//		if (hist[hdp].m.from - hist[hdp].m.dest == -16)
-//		{
-//			piece[hist[hdp].m.from + 8] = EMPTY;
-//		}
-//	}
 
 	/* Castle: return rook to its original square */
 	if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
