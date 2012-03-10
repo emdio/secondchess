@@ -1183,7 +1183,8 @@ void TakeBack() /* undo what MakeMove did */
 	piece[hist[hdp].m.dest] = hist[hdp].cap;
 	color[hist[hdp].m.from] = side;
 
-	/* Pawn moves two squares */
+	/* Pawn moves two in the former move, so we hace to replace
+	 * the eps square */
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 		{
 		if (side == BLACK)
@@ -1196,7 +1197,7 @@ void TakeBack() /* undo what MakeMove did */
 		}
 	}
 
-	/* Castle rights */
+	/* Update castle rights */
 	castle = hist[hdp].m.castle;
 
 	if (hist[hdp].cap != EMPTY)
@@ -1214,14 +1215,29 @@ void TakeBack() /* undo what MakeMove did */
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
-	if (hist[hdp].m.from - hist[hdp].m.dest == 16)
+	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
 	{
-		piece[hist[hdp].m.from - 8] = EMPTY;
+		if (side == WHITE)
+		{
+			piece[hist[hdp].m.from - 8] = EMPTY;
+		}
+		else if (side == BLACK)
+		{
+			piece[hist[hdp].m.from + 8] = EMPTY;
+		}
 	}
-	if (hist[hdp].m.from - hist[hdp].m.dest == -16)
-	{
-		piece[hist[hdp].m.from + 8] = EMPTY;
-	}
+
+//	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
+//	{
+//		if (hist[hdp].m.from - hist[hdp].m.dest == 16)
+//		{
+//			piece[hist[hdp].m.from - 8] = EMPTY;
+//		}
+//		if (hist[hdp].m.from - hist[hdp].m.dest == -16)
+//		{
+//			piece[hist[hdp].m.from + 8] = EMPTY;
+//		}
+//	}
 
 	/* Castle: return rook to its original square */
 	if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
