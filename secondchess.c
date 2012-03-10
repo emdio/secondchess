@@ -1052,8 +1052,8 @@ int MakeMove(MOVE m)
 	int i;
 
 	/* Remove possible eps piece, remaining from former move*/
-//	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
-//	{
+	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
+	{
 		for (i = 0; i < 63; i++)
 		{
 			if (piece[i] == EPS_SQUARE)
@@ -1061,7 +1061,7 @@ int MakeMove(MOVE m)
 				piece[i] = EMPTY;
 			}
 		}
-//	}
+	}
 
 	hist[hdp].m = m;
 	/* store in history the piece of the dest square */
@@ -1176,18 +1176,25 @@ void TakeBack() /* undo what MakeMove did */
 
 	int i;
 
-	/* Pawn moves two squares */
-//		if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
-//		{
-
-//		}
-
 	side = (WHITE + BLACK) - side;
 	hdp--;
 	ply--;
 	piece[hist[hdp].m.from] = piece[hist[hdp].m.dest];
 	piece[hist[hdp].m.dest] = hist[hdp].cap;
 	color[hist[hdp].m.from] = side;
+
+	/* Pawn moves two squares */
+	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
+		{
+		if (side == BLACK)
+			{
+			piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
+			}
+		else if (side == WHITE)
+		{
+			piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
+		}
+	}
 
 	/* Castle rights */
 	castle = hist[hdp].m.castle;
