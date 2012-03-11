@@ -195,7 +195,7 @@ int pst_pawn[64] ={
 		0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0, 10, 10,  0,  0,  0,
+		0,  0,  0, 12, 12,  0,  0,  0,
 		0,  0,  0, 10, 10,  0,  0,  0,
 		0,  0,  0,  5,  5,  0,  0,  0,
 		0,  0,  0, -5, -5,  0,  0,  0,
@@ -216,7 +216,7 @@ int pst_bishop[64] = {
 		-10,  5,  0,  0,  0,  0,  5,-10,
 		-10,  0,  5,  0,  0,  5,  0,-10,
 		-10,  0,  0, 10, 10,  0,  0,-10,
-		-10,  0,  0, 10, 10,  0,  0,-10,
+		-10,  0,  5, 10, 10,  5,  0,-10,
 		-10,  0,  5,  0,  0,  5,  0,-10,
 		-10,  5,  0,  0,  0,  0,  5,-10,
 		-10,-20,-30,-20,-20,-30,-20,-10 };
@@ -242,9 +242,9 @@ int pst_king[64] = {
 		 10, 15,-15,-15,-15,-15, 15, 10};
 
 /* The flip array is used to calculate the piece/square
-   values for DARK pieces. The piece/square value of a
-   LIGHT pawn is pawn_pcsq[sq] and the value of a DARK
-   pawn is pawn_pcsq[flip[sq]] */
+   values for DARK pieces.
+   The piece/square value of a white pawn is pawn_pcsq[sq]
+   and the value of a black pawn is pawn_pcsq[flip[sq]] */
 int flip[64] = {
 	 56,  57,  58,  59,  60,  61,  62,  63,
 	 48,  49,  50,  51,  52,  53,  54,  55,
@@ -591,15 +591,21 @@ int Eval()
 {
 	/* A counter for the board squares */
 	int i;
+
 	/* The score of the position */
 	int score = 0;
 
+	/* Check all the squares searching for the pieces */
 	for (i = 0; i < 64; i++)
 	{
 		if (color[i] == WHITE)
 		{
+			/* In the current square, add the material
+			 * value of the piece */
 			score += value_piece[piece[i]];
 
+			/* Now we add to the evaluation the value of the
+			 * piece square tables */
 			switch (piece[i])
 			{
 			case PAWN:
@@ -1100,6 +1106,7 @@ int MakeMove(MOVE m)
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
+				color[i] = EMPTY;
 				break;
 			}
 		}
@@ -1108,10 +1115,22 @@ int MakeMove(MOVE m)
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
+				/* this seems unnecesary, but otherwise a bug occurs:
+				 * after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
+				color[i] = EMPTY;
 				break;
 			}
 		}
 	}
+//	for (i = 0; i <= 63; i++)
+//			{
+//				if (piece[i] == EPS_SQUARE)
+//				{
+//					piece[i] = EMPTY;
+//					color[i] = EMPTY;
+//					break;
+//				}
+//			}
 
 	/* Add the eps square when a pawn moves two sqaures */
 	if (m.type == MOVE_TYPE_PAWN_TWO)
@@ -1299,18 +1318,20 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	movecnt = Gen(side, moveBuf);
 	assert (movecnt < 201);
 
-//	allmoves += movecnt;
-//
-//	printf ("There are %d moves.\n", movecnt);
-//	for (i=0; i<movecnt; i++)
-//	{
-//		printf ("from: %d dest: %d\n", moveBuf[i].from, moveBuf[i].dest);
-//	}
-
 	/* Once we have all the moves available, we loop through the posible
 	 * moves and apply an alpha-beta search */
 	for (i = 0; i < movecnt; ++i)
 	{
+
+//		{
+//		printf(
+//				"move #%d = %c%d%c%d; \n",
+//				i,
+//				'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
+//				'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
+//		}
+
+
 		if (!MakeMove(moveBuf[i]))
 		{
 			TakeBack();
