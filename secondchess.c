@@ -183,7 +183,7 @@ int allmoves = 0;
 int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
 int count_evaluations;
-
+int count_MakeMove;
 /* The values of the pieces in centipawns */
 int value_piece[6] =
 { VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING };
@@ -1060,6 +1060,8 @@ int MakeMove(MOVE m)
 	int r;
 	int i;
 
+	count_MakeMove ++;
+
 	hist[hdp].m = m;
 	/* store in history the piece of the dest square */
 	hist[hdp].cap = piece[m.dest];
@@ -1393,6 +1395,7 @@ MOVE ComputerThink(int max_depth)
 	ply = 0;
 	nodes = 0;
 	count_evaluations = 0;
+	count_MakeMove = 0;
 
 
 	clock_t start;
@@ -1414,9 +1417,9 @@ MOVE ComputerThink(int max_depth)
 	/* After searching, print results */
 	float decimal_score = ((float)score)/100.;
 	printf(
-			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, depth = %d, score = %.2fs, time = %.2fs, nps = %.0f\n",
+			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, nps = %.0f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-					- ROW(m.dest), nodes, count_evaluations, max_depth, decimal_score, t, nps);
+					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, nps);
 	return m;
 }
 
