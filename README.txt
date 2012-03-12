@@ -2,3 +2,4 @@
 -its main goal is to add the neccesary code to firstchess in order
 to make it play real chess, especially adding the rules for castle and en 
 passant capture
+-to compile just "gcc secondchess.c -o secondchess -Ofast"
