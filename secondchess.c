@@ -152,8 +152,6 @@ HIST hist[6000]; /* Game length < 6000 */
  */
 int castle = 15;
 
-int allmoves = 0;
-
 /* This mask is applied like this
  * 
  * castle &= castle_mask[from] & castle_mask[dest]
@@ -179,10 +177,12 @@ int castle_mask[64] = {
 		13, 15, 15, 15, 12, 15, 15, 14 };
 
 int hdp; /* Current move order */
+int allmoves = 0;
 
 /* For searching */
 int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
+int count_evaluations;
 
 /* The values of the pieces in centipawns */
 int value_piece[6] =
@@ -589,6 +589,9 @@ int Gen(int current_side, MOVE * pBuf)
  */
 int Eval()
 {
+
+	count_evaluations++;
+
 	/* A counter for the board squares */
 	int i;
 
@@ -1106,6 +1109,8 @@ int MakeMove(MOVE m)
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
+				/* this seems unnecesary, but otherwise a bug occurs:
+				* after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
 				color[i] = EMPTY;
 				break;
 			}
@@ -1115,8 +1120,6 @@ int MakeMove(MOVE m)
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
-				/* this seems unnecesary, but otherwise a bug occurs:
-				 * after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
 				color[i] = EMPTY;
 				break;
 			}
@@ -1384,10 +1387,13 @@ MOVE ComputerThink(int max_depth)
 	/* It returns the move the computer makes */
 	MOVE m;
 	int score;
+	double nps;
 
 	/* Reset some values before searching */
 	ply = 0;
 	nodes = 0;
+	count_evaluations = 0;
+
 
 	clock_t start;
 	clock_t stop;
@@ -1403,14 +1409,14 @@ MOVE ComputerThink(int max_depth)
 	/* Stop timer */
 	stop = clock();
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
-
-	double nps = nodes / t;
+	nps = nodes / t;
 
 	/* After searching, print results */
+	float decimal_score = ((float)score)/100.;
 	printf(
-			"Search result: move = %c%d%c%d; nodes = %d, depth = %d, score = %d, time = %.2fs, nps = %.0f\n",
+			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, depth = %d, score = %.2fs, time = %.2fs, nps = %.0f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-					- ROW(m.dest), nodes, max_depth, score, t, nps);
+					- ROW(m.dest), nodes, count_evaluations, max_depth, decimal_score, t, nps);
 	return m;
 }
 
