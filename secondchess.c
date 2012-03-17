@@ -184,6 +184,7 @@ int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
 int count_evaluations;
 int count_MakeMove;
+int extra_depth;
 /* The values of the pieces in centipawns */
 int value_piece[6] =
 { VALUE_PAWN, VALUE_KNIGHT, VALUE_BISHOP, VALUE_ROOK, VALUE_QUEEN, VALUE_KING };
@@ -1312,12 +1313,25 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	int havemove;
 	int movecnt;
 
+	if (depth == 1)
+	{
+		puts("**********************************No depth!");
+	}
+
+
 	MOVE moveBuf[200]; /* List of movements */
 	MOVE tmpMove;
 
 	nodes++; /* visiting a node, count it */
 	havemove = 0; /* is there a move available? */
 	pBestMove->type = MOVE_TYPE_NONE;
+
+	/* If we're in check we want to search deeper */
+	if (IsInCheck(side))
+	{
+		++depth;
+		extra_depth = depth;
+	}
 
 	/* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
@@ -1335,7 +1349,6 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 //				'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
 //				'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
 //		}
-
 
 		if (!MakeMove(moveBuf[i]))
 		{
@@ -1365,8 +1378,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 				return beta;
 			}
 			alpha = value;
-			/* So far, current move is the best reaction
-			 * for current position */
+			/* So far, current move is the best reaction for current position */
 			*pBestMove = moveBuf[i];
 		}
 	}
@@ -1417,9 +1429,9 @@ MOVE ComputerThink(int max_depth)
 	/* After searching, print results */
 	float decimal_score = ((float)score)/100.;
 	printf(
-			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, nps = %.0f\n",
+			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d(%d), score = %.2f, time = %.2fs, nps = %.0f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, nps);
+					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, max_depth+extra_depth, decimal_score, t, nps);
 	return m;
 }
 
