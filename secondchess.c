@@ -1490,14 +1490,9 @@ void TakeBack() /* undo what MakeMove did */
 int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 {
 	int i;
-	int value;
-	int havemove;
-	int movecnt;
-
-	if (depth == 1)
-	{
-		puts("**********************************No depth!");
-	}
+	int value;  /* To store the evaluation */
+	int havemove;  /* Either we have or not a legal move available */
+	int movecnt;  /* The number of available moves */
 
 	MOVE moveBuf[200]; /* List of movements */
 	MOVE tmpMove;
@@ -1505,13 +1500,6 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	nodes++; /* visiting a node, count it */
 	havemove = 0; /* is there a move available? */
 	pBestMove->type = MOVE_TYPE_NONE;
-
-	/* If we're in check we want to search deeper */
-	if (IsInCheck(side))
-	{
-		++depth;
-		extra_depth = depth;
-	}
 
 	/* Generate and count all moves for current position */
 	movecnt = Gen(side, moveBuf);
@@ -1523,8 +1511,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	{
 
 //		{
-//		printf(
-//				"move #%d = %c%d%c%d; \n",
+//		printf("move #%d = %c%d%c%d; \n",
 //				i,
 //				'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
 //				'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
@@ -1532,24 +1519,31 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 
 		if (!MakeMove(moveBuf[i]))
 		{
+			/* If the current move isn't legal, we take it back
+			 * and take the next move in the list */
 			TakeBack();
 			continue;
 		}
+
+		/* If we're here, that means we have a move available */
 		havemove = 1;
 
-		/* This 'if' takes us to the deep of the position */
-		if (depth - 1 > 0) /* If depth is still, continue to search deeper */
+		/* This 'if' takes us to the deep of the position, the leaf nodes */
+		if (depth - 1 > 0)
 		{
 			value = -Search(-beta, -alpha, depth - 1, &tmpMove);
 		}
-		else /* If no depth left (leaf node), go to evalute that position
+		else /* If no depth left (leaf node), we evalute the position
 		 and apply the alpha-beta search*/
 		{
 			value = -Eval();
 		}
 
-		/* Once we have an evaluation, we use it in in an alpha-beta search */
+		/* We've evaluated the position, so we return to the previous position
+		 * in such a way that when we take the next move in moveBuf everything is in order */
 		TakeBack();
+
+		/* Once we have an evaluation, we use it in in an alpha-beta search */
 		if (value > alpha)
 		{
 			/* This move is so good and caused a cutoff */
@@ -1563,7 +1557,8 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		}
 	}
 
-	/* If no legal moves, that is checkmate or stalemate */
+	/* Once we've checked all the moves and we have no legal moves,
+	 * then that's checkmate or stalemate */
 	if (!havemove)
 	{
 		if (IsInCheck(side))
@@ -1572,7 +1567,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 			return 0;
 	}
 
-	/* We return alpha, the score value */
+	/* Finally .we return alpha, the score value */
 	return alpha;
 }
 
