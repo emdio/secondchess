@@ -183,6 +183,7 @@ int allmoves = 0;
 int nodes; /* Count all visited nodes when searching */
 int ply; /* ply of search */
 int count_evaluations;
+int count_checks;
 int count_MakeMove;
 
 /* The values of the pieces in centipawns */
@@ -1646,6 +1647,81 @@ void PrintBoard()
 			"   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
+void perft(depth)
+{
+	int i;
+	int value;  /* To store the evaluation */
+	int havemove;  /* Either we have or not a legal move available */
+	int movecnt;  /* The number of available moves */
+
+	MOVE moveBuf[200]; /* List of movements */
+	MOVE tmpMove;
+
+	nodes++; /* visiting a node, count it */
+	havemove = 0; /* is there a move available? */
+
+	/* Generate and count all moves for current position */
+	movecnt = Gen(side, moveBuf);
+	assert (movecnt < 201);
+
+	/* Once we have all the moves available, we loop through the posible
+	 * moves and apply an alpha-beta search */
+	for (i = 0; i < movecnt; ++i)
+	{
+		if (!MakeMove(moveBuf[i]))
+		{
+			/* If the current move isn't legal, we take it back
+			 * and take the next move in the list */
+			TakeBack();
+			continue;
+		}
+
+		/* Checks? */
+		if (IsInCheck(side) || IsInCheck(!side))
+		{
+			count_checks++;
+//			count_evaluations--;
+		}
+
+
+		/* If we're here, that means we have a move available */
+		havemove = 1;
+
+		if (depth - 1 > 0)
+		{
+		if (IsInCheck(side))
+			{
+				count_evaluations--;
+			}
+		}
+
+		/* This 'if' takes us to the deep of the position, the leaf nodes */
+		if (depth - 1 > 0)
+		{
+			perft(depth - 1);
+		}
+		else
+		{
+			count_evaluations++;
+		}
+
+		TakeBack();
+
+	}
+
+	/* Once we've checked all the moves and we have no legal moves,
+	 * then that's checkmate or stalemate */
+	if (!havemove)
+	{
+//		if (IsInCheck(side))
+//			return -MATE + ply; /* add ply to find the longest path to lose or shortest path to win */
+//		else
+//			return 0;
+		puts("Check");
+	}
+
+//	printf("nodes = %d, counted evals = %d, depth = %d\n", nodes, count_evaluations, depth);
+}
 /*
  ****************************************************************************
  * Main program *
@@ -1714,6 +1790,21 @@ void main()
 		if (!strcmp(s, "sd"))
 		{
 			scanf("%d", &max_depth);
+			continue;
+		}
+		if (!strcmp(s, "perft"))
+		{
+			count_evaluations = 0;
+			count_checks = 0;
+			scanf("%d", &max_depth);
+			perft(max_depth);
+			printf("nodes = %d,"
+					"counted evals = %d,"
+					"checks = %d, depth = %d\n",
+					nodes,
+					count_evaluations,
+					count_checks,
+					max_depth);
 			continue;
 		}
 		if (!strcmp(s, "quit"))
