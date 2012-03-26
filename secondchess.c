@@ -211,7 +211,7 @@ int pst_knight[64] = {
 		-25,  0,  0, 15, 15,  0,  0,-25,
 		-25,  0,  0,  0,  0,  0,  0,-25,
 		-25,  0,  0,  0,  0,  0,  0,-25,
-		-40,-35,-25,-25,-25,-25,-35,-40 };
+		-40,-135,-25,-25,-25,-25,-135,-40 };
 
 int pst_bishop[64] = {
 		-10,-10,-10,-10,-10,-10,-10,-10,
@@ -583,7 +583,8 @@ int Gen(int current_side, MOVE * pBuf)
 	return movecount;
 }
 
-/* Gen all captures of current_side to move and push them to pBuf, return number of moves */
+/* Gen all captures of current_side to move and push them to pBuf, return number of moves
+ * It's necesary at least ir order to use quiescent in the search */
 int GenCaps(int current_side, MOVE * pBuf)
 {
 	int i; /* Counter for the board squares */
@@ -591,10 +592,12 @@ int GenCaps(int current_side, MOVE * pBuf)
 	int y;
 	int row;
 	int col;
-	int movecount;
-	movecount = 0;
+	int capscount;
+	int xside;
+	xside = (WHITE + BLACK) - current_side;
+	capscount = 0;
 
-	assert (movecount < 201);
+	assert (capscount < 201);
 
 	for (i = 0; i < 64; i++) /* Scan all board */
 		if (color[i] == current_side)
@@ -609,30 +612,30 @@ int GenCaps(int current_side, MOVE * pBuf)
 				{
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
-						Gen_PushPawn(i, i + 7, pBuf, &movecount);
+						Gen_PushPawn(i, i + 7, pBuf, &capscount);
 					if (col < 7 && color[i + 9] == WHITE)
 						/* Pawn captures and can be a promotion*/
-						Gen_PushPawn(i, i + 9, pBuf, &movecount);
+						Gen_PushPawn(i, i + 9, pBuf, &capscount);
 					/* For en passant capture */
 					if (col && piece[i + 7] == EPS_SQUARE)
 						/* Pawn captures and it can be a promotion*/
-						Gen_PushPawn(i, i + 7, pBuf, &movecount);
+						Gen_PushPawn(i, i + 7, pBuf, &capscount);
 					if (col < 7 && piece[i + 9] == EPS_SQUARE)
 						/* Pawn captures and can be a promotion*/
-						Gen_PushPawn(i, i + 9, pBuf, &movecount);
+						Gen_PushPawn(i, i + 9, pBuf, &capscount);
 				}
-				else
+				else if (current_side == WHITE)
 				{
 					/* For captures */
 					if (col && color[i - 9] == BLACK)
-						Gen_PushPawn(i, i - 9, pBuf, &movecount);
+						Gen_PushPawn(i, i - 9, pBuf, &capscount);
 					if (col < 7 && color[i - 7] == BLACK)
-						Gen_PushPawn(i, i - 7, pBuf, &movecount);
+						Gen_PushPawn(i, i - 7, pBuf, &capscount);
 					/* For en passant capture */
 					if (col && piece[i - 9] == EPS_SQUARE)
-						Gen_PushPawn(i, i - 9, pBuf, &movecount);
+						Gen_PushPawn(i, i - 9, pBuf, &capscount);
 					if (col < 7 && piece[i - 7] == EPS_SQUARE)
-						Gen_PushPawn(i, i - 7, pBuf, &movecount);
+						Gen_PushPawn(i, i - 7, pBuf, &capscount);
 				}
 				break;
 
@@ -641,30 +644,26 @@ int GenCaps(int current_side, MOVE * pBuf)
 			case BISHOP:
 				for (y = i - 9; y >= 0 && COL(y) != 7; y -= 9)
 				{ /* go left up */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (y = i - 7; y >= 0 && COL(y) != 0; y -= 7)
 				{ /* go right up */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (y = i + 9; y < 64 && COL(y) != 0; y += 9)
 				{ /* go right down */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (y = i + 7; y < 64 && COL(y) != 7; y += 7)
 				{ /* go left down */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				if (piece[i] == BISHOP) /* In the case of the bishop we're done */
@@ -675,30 +674,26 @@ int GenCaps(int current_side, MOVE * pBuf)
 				col = COL(i);
 				for (k = i - col, y = i - 1; y >= k; y--)
 				{ /* go left */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (k = i - col + 7, y = i + 1; y <= k; y++)
 				{ /* go right */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (y = i - 8; y >= 0; y -= 8)
 				{ /* go up */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				for (y = i + 8; y < 64; y += 8)
 				{ /* go down */
-					if (color[y] != current_side)
-						Gen_PushNormal(i, y, pBuf, &movecount);
-					if (color[y] != EMPTY)
+					if (color[y] == xside)
+						Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
 				}
 				break;
@@ -706,62 +701,57 @@ int GenCaps(int current_side, MOVE * pBuf)
 			case KNIGHT:
 				col = COL(i);
 				y = i - 6;
-				if (y >= 0 && col < 6 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y >= 0 && col < 6 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i - 10;
-				if (y >= 0 && col > 1 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y >= 0 && col > 1 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i - 15;
-				if (y >= 0 && col < 7 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y >= 0 && col < 7 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i - 17;
-				if (y >= 0 && col > 0 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y >= 0 && col > 0 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i + 6;
-				if (y < 64 && col > 1 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y < 64 && col > 1 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i + 10;
-				if (y < 64 && col < 6 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y < 64 && col < 6 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i + 15;
-				if (y < 64 && col > 0 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y < 64 && col > 0 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				y = i + 17;
-				if (y < 64 && col < 7 && color[y] != current_side)
-					Gen_PushNormal(i, y, pBuf, &movecount);
+				if (y < 64 && col < 7 && color[y] == xside)
+					Gen_PushNormal(i, y, pBuf, &capscount);
 				break;
 
 			case KING:
 				/* the column and rank checks are to make sure it is on the board*/
 				col = COL(i);
-				if (col && color[i - 1] != current_side)
-					Gen_PushKing(i, i - 1, pBuf, &movecount); /* left */
-				if (col < 7 && color[i + 1] != current_side)
-					Gen_PushKing(i, i + 1, pBuf, &movecount); /* right */
-				if (i > 7 && color[i - 8] != current_side)
-					Gen_PushKing(i, i - 8, pBuf, &movecount); /* up */
-				if (i < 56 && color[i + 8] != current_side)
-					Gen_PushKing(i, i + 8, pBuf, &movecount); /* down */
-				if (col && i > 7 && color[i - 9] != current_side)
-					Gen_PushKing(i, i - 9, pBuf, &movecount); /* left up */
-				if (col < 7 && i > 7 && color[i - 7] != current_side)
-					Gen_PushKing(i, i - 7, pBuf, &movecount); /* right up */
-				if (col && i < 56 && color[i + 7] != current_side)
-					Gen_PushKing(i, i + 7, pBuf, &movecount); /* left down */
-				if (col < 7 && i < 56 && color[i + 9] != current_side)
-					Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
-
-
-
-					/* We don't need any of the castle stuf */
-
+				if (col && color[i - 1] == xside)
+					Gen_PushKing(i, i - 1, pBuf, &capscount); /* left */
+				if (col < 7 && color[i + 1] == xside)
+					Gen_PushKing(i, i + 1, pBuf, &capscount); /* right */
+				if (i > 7 && color[i - 8] == xside)
+					Gen_PushKing(i, i - 8, pBuf, &capscount); /* up */
+				if (i < 56 && color[i + 8] == xside)
+					Gen_PushKing(i, i + 8, pBuf, &capscount); /* down */
+				if (col && i > 7 && color[i - 9] == xside)
+					Gen_PushKing(i, i - 9, pBuf, &capscount); /* left up */
+				if (col < 7 && i > 7 && color[i - 7] == xside)
+					Gen_PushKing(i, i - 7, pBuf, &capscount); /* right up */
+				if (col && i < 56 && color[i + 7] == xside)
+					Gen_PushKing(i, i + 7, pBuf, &capscount); /* left down */
+				if (col < 7 && i < 56 && color[i + 9] == xside)
+					Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
 				break;
 //			default:
 //				printf("Piece type unknown");
 //				assert(false);
 			}
 		}
-	return movecount;
+	return capscount;
 }
 
 /*
@@ -1498,7 +1488,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	MOVE moveBuf[200]; /* List of movements */
 	MOVE tmpMove;
 
-	nodes++; /* visiting a node, count it */
+//	nodes++; /* visiting a node, count it */
 	havemove = 0; /* is there a move available? */
 	pBestMove->type = MOVE_TYPE_NONE;
 
@@ -1539,7 +1529,8 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		 In the case of existing a quiescent function, it should be
 		 called here instead of Eval() */
 		{
-			value = -Eval();
+			value = Quiescent(alpha, beta);
+//			value = -Eval();
 		}
 
 		/* We've evaluated the position, so we return to the previous position
@@ -1574,6 +1565,50 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	return alpha;
 }
 
+int Quiescent(int alpha, int beta)
+{
+	int i;
+	int movecnt;
+	int val;
+	MOVE cBuf[200];
+
+	nodes++;
+
+	val = -Eval();
+	if (val >= beta)
+	{
+		return beta;
+	}
+	if (val > alpha)
+	{
+		alpha = val;
+	}
+	movecnt = GenCaps(side, cBuf);
+	for (i = 0; i < movecnt; ++i)
+	{
+		if (!MakeMove(cBuf[i]))
+		{
+			/* If the current move isn't legal, we take it back
+			 * and take the next move in the list */
+			TakeBack();
+			continue;
+		}
+		val = -Quiescent(-beta, -alpha);
+		TakeBack();
+		if (val >= beta)
+		{
+			return beta;
+		}
+		if (val > alpha)
+		{
+			alpha = val;
+		}
+	}
+	return alpha;
+}
+
+
+
 MOVE ComputerThink(int max_depth)
 {
 	/* It returns the move the computer makes */
@@ -1604,8 +1639,13 @@ MOVE ComputerThink(int max_depth)
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
 	nps = nodes / t;
 
-	/* After searching, print results */
 	float decimal_score = ((float)score)/100.;
+	if (side == BLACK)
+	{
+		decimal_score= -decimal_score;
+	}
+
+	/* After searching, print results */
 	printf(
 			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, nps = %.0f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
@@ -1680,24 +1720,19 @@ void perft(depth)
 		if (IsInCheck(side) || IsInCheck(!side))
 		{
 			count_checks++;
-//			count_evaluations--;
 		}
 
 
 		/* If we're here, that means we have a move available */
 		havemove = 1;
 
-		if (depth - 1 > 0)
-		{
-		if (IsInCheck(side))
-			{
-				count_evaluations--;
-			}
-		}
-
 		/* This 'if' takes us to the deep of the position, the leaf nodes */
 		if (depth - 1 > 0)
 		{
+			if (IsInCheck(side))
+			{
+				count_evaluations--;
+			}
 			perft(depth - 1);
 		}
 		else
