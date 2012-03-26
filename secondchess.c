@@ -1561,7 +1561,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 			return 0;
 	}
 
-	/* Finally .we return alpha, the score value */
+	/* Finally we return alpha, the score value */
 	return alpha;
 }
 
@@ -1574,6 +1574,7 @@ int Quiescent(int alpha, int beta)
 
 	nodes++;
 
+	/* First we just try the evaluation function */
 	val = -Eval();
 	if (val >= beta)
 	{
