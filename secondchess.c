@@ -303,13 +303,7 @@ void Gen_PushPawnTwo(int from, int dest, MOVE * pBuf, int *pMCount)
 	Gen_Push(from, dest, MOVE_TYPE_PAWN_TWO, pBuf, pMCount);
 }
 
-/* For en passant capture */
-//void Gen_PushPawnEPS(int from, int dest, MOVE * pBuf, int *pMCount)
-//{
-//	Gen_Push(from, dest, MOVE_TYPE_ENPASANT, pBuf, pMCount);
-//}
-
-/* King*/
+/* King */
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* Is it a castle?*/
@@ -327,7 +321,7 @@ void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 	}
 }
 
-/* Gen all moves of current_side to move and push them to pBuf, return number of moves */
+/* Gen all moves of current_side to move and push them to pBuf, and return number of moves */
 int Gen(int current_side, MOVE * pBuf)
 {
 	int i; /* Counter for the board squares */
@@ -592,12 +586,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 	int y;
 	int row;
 	int col;
-	int capscount;
+	int capscount; /* Counter for the posible captures */
 	int xside;
 	xside = (WHITE + BLACK) - current_side;
 	capscount = 0;
-
-	assert (capscount < 201);
 
 	for (i = 0; i < 64; i++) /* Scan all board */
 		if (color[i] == current_side)
@@ -1310,15 +1302,6 @@ int MakeMove(MOVE m)
 			}
 		}
 	}
-//	for (i = 0; i <= 63; i++)
-//			{
-//				if (piece[i] == EPS_SQUARE)
-//				{
-//					piece[i] = EMPTY;
-//					color[i] = EMPTY;
-//					break;
-//				}
-//			}
 
 	/* Add the eps square when a pawn moves two sqaures */
 	if (m.type == MOVE_TYPE_PAWN_TWO)
