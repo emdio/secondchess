@@ -1527,7 +1527,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		}
 
 		/* We've evaluated the position, so we return to the previous position
-		 * in such a way that when we take the next move in moveBuf everything is in order */
+		 * in such a way that when we take the next move from moveBuf everything is in order */
 		TakeBack();
 
 		/* Once we have an evaluation, we use it in in an alpha-beta search */
