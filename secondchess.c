@@ -610,6 +610,12 @@ int GenCaps(int current_side, MOVE * pBuf)
 				row = ROW(i);
 				if (current_side == BLACK)
 				{
+					/* This isn't a capture, but it's necesary in order to
+					 * not oversee promotions */
+					if (color[i + 8] == EMPTY)
+						/* Pawn advances one square.
+						 * We use Gen_PushPawn because it can be a promotion */
+						Gen_PushPawn(i, i + 8, pBuf, &capscount);
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
 						Gen_PushPawn(i, i + 7, pBuf, &capscount);
@@ -626,6 +632,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				else if (current_side == WHITE)
 				{
+					if (color[i - 8] == EMPTY)
+						/* Pawn advances one square.
+						 * We use Gen_PushPawn because it can be a promotion */
+						Gen_PushPawn(i, i - 8, pBuf, &capscount);
 					/* For captures */
 					if (col && color[i - 9] == BLACK)
 						Gen_PushPawn(i, i - 9, pBuf, &capscount);
@@ -1568,7 +1578,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 int Quiescent(int alpha, int beta)
 {
 	int i;
-	int movecnt;
+	int capscnt;
 	int val;
 	MOVE cBuf[200];
 
@@ -1584,8 +1594,11 @@ int Quiescent(int alpha, int beta)
 	{
 		alpha = val;
 	}
-	movecnt = GenCaps(side, cBuf);
-	for (i = 0; i < movecnt; ++i)
+
+	/* If we haven't got a cut off we generate the captures and
+	 * store them in cBuf */
+	capscnt = GenCaps(side, cBuf);
+	for (i = 0; i < capscnt; ++i)
 	{
 		if (!MakeMove(cBuf[i]))
 		{
@@ -1615,7 +1628,7 @@ MOVE ComputerThink(int max_depth)
 	/* It returns the move the computer makes */
 	MOVE m;
 	int score;
-	double nps;
+	double knps;
 
 	/* Reset some values before searching */
 	ply = 0;
@@ -1638,7 +1651,7 @@ MOVE ComputerThink(int max_depth)
 	/* Stop timer */
 	stop = clock();
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
-	nps = nodes / t;
+	knps = (nodes / t)/1000.;
 
 	float decimal_score = ((float)score)/100.;
 	if (side == BLACK)
@@ -1648,9 +1661,9 @@ MOVE ComputerThink(int max_depth)
 
 	/* After searching, print results */
 	printf(
-			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, nps = %.0f\n",
+			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, nps);
+					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, knps);
 	return m;
 }
 
