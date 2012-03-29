@@ -1759,7 +1759,7 @@ void perft(depth)
  * Main program *
  ****************************************************************************
  */
-void main()
+int main()
 {
 
 	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
@@ -1801,7 +1801,7 @@ void main()
 		/* Get user input */
 		printf("sc> ");
 		if (scanf("%s", s) == EOF) /* close program */
-			return;
+			return 0;
 		if (!strcmp(s, "d"))
 		{
 			PrintBoard();
@@ -1842,7 +1842,7 @@ void main()
 		if (!strcmp(s, "quit"))
 		{
 			printf("Good bye!\n");
-			return;
+			return 0;
 		}
 
 		/* Maybe the user entered a move? */
