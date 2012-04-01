@@ -641,104 +641,6 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				break;
 
-			case QUEEN: /* == BISHOP+ROOK */
-
-			case BISHOP:
-				for (y = i - 9; y >= 0 && COL(y) != 7; y -= 9)
-				{ /* go left up */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (y = i - 7; y >= 0 && COL(y) != 0; y -= 7)
-				{ /* go right up */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (y = i + 9; y < 64 && COL(y) != 0; y += 9)
-				{ /* go right down */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (y = i + 7; y < 64 && COL(y) != 7; y += 7)
-				{ /* go left down */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				if (piece[i] == BISHOP) /* In the case of the bishop we're done */
-					break;
-
-				/* FALL THROUGH FOR QUEEN {I meant to do that!} ;-) */
-			case ROOK:
-				col = COL(i);
-				for (k = i - col, y = i - 1; y >= k; y--)
-				{ /* go left */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (k = i - col + 7, y = i + 1; y <= k; y++)
-				{ /* go right */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (y = i - 8; y >= 0; y -= 8)
-				{ /* go up */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-
-						break;
-					}
-				}
-				for (y = i + 8; y < 64; y += 8)
-				{ /* go down */
-					if (color[y] != EMPTY)
-					{
-						if (color[y] != current_side)
-
-							Gen_PushNormal(i, y, pBuf, &capscount);
-						break;
-					}
-				}
-				break;
-
 			case KNIGHT:
 				col = COL(i);
 				y = i - 6;
@@ -765,6 +667,89 @@ int GenCaps(int current_side, MOVE * pBuf)
 				y = i + 17;
 				if (y < 64 && col < 7 && color[y] == xside)
 					Gen_PushNormal(i, y, pBuf, &capscount);
+				break;
+
+			case QUEEN: /* == BISHOP+ROOK */
+
+			case BISHOP:
+				for (y = i - 9; y >= 0 && COL(y) != 7; y -= 9)
+				{ /* go left up */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (y = i - 7; y >= 0 && COL(y) != 0; y -= 7)
+				{ /* go right up */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (y = i + 9; y < 64 && COL(y) != 0; y += 9)
+				{ /* go right down */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (y = i + 7; y < 64 && COL(y) != 7; y += 7)
+				{ /* go left down */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				if (piece[i] == BISHOP) /* In the case of the bishop we're done */
+					break;
+
+				/* FALL THROUGH FOR QUEEN {I meant to do that!} ;-) */
+			case ROOK:
+				col = COL(i);
+				for (k = i - col, y = i - 1; y >= k; y--)
+				{ /* go left */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (k = i - col + 7, y = i + 1; y <= k; y++)
+				{ /* go right */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (y = i - 8; y >= 0; y -= 8)
+				{ /* go up */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
+				for (y = i + 8; y < 64; y += 8)
+				{ /* go down */
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+							Gen_PushNormal(i, y, pBuf, &capscount);
+						break;
+					}
+				}
 				break;
 
 			case KING:
