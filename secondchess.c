@@ -211,17 +211,17 @@ int pst_knight[64] = {
 		-25,  0,  0, 15, 15,  0,  0,-25,
 		-25,  0,  0,  0,  0,  0,  0,-25,
 		-25,  0,  0,  0,  0,  0,  0,-25,
-		-40,-135,-25,-25,-25,-25,-135,-40 };
+		-40,-35,-25,-25,-25,-25,-35,-40 };
 
 int pst_bishop[64] = {
-		-10,-10,-10,-10,-10,-10,-10,-10,
-		-10,  5,  0,  0,  0,  0,  5,-10,
-		-10,  0,  5,  0,  0,  5,  0,-10,
-		-10,  0,  0, 10, 10,  0,  0,-10,
-		-10,  0,  5, 10, 10,  5,  0,-10,
-		-10,  0,  5,  0,  0,  5,  0,-10,
-		-10,  5,  0,  0,  0,  0,  5,-10,
-		-10,-20,-30,-20,-20,-30,-20,-10 };
+		  0,  0,  0,  0,  0,  0,  0,  0,
+		  0,  5,  0,  0,  0,  0,  5,  0,
+		  0,  0,  5,  0,  0,  5,  0,  0,
+		  0,  0,  0, 10, 10,  0,  0,  0,
+		  0,  0,  5, 10, 10,  5,  0,  0,
+		  0,  0,  5,  0,  0,  5,  0,  0,
+		  0,  5,  0,  0,  0,  0,  5,  0,
+		  0,-20,-30,-20,-20,-30,-20,  0 };
 
 int pst_rook[64] = {
 		0,  0,  0,  0,  0,  0,  0,  0,
@@ -646,27 +646,47 @@ int GenCaps(int current_side, MOVE * pBuf)
 			case BISHOP:
 				for (y = i - 9; y >= 0 && COL(y) != 7; y -= 9)
 				{ /* go left up */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (y = i - 7; y >= 0 && COL(y) != 0; y -= 7)
 				{ /* go right up */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (y = i + 9; y < 64 && COL(y) != 0; y += 9)
 				{ /* go right down */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (y = i + 7; y < 64 && COL(y) != 7; y += 7)
 				{ /* go left down */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				if (piece[i] == BISHOP) /* In the case of the bishop we're done */
 					break;
@@ -676,27 +696,46 @@ int GenCaps(int current_side, MOVE * pBuf)
 				col = COL(i);
 				for (k = i - col, y = i - 1; y >= k; y--)
 				{ /* go left */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (k = i - col + 7, y = i + 1; y <= k; y++)
 				{ /* go right */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (y = i - 8; y >= 0; y -= 8)
 				{ /* go up */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
+
 						break;
+					}
 				}
 				for (y = i + 8; y < 64; y += 8)
 				{ /* go down */
-					if (color[y] == xside)
-						Gen_PushNormal(i, y, pBuf, &capscount);
+					if (color[y] != EMPTY)
+					{
+						if (color[y] != current_side)
+
+							Gen_PushNormal(i, y, pBuf, &capscount);
 						break;
+					}
 				}
 				break;
 
@@ -748,9 +787,9 @@ int GenCaps(int current_side, MOVE * pBuf)
 				if (col < 7 && i < 56 && color[i + 9] == xside)
 					Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
 				break;
-//			default:
-//				printf("Piece type unknown");
-//				assert(false);
+				//			default:
+				//				printf("Piece type unknown");
+				//				assert(false);
 			}
 		}
 	return capscount;
