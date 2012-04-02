@@ -53,6 +53,7 @@
 #define BLACK 1
 #define false 0
 
+/* The values of the pieces */
 #define VALUE_PAWN 100
 #define VALUE_KNIGHT 310
 #define VALUE_BISHOP 320
