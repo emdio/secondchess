@@ -63,6 +63,16 @@
 #define COL(pos) ((pos)&7)
 #define ROW(pos) (((unsigned)pos)>>3)
 
+/* For move generation */
+#define MOVE_TYPE_NONE 0
+#define MOVE_TYPE_NORMAL 1
+#define MOVE_TYPE_CASTLE 2
+#define MOVE_TYPE_PAWN_TWO 3
+#define MOVE_TYPE_PROMOTION_TO_QUEEN 4
+#define MOVE_TYPE_PROMOTION_TO_ROOK 5
+#define MOVE_TYPE_PROMOTION_TO_BISHOP 6
+#define MOVE_TYPE_PROMOTION_TO_KNIGHT 7
+
 /* Some  useful squares */
 #define A1				56
 #define B1				57
@@ -110,17 +120,6 @@ int color[64] = {
 		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 int side; /* Side to move, value = BLACK or WHITE */
-
-/* For move generation */
-#define MOVE_TYPE_NONE 0
-#define MOVE_TYPE_NORMAL 1
-#define MOVE_TYPE_CASTLE 2
-#define MOVE_TYPE_ENPASANT 3
-#define MOVE_TYPE_PAWN_TWO 4
-#define MOVE_TYPE_PROMOTION_TO_QUEEN 5
-#define MOVE_TYPE_PROMOTION_TO_ROOK 6
-#define MOVE_TYPE_PROMOTION_TO_BISHOP 7
-#define MOVE_TYPE_PROMOTION_TO_KNIGHT 8
 
 /* A move is defined by its origin and final squares, and by the kind of
  * move it's: normal,  enpasant... */
@@ -1327,7 +1326,7 @@ int MakeMove(MOVE m)
 		}
 	}
 
-	/* Add the eps square when a pawn moves two sqaures */
+	/* Add the eps square when a pawn moves two squares */
 	if (m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == BLACK)
@@ -1541,10 +1540,11 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		{
 			value = -Search(-beta, -alpha, depth - 1, &tmpMove);
 		}
-		else /* If no depth left (leaf node), we evalute the position
+		/* If no depth left (leaf node), we evalute the position
 		 and apply the alpha-beta search.
 		 In the case of existing a quiescent function, it should be
 		 called here instead of Eval() */
+		else
 		{
 			value = Quiescent(alpha, beta);
 //			value = -Eval();
