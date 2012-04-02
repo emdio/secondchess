@@ -1,6 +1,5 @@
 /*
  secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
- Version: beta ta
  */
 /*
 
@@ -22,9 +21,12 @@
  * Board representation and main varians *
  * Move generator *
  * Evaluation for current position *
- * Make and Take back a move, IsInCheck *
+ * Make and Take back a move *
+ * IsInCheck *
+ * IsAttacked *
  * Search function - a typical alphabeta *
- * Utility *
+ * Quiescence search
+ * Utilities *
  * Main program *
  */
 #include <stdio.h>
@@ -140,7 +142,7 @@ typedef struct tag_HIST
 
 HIST hist[6000]; /* Game length < 6000 */
 
-/* For catle rights we use a bitfield, like in TSCP 
+/* For castle rights we use a bitfield, like in TSCP
  * 15 = 1111  = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
  * 
  * 0001 White can short castle
@@ -150,6 +152,7 @@ HIST hist[6000]; /* Game length < 6000 */
  * 
  */
 int castle = 15;
+
 
 /* This mask is applied like this
  * 
@@ -192,6 +195,10 @@ int value_piece[6] =
 /* * * * * * * * * * * * *
  * Piece Square Tables
  * * * * * * * * * * * * */
+/* When evaluating the position we'll add a bonus (or malus) to each piece
+ * depending on the very square where it's placed. Vg, a knight in d4 will
+ * be given an extra +15, whilst a knight in a1 will be penalized with -40.
+ * This simple idea allows the engine to make more sensible moves */
 int pst_pawn[64] ={
 		0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,
@@ -243,7 +250,8 @@ int pst_king[64] = {
 		 10, 15,-15,-15,-15,-15, 15, 10};
 
 /* The flip array is used to calculate the piece/square
-   values for DARK pieces.
+   values for BLACKS pieces, without needing to write the
+   arrays for them (idea taken from TSCP).
    The piece/square value of a white pawn is pawn_pcsq[sq]
    and the value of a black pawn is pawn_pcsq[flip[sq]] */
 int flip[64] = {
