@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <signal.h>
 
 //#define NDEBUG
 #include <assert.h>
@@ -123,6 +124,8 @@ int color[64] = {
 		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 int side; /* Side to move, value = BLACK or WHITE */
+int             computer_side;
+int             max_depth;  /* max depth to search */
 
 /* A move is defined by its origin and final squares, and by the kind of
  * move it's: normal,  enpasant... */
@@ -1792,6 +1795,22 @@ void perft(depth)
  * Main program *
  ****************************************************************************
  */
+
+void             xboard();
+
+void         startgame()
+{
+   int i;
+   for (i = 0; i < 64; ++i) {
+	  piece[i] = piece[i];
+	  color[i] = color[i];
+   }
+
+	side = WHITE;
+	computer_side = BLACK;      /* Human is white side */
+	hdp = 0;
+}
+
 int main()
 {
 
@@ -1802,7 +1821,10 @@ int main()
 	int dest;
 	int i;
 	int computer_side;
-	int max_depth; /* max depth to search */
+
+	startgame();
+
+	max_depth = 6; /* max depth to search */
 	MOVE moveBuf[200];
 	int movecnt;
 
@@ -1846,6 +1868,11 @@ int main()
 			PrintBoard();
 			computer_side = (WHITE + BLACK) - computer_side;
 			continue;
+		}
+		if (!strcmp(s, "xboard"))
+		{
+		 xboard();
+			return;
 		}
 		if (!strcmp(s, "on"))
 		{
@@ -1925,5 +1952,152 @@ int main()
 				break;
 			}
 		PrintBoard();
+	}
+}
+
+void xboard()
+{
+	char line[256], command[256], c;
+	int from, dest, i;
+	MOVE moveBuf[200], bestMove;
+	int movecnt;
+
+	signal(SIGINT, SIG_IGN);
+	printf("\n");
+
+	startgame();
+
+	for (;;)
+	{
+		fflush(stdout);
+		if (side == computer_side)
+		{ /* computer's turn */
+			/* Find out the best move to react the current position */
+			bestMove = ComputerThink(max_depth);
+			MakeMove(bestMove);
+			/* send move */
+			switch (bestMove.type)
+			{
+			case MOVE_TYPE_PROMOTION_TO_QUEEN:
+				c = 'q';
+				break;
+			case MOVE_TYPE_PROMOTION_TO_ROOK:
+				c = 'r';
+				break;
+			case MOVE_TYPE_PROMOTION_TO_BISHOP:
+				c = 'b';
+				break;
+			case MOVE_TYPE_PROMOTION_TO_KNIGHT:
+				c = 'n';
+				break;
+			default:
+				c = ' ';
+				printf("move %c%d%c%d%c\n", 'a' + COL(bestMove.from), 8
+						- ROW(bestMove.from), 'a' + COL(bestMove.dest), 8
+						- ROW(bestMove.dest), c);
+			}
+			continue;
+		}
+
+		if (!fgets(line, 256, stdin))
+			return;
+		if (line[0] == '\n')
+			continue;
+		sscanf(line, "%s", command);
+		if (!strcmp(command, "xboard"))
+		{
+			continue;
+		}
+		if (!strcmp(command, "new"))
+		{
+			startgame();
+			continue;
+		}
+		if (!strcmp(command, "quit"))
+		{
+			return;
+		}
+		if (!strcmp(command, "force"))
+		{
+			computer_side = EMPTY;
+			continue;
+		}
+		if (!strcmp(command, "white"))
+		{
+			side = WHITE;
+			computer_side = BLACK;
+			continue;
+		}
+		if (!strcmp(command, "black"))
+		{
+			side = BLACK;
+			computer_side = WHITE;
+			continue;
+		}
+		if (!strcmp(command, "sd"))
+		{
+			sscanf(line, "sd %d", &max_depth);
+			continue;
+		}
+		if (!strcmp(command, "go"))
+		{
+			computer_side = side;
+			continue;
+		}
+		if (!strcmp(command, "undo"))
+		{
+			if (hdp = 0)
+				continue;
+			TakeBack();
+			continue;
+		}
+		if (!strcmp(command, "remove"))
+		{
+			if (hdp <= 1)
+				continue;
+			TakeBack();
+			TakeBack();
+			continue;
+		}
+
+		/* maybe the user entered a move? */
+		from = command[0] - 'a';
+		from += 8 * (8 - (command[1] - '0'));
+		dest = command[2] - 'a';
+		dest += 8 * (8 - (command[3] - '0'));
+		ply = 0;
+		movecnt = Gen(side, moveBuf);
+		/* loop through the moves to see if it's legal */
+		for (i = 0; i < movecnt; i++)
+			if (moveBuf[i].from == from && moveBuf[i].dest == dest)
+			{
+				if (piece[from] == PAWN && (dest < 8 || dest > 55))
+				{ /* Promotion move? */
+					switch (command[4])
+					{
+					case 'q':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
+						break;
+					case 'r':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_ROOK;
+						break;
+					case 'b':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_BISHOP;
+						break;
+					case 'n':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_KNIGHT;
+						break;
+					default:
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
+					}
+				}
+				if (!MakeMove(moveBuf[i]))
+				{
+					TakeBack();
+					printf("Illegal move.\n");
+				}
+				break;
+
+			}
 	}
 }
