@@ -1,20 +1,20 @@
 /*
- secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
+secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
  */
 /*
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program. If not, see <http://www.gnu.org/licenses/>
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>
 
  * BASIC PARTS: *
  * Some definitions *
@@ -72,28 +72,29 @@
 #define MOVE_TYPE_NORMAL 1
 #define MOVE_TYPE_CASTLE 2
 #define MOVE_TYPE_PAWN_TWO 3
-#define MOVE_TYPE_PROMOTION_TO_QUEEN 4
-#define MOVE_TYPE_PROMOTION_TO_ROOK 5
-#define MOVE_TYPE_PROMOTION_TO_BISHOP 6
-#define MOVE_TYPE_PROMOTION_TO_KNIGHT 7
+#define MOVE_TYPE_EPS 4
+#define MOVE_TYPE_PROMOTION_TO_QUEEN 5
+#define MOVE_TYPE_PROMOTION_TO_ROOK 6
+#define MOVE_TYPE_PROMOTION_TO_BISHOP 7
+#define MOVE_TYPE_PROMOTION_TO_KNIGHT 8
 
-/* Some  useful squares */
-#define A1				56
-#define B1				57
-#define C1				58
-#define D1				59
-#define E1				60
-#define F1				61
-#define G1				62
-#define H1				63
-#define A8				0
-#define B8				1
-#define C8				2
-#define D8				3
-#define E8				4
-#define F8				5
-#define G8				6
-#define H8				7
+/* Some useful squares */
+#define A1 56
+#define B1 57
+#define C1 58
+#define D1 59
+#define E1 60
+#define F1 61
+#define G1 62
+#define H1 63
+#define A8 0
+#define B8 1
+#define C8 2
+#define D8 3
+#define E8 4
+#define F8 5
+#define G8 6
+#define H8 7
 
 /*
  ****************************************************************************
@@ -124,11 +125,11 @@ int color[64] = {
 		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 int side; /* Side to move, value = BLACK or WHITE */
-int             computer_side;
-int             max_depth;  /* max depth to search */
+int computer_side;
+int max_depth; /* max depth to search */
 
 /* A move is defined by its origin and final squares, and by the kind of
- * move it's: normal,  enpasant... */
+ * move it's: normal, enpasant... */
 typedef struct tag_MOVE
 {
 	int from;
@@ -147,31 +148,31 @@ typedef struct tag_HIST
 HIST hist[6000]; /* Game length < 6000 */
 
 /* For castle rights we use a bitfield, like in TSCP
- * 15 = 1111  = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
- * 
+ * 15 = 1111 = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
+ *
  * 0001 White can short castle
  * 0010 White can long castle
  * 0100 Black can short castle
  * 1000 Black can long castle
- * 
+ *
  */
 int castle = 15;
 
 
 /* This mask is applied like this
- * 
+ *
  * castle &= castle_mask[from] & castle_mask[dest]
- * 
+ *
  * When from and dest are whatever pieces, then nothing happens, otherwise
  * the values are chosen in such a way that if vg the white king moves
  * to F1 then
- * 
+ *
  * castle = castle & (12 & 15)
  * 1111 & (1100 & 1111) == 1111 & 1100 == 1100
- * 
+ *
  * and white's lost its castle rights
- * 
- *  */
+ *
+ * */
 int castle_mask[64] = {
 		7, 15, 15, 15, 3, 15, 15, 11,
 		15, 15, 15, 15, 15, 15, 15, 15,
@@ -204,44 +205,44 @@ int value_piece[6] =
  * be given an extra +15, whilst a knight in a1 will be penalized with -40.
  * This simple idea allows the engine to make more sensible moves */
 int pst_pawn[64] ={
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0, 15, 15,  0,  0,  0,
-		0,  0,  0, 10, 10,  0,  0,  0,
-		0,  0,  0,  5,  5,  0,  0,  0,
-		0,  0,  0,-25,-25,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0  };
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 15, 15, 0, 0, 0,
+		0, 0, 0, 10, 10, 0, 0, 0,
+		0, 0, 0, 5, 5, 0, 0, 0,
+		0, 0, 0,-25,-25, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0 };
 
 int pst_knight[64] = {
 		-40,-25,-25,-25,-25,-25,-25,-40,
-		-30,  0,  0,  0,  0,  0,  0,-30,
-		-30,  0,  0,  0,  0,  0,  0,-30,
-		-30,  0,  0, 15, 15,  0,  0,-30,
-		-30,  0,  0, 15, 15,  0,  0,-30,
-		-30,  0,  10, 0, 0,  10,  0,-30,
-		-30,  0,  0,  5,  5,  0,  0,-30,
+		-30, 0, 0, 0, 0, 0, 0,-30,
+		-30, 0, 0, 0, 0, 0, 0,-30,
+		-30, 0, 0, 15, 15, 0, 0,-30,
+		-30, 0, 0, 15, 15, 0, 0,-30,
+		-30, 0, 10, 0, 0, 10, 0,-30,
+		-30, 0, 0, 5, 5, 0, 0,-30,
 		-40,-30,-25,-25,-25,-25,-30,-40 };
 
 int pst_bishop[64] = {
-		  -10,  0,  0,  0,  0,  0,  0,-10,
-		  -10,  5,  0,  0,  0,  0,  5,-10,
-		  -10,  0,  5,  0,  0,  5,  0,-10,
-		  -10,  0,  0, 10, 10,  0,  0,-10,
-		  -10,  0,  5, 10, 10,  5,  0,-10,
-		  -10,  0,  5,  0,  0,  5,  0,-10,
-		  -10,  5,  0,  0,  0,  0,  5,-10,
-		  -10,-20,-20,-20,-20,-20,-20,-10 };
+		-10, 0, 0, 0, 0, 0, 0,-10,
+		-10, 5, 0, 0, 0, 0, 5,-10,
+		-10, 0, 5, 0, 0, 5, 0,-10,
+		-10, 0, 0, 10, 10, 0, 0,-10,
+		-10, 0, 5, 10, 10, 5, 0,-10,
+		-10, 0, 5, 0, 0, 5, 0,-10,
+		-10, 5, 0, 0, 0, 0, 5,-10,
+		-10,-20,-20,-20,-20,-20,-20,-10 };
 
 int pst_rook[64] = {
-		0,  0,  0,  0,  0,  0,  0,  0,
-	   10, 10, 10, 10, 10, 10, 10, 10,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  0,  0,  0,  0,  0,
-		0,  0,  0,  5,  5,  0,  0,  0 };
+		0, 0, 0, 0, 0, 0, 0, 0,
+		10, 10, 10, 10, 10, 10, 10, 10,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 5, 5, 0, 0, 0 };
 
 int pst_king[64] = {
 		-25,-25,-25,-25,-25,-25,-25,-25,
@@ -251,22 +252,22 @@ int pst_king[64] = {
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-25,-25,-25,-25,-25,-25,-25,-25,
 		-25,-25,-25,-25,-25,-25,-25,-25,
-		 10, 15,-15,-15,-15,-15, 15, 10};
+		10, 15,-15,-15,-15,-15, 15, 10};
 
 /* The flip array is used to calculate the piece/square
-   values for BLACKS pieces, without needing to write the
-   arrays for them (idea taken from TSCP).
-   The piece/square value of a white pawn is pawn_pcsq[sq]
-   and the value of a black pawn is pawn_pcsq[flip[sq]] */
+values for BLACKS pieces, without needing to write the
+arrays for them (idea taken from TSCP).
+The piece/square value of a white pawn is pawn_pcsq[sq]
+and the value of a black pawn is pawn_pcsq[flip[sq]] */
 int flip[64] = {
-	 56,  57,  58,  59,  60,  61,  62,  63,
-	 48,  49,  50,  51,  52,  53,  54,  55,
-	 40,  41,  42,  43,  44,  45,  46,  47,
-	 32,  33,  34,  35,  36,  37,  38,  39,
-	 24,  25,  26,  27,  28,  29,  30,  31,
-	 16,  17,  18,  19,  20,  21,  22,  23,
-	  8,   9,  10,  11,  12,  13,  14,  15,
-	  0,   1,   2,   3,   4,   5,   6,   7
+		56, 57, 58, 59, 60, 61, 62, 63,
+		48, 49, 50, 51, 52, 53, 54, 55,
+		40, 41, 42, 43, 44, 45, 46, 47,
+		32, 33, 34, 35, 36, 37, 38, 39,
+		24, 25, 26, 27, 28, 29, 30, 31,
+		16, 17, 18, 19, 20, 21, 22, 23,
+		8, 9, 10, 11, 12, 13, 14, 15,
+		0, 1, 2, 3, 4, 5, 6, 7
 };
 /*
  ****************************************************************************
@@ -295,7 +296,11 @@ void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* The 7 and 56 are to limit pawns to the 2nd through 7th ranks, which
 	 * means this isn't a promotion, i.e., a normal pawn move */
-	if (dest > 7 && dest < 56) /* this is just a normal move */
+	if (piece[dest] == EPS_SQUARE)
+	{
+		Gen_Push(from, dest, MOVE_TYPE_EPS, pBuf, pMCount);
+	}
+	else if (dest > 7 && dest < 56) /* this is just a normal move */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
 	}
@@ -513,76 +518,76 @@ int Gen(int current_side, MOVE * pBuf)
 					Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
 
 
-					if (current_side == WHITE)
+				if (current_side == WHITE)
+				{
+					/* Can white short castle? */
+					if (castle & 1)
 					{
-						/* Can white short castle? */
-						if (castle & 1)
-						{
-							/* If white can castle the white king has to be in square 60 */
-							if (col &&
+						/* If white can castle the white king has to be in square 60 */
+						if (col &&
 								color[i + 1] == EMPTY &&
 								color[i + 2] == EMPTY &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i + 1))
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2, pBuf, &movecount);
-							}
-						}
-
-						/* Can white long castle? */
-						if (castle & 2)
 						{
-							if (col &&
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i + 2, pBuf, &movecount);
+						}
+					}
+
+					/* Can white long castle? */
+					if (castle & 2)
+					{
+						if (col &&
 								color[i - 1] == EMPTY &&
 								color[i - 2] == EMPTY &&
 								color[i - 3] == EMPTY &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i - 1))
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2, pBuf, &movecount);
-							}
+						{
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i - 2, pBuf, &movecount);
 						}
 					}
-					else if (current_side == BLACK)
+				}
+				else if (current_side == BLACK)
+				{
+					/* Can black short castle? */
+					if (castle & 4)
 					{
-						/* Can black short castle? */
-						if (castle & 4)
-						{
-							/* If white can castle the white king has to be in square 60 */
-							if (col &&
+						/* If white can castle the white king has to be in square 60 */
+						if (col &&
 								color[i + 1] == EMPTY &&
 								color[i + 2] == EMPTY &&
 								piece[i + 3] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i + 1))
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i + 2, pBuf, &movecount);
-							}
-						}
-						/* Can black long castle? */
-						if (castle & 8)
 						{
-							if (col &&
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i + 2, pBuf, &movecount);
+						}
+					}
+					/* Can black long castle? */
+					if (castle & 8)
+					{
+						if (col &&
 								color[i - 1] == EMPTY &&
 								color[i - 2] == EMPTY &&
 								color[i - 3] == EMPTY &&
 								piece[i - 4] == ROOK &&
 								!IsInCheck(current_side) &&
 								!IsAttacked(current_side, i - 1))
-							{
-								/* The king goes 2 sq to the left */
-								Gen_PushKing(i, i - 2, pBuf, &movecount);
-							}
+						{
+							/* The king goes 2 sq to the left */
+							Gen_PushKing(i, i - 2, pBuf, &movecount);
 						}
 					}
+				}
 
 				break;
-//			default:
-//				printf("Piece type unknown");
-//				assert(false);
+				// default:
+				// printf("Piece type unknown");
+				// assert(false);
 			}
 		}
 	return movecount;
@@ -763,29 +768,29 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				break;
 
-			case KING:
-				/* the column and rank checks are to make sure it is on the board*/
-				col = COL(i);
-				if (col && color[i - 1] == xside)
-					Gen_PushKing(i, i - 1, pBuf, &capscount); /* left */
-				if (col < 7 && color[i + 1] == xside)
-					Gen_PushKing(i, i + 1, pBuf, &capscount); /* right */
-				if (i > 7 && color[i - 8] == xside)
-					Gen_PushKing(i, i - 8, pBuf, &capscount); /* up */
-				if (i < 56 && color[i + 8] == xside)
-					Gen_PushKing(i, i + 8, pBuf, &capscount); /* down */
-				if (col && i > 7 && color[i - 9] == xside)
-					Gen_PushKing(i, i - 9, pBuf, &capscount); /* left up */
-				if (col < 7 && i > 7 && color[i - 7] == xside)
-					Gen_PushKing(i, i - 7, pBuf, &capscount); /* right up */
-				if (col && i < 56 && color[i + 7] == xside)
-					Gen_PushKing(i, i + 7, pBuf, &capscount); /* left down */
-				if (col < 7 && i < 56 && color[i + 9] == xside)
-					Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
-				break;
-				//			default:
-				//				printf("Piece type unknown");
-				//				assert(false);
+			//case KING:
+				///* the column and rank checks are to make sure it is on the board*/
+				//col = COL(i);
+				//if (col && color[i - 1] == xside)
+					//Gen_PushKing(i, i - 1, pBuf, &capscount); /* left */
+				//if (col < 7 && color[i + 1] == xside)
+					//Gen_PushKing(i, i + 1, pBuf, &capscount); /* right */
+				//if (i > 7 && color[i - 8] == xside)
+					//Gen_PushKing(i, i - 8, pBuf, &capscount); /* up */
+				//if (i < 56 && color[i + 8] == xside)
+					//Gen_PushKing(i, i + 8, pBuf, &capscount); /* down */
+				//if (col && i > 7 && color[i - 9] == xside)
+					//Gen_PushKing(i, i - 9, pBuf, &capscount); /* left up */
+				//if (col < 7 && i > 7 && color[i - 7] == xside)
+					//Gen_PushKing(i, i - 7, pBuf, &capscount); /* right up */
+				//if (col && i < 56 && color[i + 7] == xside)
+					//Gen_PushKing(i, i + 7, pBuf, &capscount); /* left down */
+				//if (col < 7 && i < 56 && color[i + 9] == xside)
+					//Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
+				//break;
+				// default:
+				// printf("Piece type unknown");
+				// assert(false);
 			}
 		}
 	return capscount;
@@ -997,7 +1002,7 @@ int IsInCheck(int current_side)
 			for (y += 9; y < 64 && COL(y) != 0; y += 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1018,7 +1023,7 @@ int IsInCheck(int current_side)
 			for (y += 7; y < 64 && COL(y) != 7; y += 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1040,7 +1045,7 @@ int IsInCheck(int current_side)
 			for (y -= 9; y >= 0 && COL(y) != 7; y -= 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1062,7 +1067,7 @@ int IsInCheck(int current_side)
 			for (y -= 7; y >= 0 && COL(y) != 0; y -= 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1191,7 +1196,7 @@ int IsAttacked(int current_side, int k)
 			for (y += 9; y < 64 && COL(y) != 0; y += 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1212,7 +1217,7 @@ int IsAttacked(int current_side, int k)
 			for (y += 7; y < 64 && COL(y) != 7; y += 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1234,7 +1239,7 @@ int IsAttacked(int current_side, int k)
 			for (y -= 9; y >= 0 && COL(y) != 7; y -= 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1256,7 +1261,7 @@ int IsAttacked(int current_side, int k)
 			for (y -= 7; y >= 0 && COL(y) != 0; y -= 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
-						== BISHOP))
+				                                                     == BISHOP))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1283,6 +1288,21 @@ int MakeMove(MOVE m)
 	color[m.dest] = color[m.from];
 	/* The original color becomes empty */
 	color[m.from] = EMPTY;
+	
+	/* en pasant capture */
+	if (m.type == MOVE_TYPE_EPS)
+	{
+		if (side == WHITE)
+		{
+			piece[m.dest + 8] = EMPTY;
+			color[m.dest + 8] = EMPTY;
+		}
+		else
+		{
+			piece[m.dest - 8] = EMPTY;
+			color[m.dest - 8] = EMPTY;
+		}
+	}
 
 
 	/* Once the move is done we check either this is a promotion */
@@ -1322,7 +1342,7 @@ int MakeMove(MOVE m)
 			{
 				piece[i] = EMPTY;
 				/* this seems unnecesary, but otherwise a bug occurs:
-				* after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
+				 * after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
 				color[i] = EMPTY;
 				break;
 			}
@@ -1421,6 +1441,7 @@ void TakeBack() /* undo what MakeMove did */
 	/* Update castle rights */
 	castle = hist[hdp].m.castle;
 
+	/* Return the captured material */
 	if (hist[hdp].cap != EMPTY)
 	{
 		color[hist[hdp].m.dest] = (WHITE + BLACK) - side;
@@ -1437,30 +1458,49 @@ void TakeBack() /* undo what MakeMove did */
 	}
 
 	/* Pawn moves two in the former move, so we hace to replace
-		 * the eps square */
+	 * the eps square */
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == BLACK)
-			{
+		{
 			piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
-			}
-		else if (side == WHITE)
+		}
+		else
 		{
 			piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
 		}
 	}
 
 	/* To remove the eps square after unmaking a pawn
-	 * movein two sqaures*/
+	 * moving two squares*/
 	if (hist[hdp].m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == WHITE)
 		{
 			piece[hist[hdp].m.from - 8] = EMPTY;
 		}
-		else if (side == BLACK)
+		else
 		{
 			piece[hist[hdp].m.from + 8] = EMPTY;
+		}
+	}
+	
+	/* Unmaking an en pasant capture */
+	if (hist[hdp].m.type == MOVE_TYPE_EPS)
+	{
+		if (side == WHITE)
+		{
+			/* The pawn */
+			piece[hist[hdp].m.dest + 8] = PAWN;
+			color[hist[hdp].m.dest + 8] = BLACK;
+			/* The eps square */
+			piece[hist[hdp].m.dest] = EPS_SQUARE;
+		}
+		else
+		{
+			piece[hist[hdp].m.dest - 8] = PAWN;
+			color[hist[hdp].m.dest - 8] = WHITE;
+			piece[hist[hdp].m.dest] = EPS_SQUARE;
 		}
 	}
 
@@ -1509,14 +1549,14 @@ void TakeBack() /* undo what MakeMove did */
 int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 {
 	int i;
-	int value;  /* To store the evaluation */
-	int havemove;  /* Either we have or not a legal move available */
-	int movecnt;  /* The number of available moves */
+	int value; /* To store the evaluation */
+	int havemove; /* Either we have or not a legal move available */
+	int movecnt; /* The number of available moves */
 
 	MOVE moveBuf[200]; /* List of movements */
 	MOVE tmpMove;
 
-//	nodes++; /* visiting a node, count it */
+	// nodes++; /* visiting a node, count it */
 	havemove = 0; /* is there a move available? */
 	pBestMove->type = MOVE_TYPE_NONE;
 
@@ -1529,12 +1569,12 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	for (i = 0; i < movecnt; ++i)
 	{
 
-//		{
-//		printf("move #%d = %c%d%c%d; \n",
-//				i,
-//				'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
-//				'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
-//		}
+		// {
+		// printf("move #%d = %c%d%c%d; \n",
+		// i,
+		// 'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
+		// 'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
+		// }
 
 		if (!MakeMove(moveBuf[i]))
 		{
@@ -1553,13 +1593,13 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 			value = -Search(-beta, -alpha, depth - 1, &tmpMove);
 		}
 		/* If no depth left (leaf node), we evalute the position
-		 and apply the alpha-beta search.
-		 In the case of existing a quiescent function, it should be
-		 called here instead of Eval() */
+		and apply the alpha-beta search.
+		In the case of existing a quiescent function, it should be
+		called here instead of Eval() */
 		else
 		{
-			value = Quiescent(alpha, beta);
-//			value = -Eval();
+			//value = Quiescent(alpha, beta);
+			 value = -Eval();
 		}
 
 		/* We've evaluated the position, so we return to the previous position
@@ -1598,27 +1638,32 @@ int Quiescent(int alpha, int beta)
 {
 	int i;
 	int capscnt;
-	int val;
+	int stand_pat;
+	int score;
 	MOVE cBuf[200];
 
 	nodes++;
 
 	/* First we just try the evaluation function */
-	val = -Eval();
-	if (val >= beta)
-	{
-		return beta;
-	}
-	if (val > alpha)
-	{
-		alpha = val;
-	}
+	stand_pat = -Eval();
+	//printf("val = %d\n", val);
+	
+	if( stand_pat >= beta )
+        return beta;
+    if( alpha < stand_pat )
+        alpha = stand_pat;
 
 	/* If we haven't got a cut off we generate the captures and
 	 * store them in cBuf */
 	capscnt = GenCaps(side, cBuf);
 	for (i = 0; i < capscnt; ++i)
 	{
+		 //{
+		 //printf("capture: #%d = %c%d%c%d; \n",
+		 //i,
+		 //'a' + COL(cBuf[i].from), 8 - ROW(cBuf[i].from),
+		 //'a' + COL(cBuf[i].dest), 8 - ROW(cBuf[i].dest));
+		 //}
 		if (!MakeMove(cBuf[i]))
 		{
 			/* If the current move isn't legal, we take it back
@@ -1626,16 +1671,12 @@ int Quiescent(int alpha, int beta)
 			TakeBack();
 			continue;
 		}
-		val = -Quiescent(-beta, -alpha);
+		score = -Quiescent(-beta, -alpha);
 		TakeBack();
-		if (val >= beta)
-		{
-			return beta;
-		}
-		if (val > alpha)
-		{
-			alpha = val;
-		}
+		if( score >= beta )
+            return beta;
+        if( score > alpha )
+           alpha = score;
 	}
 	return alpha;
 }
@@ -1682,7 +1723,7 @@ MOVE ComputerThink(int max_depth)
 	printf(
 			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-					- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, knps);
+			- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, knps);
 	return m;
 }
 
@@ -1699,7 +1740,7 @@ void PrintBoard()
 	{
 		if ((i & 7) == 0)
 		{
-			printf("   +---+---+---+---+---+---+---+---+\n");
+			printf(" +---+---+---+---+---+---+---+---+\n");
 			if (i <= 56)
 			{
 				printf(" %d |", 8 - (((unsigned) i) >> 3));
@@ -1717,15 +1758,15 @@ void PrintBoard()
 			printf("\n");
 	}
 	printf(
-			"   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
+			" +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
 void perft(depth)
 {
 	int i;
-	int value;  /* To store the evaluation */
-	int havemove;  /* Either we have or not a legal move available */
-	int movecnt;  /* The number of available moves */
+	int value; /* To store the evaluation */
+	int havemove; /* Either we have or not a legal move available */
+	int movecnt; /* The number of available moves */
 
 	MOVE moveBuf[200]; /* List of movements */
 	MOVE tmpMove;
@@ -1781,14 +1822,14 @@ void perft(depth)
 	 * then that's checkmate or stalemate */
 	if (!havemove)
 	{
-//		if (IsInCheck(side))
-//			return -MATE + ply; /* add ply to find the longest path to lose or shortest path to win */
-//		else
-//			return 0;
+		// if (IsInCheck(side))
+		// return -MATE + ply; /* add ply to find the longest path to lose or shortest path to win */
+		// else
+		// return 0;
 		puts("Check");
 	}
 
-//	printf("nodes = %d, counted evals = %d, depth = %d\n", nodes, count_evaluations, depth);
+	// printf("nodes = %d, counted evals = %d, depth = %d\n", nodes, count_evaluations, depth);
 }
 /*
  ****************************************************************************
@@ -1796,18 +1837,18 @@ void perft(depth)
  ****************************************************************************
  */
 
-void             xboard();
+void xboard();
 
-void         startgame()
+void startgame()
 {
-   int i;
-   for (i = 0; i < 64; ++i) {
-	  piece[i] = piece[i];
-	  color[i] = color[i];
-   }
+	int i;
+	for (i = 0; i < 64; ++i) {
+		piece[i] = piece[i];
+		color[i] = color[i];
+	}
 
 	side = WHITE;
-	computer_side = BLACK;      /* Human is white side */
+	computer_side = BLACK; /* Human is white side */
 	hdp = 0;
 }
 
@@ -1871,7 +1912,7 @@ int main()
 		}
 		if (!strcmp(s, "xboard"))
 		{
-		 xboard();
+			xboard();
 			return;
 		}
 		if (!strcmp(s, "on"))
