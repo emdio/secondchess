@@ -2,7 +2,7 @@
 
 -Its main goal is to add the neccesary code to firstchess in order
 to make it play real chess, especially adding the rules for castle and en 
-passant capture
+passant capture, focusing in an easy to read code.
 
 -To compile under linux just "gcc secondchess.c -o secondchess -Ofast"
 
