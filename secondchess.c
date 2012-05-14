@@ -2087,7 +2087,7 @@ void xboard()
 		}
 		if (!strcmp(command, "undo"))
 		{
-			if (hdp = 0)
+			if (hdp == 0)
 				continue;
 			TakeBack();
 			continue;
