@@ -1713,7 +1713,7 @@ MOVE ComputerThink(int max_depth)
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
 	knps = (nodes / t)/1000.;
 
-	float decimal_score = ((float)score)/100.;
+	double decimal_score = ((double)score)/100.;
 	if (side == BLACK)
 	{
 		decimal_score= -decimal_score;
