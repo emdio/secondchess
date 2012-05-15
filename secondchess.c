@@ -615,7 +615,7 @@ int GenCaps(int current_side, MOVE * pBuf)
 
 			case PAWN:
 				col = COL(i);
-				row = ROW(i);
+				//row = ROW(i);
 				if (current_side == BLACK)
 				{
 					/* This isn't a capture, but it's necesary in order to
@@ -1837,7 +1837,7 @@ void perft(depth)
  ****************************************************************************
  */
 
-//void xboard();
+void xboard();
 
 void startgame()
 {
@@ -1913,7 +1913,7 @@ int main()
 		if (!strcmp(s, "xboard"))
 		{
 			xboard();
-			return;
+			return 0;
 		}
 		if (!strcmp(s, "on"))
 		{
