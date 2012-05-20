@@ -1861,7 +1861,7 @@ int main()
 	int from;
 	int dest;
 	int i;
-	int computer_side;
+	//int computer_side;
 
 	startgame();
 
