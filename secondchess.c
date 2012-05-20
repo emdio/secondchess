@@ -1683,7 +1683,7 @@ int Quiescent(int alpha, int beta)
 
 
 
-MOVE ComputerThink(int max_depth)
+MOVE ComputerThink(int depth)
 {
 	/* It returns the move the computer makes */
 	MOVE m;
@@ -1706,7 +1706,7 @@ MOVE ComputerThink(int max_depth)
 	assert(start != -1);
 
 	/* Search now */
-	score = Search(-MATE, MATE, max_depth, &m);
+	score = Search(-MATE, MATE, depth, &m);
 
 	/* Stop timer */
 	stop = clock();
@@ -1723,7 +1723,7 @@ MOVE ComputerThink(int max_depth)
 	printf(
 			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-			- ROW(m.dest), nodes, count_evaluations, count_MakeMove, max_depth, decimal_score, t, knps);
+			- ROW(m.dest), nodes, count_evaluations, count_MakeMove, depth, decimal_score, t, knps);
 	return m;
 }
 
