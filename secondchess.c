@@ -1740,7 +1740,7 @@ void PrintBoard()
 	{
 		if ((i & 7) == 0)
 		{
-			printf(" +---+---+---+---+---+---+---+---+\n");
+			printf("   +---+---+---+---+---+---+---+---+\n");
 			if (i <= 56)
 			{
 				printf(" %d |", 8 - (((unsigned) i) >> 3));
@@ -1758,7 +1758,7 @@ void PrintBoard()
 			printf("\n");
 	}
 	printf(
-			" +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
+			"   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
 void perft(depth)
