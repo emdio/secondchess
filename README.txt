@@ -17,3 +17,7 @@ passant capture, focusing in an easy to read code.
  -Jonatan Pettersson, author of mediocre chess
  -Graham Banks and Dusan Stamenkovic for their logos
  -Many more...
+ 
+-TODO
+  -Finish perft function
+  -Implement qsearch 
