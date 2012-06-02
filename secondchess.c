@@ -33,6 +33,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #include <string.h>
 #include <time.h>
 #include <signal.h>
+#include <stdlib.h>
 
 //#define NDEBUG
 #include <assert.h>
@@ -869,8 +870,8 @@ int Eval()
 	}
 
 	if (side == WHITE)
-		return score;
-	return -score;
+		return score + addRand();
+	return -score - addRand();
 }
 
 /*
@@ -1732,6 +1733,20 @@ MOVE ComputerThink(int depth)
  * Utilities *
  ****************************************************************************
  */
+ 
+int
+addRand (int argc, char *argv[])
+{
+  /* Simple "srand()" seed: just use "time()" */
+  unsigned int iseed = (unsigned int)time(NULL);
+  srand (iseed);
+
+  double randuno = (((double)rand()/RAND_MAX)) * 100;
+  int randunofinal = (int)randuno;
+
+  return randunofinal;
+} 
+
 void PrintBoard()
 {
 	char pieceName[] = "PNBRQKpnbrqk";
