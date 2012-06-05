@@ -1768,9 +1768,9 @@ void PrintBoard()
 		else
 		{
 			if (color[i] == WHITE)
-				printf(" %c |", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
+				printf(" %c |", pieceName[piece[i]]);
 			else
-				printf("<%c>|", pieceName[piece[i] + (color[i] == WHITE ? 0 : 6)]);
+				printf("<%c>|", pieceName[piece[i] + 6]);
 		}
 		if ((i & 7) == 7)
 			printf("\n");
