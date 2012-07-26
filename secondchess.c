@@ -621,10 +621,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 				{
 					/* This isn't a capture, but it's necesary in order to
 					 * not oversee promotions */
-					if (color[i + 8] == EMPTY)
+					//if (color[i + 8] == EMPTY)
 						/* Pawn advances one square.
 						 * We use Gen_PushPawn because it can be a promotion */
-						Gen_PushPawn(i, i + 8, pBuf, &capscount);
+						//Gen_PushPawn(i, i + 8, pBuf, &capscount);
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
 						Gen_PushPawn(i, i + 7, pBuf, &capscount);
@@ -641,10 +641,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				else if (current_side == WHITE)
 				{
-					if (color[i - 8] == EMPTY)
+					//if (color[i - 8] == EMPTY)
 						/* Pawn advances one square.
 						 * We use Gen_PushPawn because it can be a promotion */
-						Gen_PushPawn(i, i - 8, pBuf, &capscount);
+						//Gen_PushPawn(i, i - 8, pBuf, &capscount);
 					/* For captures */
 					if (col && color[i - 9] == BLACK)
 						Gen_PushPawn(i, i - 9, pBuf, &capscount);
@@ -1599,8 +1599,8 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		called here instead of Eval() */
 		else
 		{
-			//value = Quiescent(alpha, beta);
-			 value = -Eval();
+			value = Quiescent(alpha, beta);
+			// value = -Eval();
 		}
 
 		/* We've evaluated the position, so we return to the previous position
@@ -1657,6 +1657,17 @@ int Quiescent(int alpha, int beta)
 	/* If we haven't got a cut off we generate the captures and
 	 * store them in cBuf */
 	capscnt = GenCaps(side, cBuf);
+	
+	//for (i = 0; i < capscnt; ++i)
+	//{
+		 //{
+		 //printf("capture: #%d = %c%d%c%d; \n",
+		 //i,
+		 //'a' + COL(cBuf[i].from), 8 - ROW(cBuf[i].from),
+		 //'a' + COL(cBuf[i].dest), 8 - ROW(cBuf[i].dest));
+		 //}
+	 //}
+	
 	for (i = 0; i < capscnt; ++i)
 	{
 		 //{
@@ -1741,7 +1752,7 @@ addRand (int argc, char *argv[])
   unsigned int iseed = (unsigned int)time(NULL);
   srand (iseed);
 
-  double randuno = (((double)rand()/RAND_MAX)) * 100;
+  double randuno = (((double)rand()/RAND_MAX)) * 50;
   int randunofinal = (int)randuno;
 
   return randunofinal;
@@ -1855,8 +1866,6 @@ void perft(depth)
  ****************************************************************************
  */
 
-void xboard();
-
 void startgame()
 {
 	int i;
@@ -1868,150 +1877,6 @@ void startgame()
 	side = WHITE;
 	computer_side = BLACK; /* Human is white side */
 	hdp = 0;
-}
-
-int main()
-{
-
-	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
-
-	char s[256];
-	int from;
-	int dest;
-	int i;
-	//int computer_side;
-
-	startgame();
-
-	max_depth = 6; /* max depth to search */
-	MOVE moveBuf[200];
-	int movecnt;
-
-	puts("Second Chess, by Emilio Diaz");
-	puts(" Help");
-	puts(" d: display board");
-	puts(" MOVE: make a move (e.g. b1c3, a7a8q, e1g1)");
-	puts(" on: force computer to move");
-	puts(" quit: exit");
-	puts(" sd n: set engine depth to n plies");
-	puts(" undo: take back last move");
-
-	side = WHITE;
-	computer_side = BLACK; /* Human is white side */
-	max_depth = 6;
-	hdp = 0; /* Current move order */
-	for (;;)
-	{
-		if (side == computer_side)
-		{ /* Computer's turn */
-			/* Find out the best move to react the current position */
-			MOVE bestMove = ComputerThink(max_depth);
-			MakeMove(bestMove);
-			PrintBoard();
-			printf("CASTLE: %d\n", castle);
-			continue;
-		}
-
-		/* Get user input */
-		printf("sc> ");
-		if (scanf("%s", s) == EOF) /* close program */
-			return 0;
-		if (!strcmp(s, "d"))
-		{
-			PrintBoard();
-			continue;
-		}
-		if (!strcmp(s, "undo"))
-		{
-			TakeBack();
-			PrintBoard();
-			computer_side = (WHITE + BLACK) - computer_side;
-			continue;
-		}
-		if (!strcmp(s, "xboard"))
-		{
-			xboard();
-			return 0;
-		}
-		if (!strcmp(s, "on"))
-		{
-			computer_side = side;
-			continue;
-		}
-		if (!strcmp(s, "sd"))
-		{
-			scanf("%d", &max_depth);
-			continue;
-		}
-		if (!strcmp(s, "perft"))
-		{
-			count_evaluations = 0;
-			count_checks = 0;
-			scanf("%d", &max_depth);
-			perft(max_depth);
-			printf("nodes = %d,"
-					"counted evals = %d,"
-					"checks = %d, depth = %d\n",
-					nodes,
-					count_evaluations,
-					count_checks,
-					max_depth);
-			continue;
-		}
-		if (!strcmp(s, "quit"))
-		{
-			printf("Good bye!\n");
-			return 0;
-		}
-
-		/* Maybe the user entered a move? */
-		from = s[0] - 'a';
-		from += 8 * (8 - (s[1] - '0'));
-		dest = s[2] - 'a';
-		dest += 8 * (8 - (s[3] - '0'));
-		ply = 0;
-		movecnt = Gen(side, moveBuf);
-
-		/* Loop through the moves to see if it's legal */
-		for (i = 0; i < movecnt; i++)
-			if (moveBuf[i].from == from && moveBuf[i].dest == dest)
-			{
-				/* Promotion move? */
-				if (piece[from] == PAWN && (dest < 8 || dest > 55))
-				{
-					switch (s[4])
-					{
-					case 'q':
-						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
-						break;
-
-					case 'r':
-						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_ROOK;
-						break;
-
-					case 'b':
-						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_BISHOP;
-						break;
-
-					case 'n':
-						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_KNIGHT;
-						break;
-
-					default:
-						puts(
-								"promoting to a McGuffin..., I'll give you a queen");
-						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
-					}
-				}
-				if (!MakeMove(moveBuf[i]))
-				{
-					TakeBack();
-					printf("Illegal move.\n");
-				}
-				break;
-			}
-		PrintBoard();
-	}
 }
 
 void xboard()
@@ -2160,3 +2025,149 @@ void xboard()
 			}
 	}
 }
+
+int main()
+{
+
+	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
+
+	char s[256];
+	int from;
+	int dest;
+	int i;
+	//int computer_side;
+
+	startgame();
+
+	max_depth = 6; /* max depth to search */
+	MOVE moveBuf[200];
+	int movecnt;
+
+	puts("Second Chess, by Emilio Diaz");
+	puts(" Help");
+	puts(" d: display board");
+	puts(" MOVE: make a move (e.g. b1c3, a7a8q, e1g1)");
+	puts(" on: force computer to move");
+	puts(" quit: exit");
+	puts(" sd n: set engine depth to n plies");
+	puts(" undo: take back last move");
+
+	side = WHITE;
+	computer_side = BLACK; /* Human is white side */
+	max_depth = 6;
+	hdp = 0; /* Current move order */
+	for (;;)
+	{
+		if (side == computer_side)
+		{ /* Computer's turn */
+			/* Find out the best move to react the current position */
+			MOVE bestMove = ComputerThink(max_depth);
+			MakeMove(bestMove);
+			PrintBoard();
+			printf("CASTLE: %d\n", castle);
+			continue;
+		}
+
+		/* Get user input */
+		printf("sc> ");
+		if (scanf("%s", s) == EOF) /* close program */
+			return 0;
+		if (!strcmp(s, "d"))
+		{
+			PrintBoard();
+			continue;
+		}
+		if (!strcmp(s, "undo"))
+		{
+			TakeBack();
+			PrintBoard();
+			computer_side = (WHITE + BLACK) - computer_side;
+			continue;
+		}
+		if (!strcmp(s, "xboard"))
+		{
+			xboard();
+			return 0;
+		}
+		if (!strcmp(s, "on"))
+		{
+			computer_side = side;
+			continue;
+		}
+		if (!strcmp(s, "sd"))
+		{
+			scanf("%d", &max_depth);
+			continue;
+		}
+		if (!strcmp(s, "perft"))
+		{
+			count_evaluations = 0;
+			count_checks = 0;
+			scanf("%d", &max_depth);
+			perft(max_depth);
+			printf("nodes = %d,"
+					"counted evals = %d,"
+					"checks = %d, depth = %d\n",
+					nodes,
+					count_evaluations,
+					count_checks,
+					max_depth);
+			continue;
+		}
+		if (!strcmp(s, "quit"))
+		{
+			printf("Good bye!\n");
+			return 0;
+		}
+
+		/* Maybe the user entered a move? */
+		from = s[0] - 'a';
+		from += 8 * (8 - (s[1] - '0'));
+		dest = s[2] - 'a';
+		dest += 8 * (8 - (s[3] - '0'));
+		ply = 0;
+		movecnt = Gen(side, moveBuf);
+
+		/* Loop through the moves to see if it's legal */
+		for (i = 0; i < movecnt; i++)
+			if (moveBuf[i].from == from && moveBuf[i].dest == dest)
+			{
+				/* Promotion move? */
+				if (piece[from] == PAWN && (dest < 8 || dest > 55))
+				{
+					switch (s[4])
+					{
+					case 'q':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
+						break;
+
+					case 'r':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_ROOK;
+						break;
+
+					case 'b':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_BISHOP;
+						break;
+
+					case 'n':
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_KNIGHT;
+						break;
+
+					default:
+						puts(
+								"promoting to a McGuffin..., I'll give you a queen");
+						moveBuf[i].type = MOVE_TYPE_PROMOTION_TO_QUEEN;
+					}
+				}
+				if (!MakeMove(moveBuf[i]))
+				{
+					TakeBack();
+					printf("Illegal move.\n");
+				}
+				break;
+			}
+		PrintBoard();
+	}
+}
+
+
