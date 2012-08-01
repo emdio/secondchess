@@ -1569,13 +1569,6 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	for (i = 0; i < movecnt; ++i)
 	{
 
-		// {
-		// printf("move #%d = %c%d%c%d; \n",
-		// i,
-		// 'a' + COL(moveBuf[i].from), 8 - ROW(moveBuf[i].from),
-		// 'a' + COL(moveBuf[i].dest), 8 - ROW(moveBuf[i].dest));
-		// }
-
 		if (!MakeMove(moveBuf[i]))
 		{
 			/* If the current move isn't legal, we take it back
@@ -1598,7 +1591,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		called here instead of Eval() */
 		else
 		{
-			value = -Quiescent(alpha, beta);
+			value = -Quiescent(-beta, -alpha);
 			// value = -Eval();
 		}
 
@@ -1646,7 +1639,6 @@ int Quiescent(int alpha, int beta)
 
 	/* First we just try the evaluation function */
 	stand_pat = Eval();
-	//printf("val = %d\n", val);
 	
 	if( stand_pat >= beta )
         return beta;
@@ -1657,24 +1649,8 @@ int Quiescent(int alpha, int beta)
 	 * store them in cBuf */
 	capscnt = GenCaps(side, cBuf);
 	
-	//for (i = 0; i < capscnt; ++i)
-	//{
-		 //{
-		 //printf("capture: #%d = %c%d%c%d; \n",
-		 //i,
-		 //'a' + COL(cBuf[i].from), 8 - ROW(cBuf[i].from),
-		 //'a' + COL(cBuf[i].dest), 8 - ROW(cBuf[i].dest));
-		 //}
-	 //}
-	
 	for (i = 0; i < capscnt; ++i)
 	{
-		 //{
-		 //printf("capture: #%d = %c%d%c%d; \n",
-		 //i,
-		 //'a' + COL(cBuf[i].from), 8 - ROW(cBuf[i].from),
-		 //'a' + COL(cBuf[i].dest), 8 - ROW(cBuf[i].dest));
-		 //}
 		if (!MakeMove(cBuf[i]))
 		{
 			/* If the current move isn't legal, we take it back
