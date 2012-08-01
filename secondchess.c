@@ -768,28 +768,28 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				break;
 
-			//case KING:
+			case KING:
 				///* the column and rank checks are to make sure it is on the board*/
-				//col = COL(i);
-				//if (col && color[i - 1] == xside)
-					//Gen_PushKing(i, i - 1, pBuf, &capscount); /* left */
-				//if (col < 7 && color[i + 1] == xside)
-					//Gen_PushKing(i, i + 1, pBuf, &capscount); /* right */
-				//if (i > 7 && color[i - 8] == xside)
-					//Gen_PushKing(i, i - 8, pBuf, &capscount); /* up */
-				//if (i < 56 && color[i + 8] == xside)
-					//Gen_PushKing(i, i + 8, pBuf, &capscount); /* down */
-				//if (col && i > 7 && color[i - 9] == xside)
-					//Gen_PushKing(i, i - 9, pBuf, &capscount); /* left up */
-				//if (col < 7 && i > 7 && color[i - 7] == xside)
-					//Gen_PushKing(i, i - 7, pBuf, &capscount); /* right up */
-				//if (col && i < 56 && color[i + 7] == xside)
-					//Gen_PushKing(i, i + 7, pBuf, &capscount); /* left down */
-				//if (col < 7 && i < 56 && color[i + 9] == xside)
-					//Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
-				//break;
-				// default:
-				// printf("Piece type unknown");
+				col = COL(i);
+				if (col && color[i - 1] == xside)
+					Gen_PushKing(i, i - 1, pBuf, &capscount); /* left */
+				if (col < 7 && color[i + 1] == xside)
+					Gen_PushKing(i, i + 1, pBuf, &capscount); /* right */
+				if (i > 7 && color[i - 8] == xside)
+					Gen_PushKing(i, i - 8, pBuf, &capscount); /* up */
+				if (i < 56 && color[i + 8] == xside)
+					Gen_PushKing(i, i + 8, pBuf, &capscount); /* down */
+				if (col && i > 7 && color[i - 9] == xside)
+					Gen_PushKing(i, i - 9, pBuf, &capscount); /* left up */
+				if (col < 7 && i > 7 && color[i - 7] == xside)
+					Gen_PushKing(i, i - 7, pBuf, &capscount); /* right up */
+				if (col && i < 56 && color[i + 7] == xside)
+					Gen_PushKing(i, i + 7, pBuf, &capscount); /* left down */
+				if (col < 7 && i < 56 && color[i + 9] == xside)
+					Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
+				break;
+				 default:
+				 printf("Piece type unknown");
 				// assert(false);
 			}
 		}
