@@ -32,7 +32,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <signal.h>
 #include <stdlib.h>
 
 //#define NDEBUG
@@ -870,8 +869,8 @@ int Eval()
 	}
 
 	if (side == WHITE)
-		return score + addRand();
-	return -score - addRand();
+		return score;
+	return -score;
 }
 
 /*
@@ -1599,7 +1598,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		called here instead of Eval() */
 		else
 		{
-			value = Quiescent(alpha, beta);
+			value = -Quiescent(alpha, beta);
 			// value = -Eval();
 		}
 
@@ -1646,7 +1645,7 @@ int Quiescent(int alpha, int beta)
 	nodes++;
 
 	/* First we just try the evaluation function */
-	stand_pat = -Eval();
+	stand_pat = Eval();
 	//printf("val = %d\n", val);
 	
 	if( stand_pat >= beta )
@@ -1752,7 +1751,7 @@ addRand (int argc, char *argv[])
   unsigned int iseed = (unsigned int)time(NULL);
   srand (iseed);
 
-  double randuno = (((double)rand()/RAND_MAX)) * 50;
+  double randuno = (((double)rand()/RAND_MAX)) * 10;
   int randunofinal = (int)randuno;
 
   return randunofinal;
@@ -1886,7 +1885,6 @@ void xboard()
 	MOVE moveBuf[200], bestMove;
 	int movecnt;
 
-	signal(SIGINT, SIG_IGN);
 	printf("\n");
 
 	startgame();
@@ -2039,7 +2037,7 @@ int main()
 
 	startgame();
 
-	max_depth = 6; /* max depth to search */
+	max_depth = 5; /* max depth to search */
 	MOVE moveBuf[200];
 	int movecnt;
 
@@ -2054,7 +2052,7 @@ int main()
 
 	side = WHITE;
 	computer_side = BLACK; /* Human is white side */
-	max_depth = 6;
+
 	hdp = 0; /* Current move order */
 	for (;;)
 	{
