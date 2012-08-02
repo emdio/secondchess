@@ -128,7 +128,7 @@ int side; /* Side to move, value = BLACK or WHITE */
 int computer_side;
 int max_depth; /* max depth to search */
 
-/* A move is defined by its origin and final squares, and by the kind of
+/* A move is defined by its origin and final squares, the castle rights and the kind of
  * move it's: normal, enpasant... */
 typedef struct tag_MOVE
 {
@@ -148,12 +148,13 @@ typedef struct tag_HIST
 HIST hist[6000]; /* Game length < 6000 */
 
 /* For castle rights we use a bitfield, like in TSCP
- * 15 = 1111 = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
  *
  * 0001 White can short castle
  * 0010 White can long castle
  * 0100 Black can short castle
  * 1000 Black can long castle
+ *
+ * 15 = 1111 = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
  *
  */
 int castle = 15;
@@ -170,7 +171,7 @@ int castle = 15;
  * castle = castle & (12 & 15)
  * 1111 & (1100 & 1111) == 1111 & 1100 == 1100
  *
- * and white's lost its castle rights
+ * and white's lost all its castle rights
  *
  * */
 int castle_mask[64] = {
@@ -257,8 +258,8 @@ int pst_king[64] = {
 /* The flip array is used to calculate the piece/square
 values for BLACKS pieces, without needing to write the
 arrays for them (idea taken from TSCP).
-The piece/square value of a white pawn is pawn_pcsq[sq]
-and the value of a black pawn is pawn_pcsq[flip[sq]] */
+The piece/square value of a white pawn is pst_pawn[sq]
+and the value of a black pawn is pst_pawn[flip[sq]] */
 int flip[64] = {
 		56, 57, 58, 59, 60, 61, 62, 63,
 		48, 49, 50, 51, 52, 53, 54, 55,
