@@ -272,7 +272,6 @@ int flip[64] = {
 /*
  ****************************************************************************
  * Move generator *
- * Lack: no enpassant *
  ****************************************************************************
  */
 void Gen_Push(int from, int dest, int type, MOVE * pBuf, int *pMCount)
