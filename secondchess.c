@@ -323,11 +323,11 @@ void Gen_PushPawnTwo(int from, int dest, MOVE * pBuf, int *pMCount)
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* Is it a castle?*/
-	if (from == E1 && (dest == G1 || dest == C1)) /* this is a white short castle */
+    if (from == E1 && (dest == G1 || dest == C1)) /* this is a white castle */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
-	else if (from == E8 && (dest == G8 || dest == C8)) /* this is a white long castle */
+    else if (from == E8 && (dest == G8 || dest == C8)) /* this is a black castle */
 	{
 		Gen_Push(from, dest, MOVE_TYPE_CASTLE, pBuf, pMCount);
 	}
@@ -347,8 +347,6 @@ int Gen(int current_side, MOVE * pBuf)
 	int col;
 	int movecount;
 	movecount = 0;
-
-	assert (movecount < 201);
 
 	for (i = 0; i < 64; i++) /* Scan all board */
 		if (color[i] == current_side)
