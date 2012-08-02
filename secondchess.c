@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
  * IsInCheck *
  * IsAttacked *
  * Search function - a typical alphabeta *
- * Quiescence search
+ * Quiescent search
  * Utilities *
  * Main program *
  */
