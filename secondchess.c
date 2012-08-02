@@ -600,6 +600,7 @@ int GenCaps(int current_side, MOVE * pBuf)
 	int k; /* Counter for cols */
 	int y;
 	int row;
+    int dest;
 	int col;
 	int capscount; /* Counter for the posible captures */
 	int xside;
@@ -614,14 +615,14 @@ int GenCaps(int current_side, MOVE * pBuf)
 
 			case PAWN:
 				col = COL(i);
-				//row = ROW(i);
+                row = ROW(i);
 				if (current_side == BLACK)
 				{
 					/* This isn't a capture, but it's necesary in order to
 					 * not oversee promotions */
-                    if (color[i + 8] == EMPTY)
-						/* Pawn advances one square.
-						 * We use Gen_PushPawn because it can be a promotion */
+                    if (color[i + 8] == EMPTY && row > 6)
+                        /* Pawn advances one square.
+                         * We use Gen_PushPawn because it can be a promotion */
                         Gen_PushPawn(i, i + 8, pBuf, &capscount);
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
@@ -639,7 +640,7 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				else if (current_side == WHITE)
 				{
-                    if (color[i - 8] == EMPTY)
+                    if (color[i - 8] == EMPTY && row < 2)
                     /* This isn't a capture, but it's necesary in order to
                      * not oversee promotions */
                         Gen_PushPawn(i, i - 8, pBuf, &capscount);
