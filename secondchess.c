@@ -842,6 +842,8 @@ int Eval()
 				break;
 			}
 		}
+        /* Now the evaluation for black: note the change of
+          the sign in the score*/
 		else if (color[i] == BLACK)
 		{
 			score -= value_piece[piece[i]];
@@ -867,6 +869,7 @@ int Eval()
 		}
 	}
 
+    /* Finally we return the score, taking into account the side to move */
 	if (side == WHITE)
 		return score;
 	return -score;
@@ -877,7 +880,8 @@ int Eval()
  * Make and Take back a move, IsInCheck *
  ****************************************************************************
  */
-/* Check and return 1 if side is in check, 0 otherwise */
+/* Check and return 1 if side is in check, 0 otherwise. Necesary in order to
+ check if castle is allowed*/
 int IsInCheck(int current_side)
 {
 	int k; /* The square where the king is placed */
@@ -1075,7 +1079,7 @@ int IsInCheck(int current_side)
 	return 0;
 }
 
-/* Check and return 1 if square k is attacked, 0 otherwise. Necesary, vg, to check
+/* Check and return 1 if square k is attacked by current_side, 0 otherwise. Necesary, vg, to check
  * castle rules (if king goes from e1 to g1, f1 can't be attacked by an enemy piece) */
 int IsAttacked(int current_side, int k)
 {
