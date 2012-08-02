@@ -338,7 +338,7 @@ void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 }
 
 /* Gen all moves of current_side to move and push them to pBuf, and return number of moves */
-int Gen(int current_side, MOVE * pBuf)
+int GenMoves(int current_side, MOVE * pBuf)
 {
 	int i; /* Counter for the board squares */
 	int k; /* Counter for cols */
@@ -497,6 +497,7 @@ int Gen(int current_side, MOVE * pBuf)
 
 			case KING:
 				/* the column and rank checks are to make sure it is on the board*/
+                /* The 'normal' moves*/
 				col = COL(i);
 				if (col && color[i - 1] != current_side)
 					Gen_PushKing(i, i - 1, pBuf, &movecount); /* left */
@@ -515,7 +516,7 @@ int Gen(int current_side, MOVE * pBuf)
 				if (col < 7 && i < 56 && color[i + 9] != current_side)
 					Gen_PushKing(i, i + 9, pBuf, &movecount); /* right down */
 
-
+                /* The castle moves*/
 				if (current_side == WHITE)
 				{
 					/* Can white short castle? */
@@ -523,10 +524,10 @@ int Gen(int current_side, MOVE * pBuf)
 					{
 						/* If white can castle the white king has to be in square 60 */
 						if (col &&
-								color[i + 1] == EMPTY &&
-								color[i + 2] == EMPTY &&
-								!IsInCheck(current_side) &&
-								!IsAttacked(current_side, i + 1))
+                            color[i + 1] == EMPTY &&
+                            color[i + 2] == EMPTY &&
+                            !IsInCheck(current_side) &&
+                            !IsAttacked(current_side, i + 1))
 						{
 							/* The king goes 2 sq to the left */
 							Gen_PushKing(i, i + 2, pBuf, &movecount);
@@ -537,11 +538,11 @@ int Gen(int current_side, MOVE * pBuf)
 					if (castle & 2)
 					{
 						if (col &&
-								color[i - 1] == EMPTY &&
-								color[i - 2] == EMPTY &&
-								color[i - 3] == EMPTY &&
-								!IsInCheck(current_side) &&
-								!IsAttacked(current_side, i - 1))
+                            color[i - 1] == EMPTY &&
+                            color[i - 2] == EMPTY &&
+                            color[i - 3] == EMPTY &&
+                            !IsInCheck(current_side) &&
+                            !IsAttacked(current_side, i - 1))
 						{
 							/* The king goes 2 sq to the left */
 							Gen_PushKing(i, i - 2, pBuf, &movecount);
@@ -583,8 +584,8 @@ int Gen(int current_side, MOVE * pBuf)
 				}
 
 				break;
-				// default:
-				// printf("Piece type unknown");
+//                default:
+//                printf("Piece type unknown, %d", piece[i]);
 				// assert(false);
 			}
 		}
@@ -618,10 +619,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 				{
 					/* This isn't a capture, but it's necesary in order to
 					 * not oversee promotions */
-					//if (color[i + 8] == EMPTY)
+                    if (color[i + 8] == EMPTY)
 						/* Pawn advances one square.
 						 * We use Gen_PushPawn because it can be a promotion */
-						//Gen_PushPawn(i, i + 8, pBuf, &capscount);
+                        Gen_PushPawn(i, i + 8, pBuf, &capscount);
 					if (col && color[i + 7] == WHITE)
 						/* Pawn captures and it can be a promotion*/
 						Gen_PushPawn(i, i + 7, pBuf, &capscount);
@@ -638,10 +639,10 @@ int GenCaps(int current_side, MOVE * pBuf)
 				}
 				else if (current_side == WHITE)
 				{
-					//if (color[i - 8] == EMPTY)
-						/* Pawn advances one square.
-						 * We use Gen_PushPawn because it can be a promotion */
-						//Gen_PushPawn(i, i - 8, pBuf, &capscount);
+                    if (color[i - 8] == EMPTY)
+                    /* This isn't a capture, but it's necesary in order to
+                     * not oversee promotions */
+                        Gen_PushPawn(i, i - 8, pBuf, &capscount);
 					/* For captures */
 					if (col && color[i - 9] == BLACK)
 						Gen_PushPawn(i, i - 9, pBuf, &capscount);
@@ -786,8 +787,8 @@ int GenCaps(int current_side, MOVE * pBuf)
 				if (col < 7 && i < 56 && color[i + 9] == xside)
 					Gen_PushKing(i, i + 9, pBuf, &capscount); /* right down */
 				break;
-				 default:
-				 printf("Piece type unknown");
+//				 default:
+//				 printf("Piece type unknown");
 				// assert(false);
 			}
 		}
@@ -1559,7 +1560,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 	pBestMove->type = MOVE_TYPE_NONE;
 
 	/* Generate and count all moves for current position */
-	movecnt = Gen(side, moveBuf);
+    movecnt = GenMoves(side, moveBuf);
 	assert (movecnt < 201);
 
 	/* Once we have all the moves available, we loop through the posible
@@ -1777,7 +1778,7 @@ void perft(depth)
 	havemove = 0; /* is there a move available? */
 
 	/* Generate and count all moves for current position */
-	movecnt = Gen(side, moveBuf);
+    movecnt = GenMoves(side, moveBuf);
 	assert (movecnt < 201);
 
 	/* Once we have all the moves available, we loop through the posible
@@ -1962,7 +1963,7 @@ void xboard()
 		dest = command[2] - 'a';
 		dest += 8 * (8 - (command[3] - '0'));
 		ply = 0;
-		movecnt = Gen(side, moveBuf);
+        movecnt = GenMoves(side, moveBuf);
 		/* loop through the moves to see if it's legal */
 		for (i = 0; i < movecnt; i++)
 			if (moveBuf[i].from == from && moveBuf[i].dest == dest)
@@ -2098,7 +2099,7 @@ int main()
 		dest = s[2] - 'a';
 		dest += 8 * (8 - (s[3] - '0'));
 		ply = 0;
-		movecnt = Gen(side, moveBuf);
+        movecnt = GenMoves(side, moveBuf);
 
 		/* Loop through the moves to see if it's legal */
 		for (i = 0; i < movecnt; i++)
