@@ -1418,9 +1418,10 @@ int MakeMove(MOVE m)
 	ply++;
 	hdp++;
 
-	/* Update the castle */
+    /* Update the castle rights */
 	castle &= castle_mask[m.from] & castle_mask[m.dest];
 
+    /* Checking if after making the move we're in check*/
 	r = !IsInCheck(side);
 
 	/* After making move, give turn to opponent */
@@ -1545,7 +1546,7 @@ void TakeBack() /* undo what MakeMove did */
 /*
  ****************************************************************************
  * Search function - a typical alphabeta, main search function *
- * Lack: no any technique for move ordering *
+ * Lack: no move ordering *
  ****************************************************************************
  */
 
