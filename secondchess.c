@@ -290,6 +290,8 @@ void Gen_PushNormal(int from, int dest, MOVE * pBuf, int *pMCount)
 	Gen_Push(from, dest, MOVE_TYPE_NORMAL, pBuf, pMCount);
 }
 
+/* Especial cases for Pawn */
+
 /* Pawn can promote */
 void Gen_PushPawn(int from, int dest, MOVE * pBuf, int *pMCount)
 {
@@ -318,7 +320,7 @@ void Gen_PushPawnTwo(int from, int dest, MOVE * pBuf, int *pMCount)
 	Gen_Push(from, dest, MOVE_TYPE_PAWN_TWO, pBuf, pMCount);
 }
 
-/* King */
+/* Especial cases for King */
 void Gen_PushKing(int from, int dest, MOVE * pBuf, int *pMCount)
 {
 	/* Is it a castle?*/
@@ -371,7 +373,7 @@ int GenMoves(int current_side, MOVE * pBuf)
 					if (col < 7 && color[i + 9] == WHITE)
 						/* Pawn captures and can be a promotion*/
 						Gen_PushPawn(i, i + 9, pBuf, &movecount);
-					/* For en passant capture */
+                        /* For en passant capture */
 					if (col && piece[i + 7] == EPS_SQUARE)
 						/* Pawn captures and it can be a promotion*/
 						Gen_PushPawn(i, i + 7, pBuf, &movecount);
@@ -797,7 +799,7 @@ int GenCaps(int current_side, MOVE * pBuf)
 /*
  ****************************************************************************
  * Evaluation for current position - main "brain" function *
- * Lack: almost no knowlegde *
+ * Lack: almost no knowlegde; material value + piece square tables *
  ****************************************************************************
  */
 int Eval()
@@ -879,8 +881,9 @@ int Eval()
  * Make and Take back a move, IsInCheck *
  ****************************************************************************
  */
+
 /* Check and return 1 if side is in check, 0 otherwise. Necesary in order to
- check if castle is allowed*/
+ check if castle is allowed, and the legality of a move done*/
 int IsInCheck(int current_side)
 {
 	int k; /* The square where the king is placed */
@@ -888,14 +891,13 @@ int IsInCheck(int current_side)
 	int y;
 	int row; /* Row where the king is placed */
 	int col; /* Col where the king is placed */
-	int xside;
-	xside = (WHITE + BLACK) - current_side; /* opposite current_side, who may be checking */
+    int xside; /* opposite current_side, who may be checking */
+    xside = (WHITE + BLACK) - current_side;
 
-	/* Find King */
+    /* Find the King of the side to move */
 	for (k = 0; k < 64; k++)
 		if ((piece[k] == KING) && color[k] == current_side)
-			break;
-	/* Situation of the king */
+            break;
 	row = ROW(k);
 	col = COL(k);
 
@@ -920,16 +922,16 @@ int IsInCheck(int current_side)
 	/* Check horizontal and vertical lines for attacking of Queen, Rook, King */
 	/* go down */
 	y = k + 8;
-	if (y < 64)
+    if (y < 64) /* Are we inside the board? */
 	{
-		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
-				|| piece[y] == ROOK))
+        if (color[y] == xside &&
+           (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
 			return 1;
 		if (piece[y] == EMPTY)
 			for (y += 8; y < 64; y += 8)
 			{
-				if (color[y] == xside
-						&& (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside &&
+                   (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -940,14 +942,14 @@ int IsInCheck(int current_side)
 	h = k - col;
 	if (y >= h)
 	{
-		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
-				|| piece[y] == ROOK))
+        if (color[y] == xside &&
+           (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
 			return 1;
 		if (piece[y] == EMPTY)
 			for (y--; y >= h; y--)
 			{
-				if (color[y] == xside
-						&& (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside &&
+                   (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -958,14 +960,14 @@ int IsInCheck(int current_side)
 	h = k - col + 7;
 	if (y <= h)
 	{
-		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
-				|| piece[y] == ROOK))
+        if (color[y] == xside &&
+           (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
 			return 1;
 		if (piece[y] == EMPTY)
 			for (y++; y <= h; y++)
 			{
-				if (color[y] == xside
-						&& (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside &&
+                   (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -975,14 +977,14 @@ int IsInCheck(int current_side)
 	y = k - 8;
 	if (y >= 0)
 	{
-		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
-				|| piece[y] == ROOK))
+        if (color[y] == xside &&
+           (piece[y] == KING || piece[y] == QUEEN || piece[y] == ROOK))
 			return 1;
 		if (piece[y] == EMPTY)
 			for (y -= 8; y >= 0; y -= 8)
 			{
-				if (color[y] == xside
-						&& (piece[y] == QUEEN || piece[y] == ROOK))
+                if (color[y] == xside &&
+                   (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
 				if (piece[y] != EMPTY)
 					break;
@@ -1279,17 +1281,12 @@ int MakeMove(MOVE m)
 
 	count_MakeMove ++;
 
-	hist[hdp].m = m;
-	/* store in history the piece of the dest square */
-	hist[hdp].cap = piece[m.dest];
-	/* dest piece is the original piece */
-	piece[m.dest] = piece[m.from];
-	/* The original square becomes empty */
-	piece[m.from] = EMPTY;
-	/* The dest square color is the one of the origin piece */
-	color[m.dest] = color[m.from];
-	/* The original color becomes empty */
-	color[m.from] = EMPTY;
+    hist[hdp].m = m;
+    hist[hdp].cap = piece[m.dest]; /* store in history the piece of the dest square */
+    piece[m.dest] = piece[m.from]; /* dest piece is the original piece */
+    piece[m.from] = EMPTY;/* The original square becomes empty */
+    color[m.dest] = color[m.from]; /* The dest square color is the one of the origin piece */
+    color[m.from] = EMPTY; /* The original color becomes empty */
 	
 	/* en pasant capture */
 	if (m.type == MOVE_TYPE_EPS)
