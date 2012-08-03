@@ -1426,7 +1426,8 @@ int MakeMove(MOVE m)
 	return r;
 }
 
-void TakeBack() /* undo what MakeMove did */
+/* Undo what MakeMove did */
+void TakeBack()
 {
 
 	int i;
@@ -1457,7 +1458,7 @@ void TakeBack() /* undo what MakeMove did */
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
-	/* Pawn moves two in the former move, so we hace to replace
+    /* If pawn moved two squares in the former move, we have to replace
 	 * the eps square */
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 	{
@@ -1504,7 +1505,7 @@ void TakeBack() /* undo what MakeMove did */
 		}
 	}
 
-	/* Castle: return rook to its original square */
+    /* Undo Castle: return rook to its original square */
 	if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
 	{
 		/* Take the tower to its poriginal place */
