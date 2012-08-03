@@ -192,6 +192,8 @@ int ply; /* ply of search */
 int count_evaluations;
 int count_checks;
 int count_MakeMove;
+int countquiesCalls;
+int countCapCalls;
 
 /* The values of the pieces in centipawns */
 int value_piece[6] =
@@ -1636,11 +1638,12 @@ int Quiescent(int alpha, int beta)
 	int score;
 	MOVE cBuf[200];
 
+    countquiesCalls++;
 	nodes++;
 
 	/* First we just try the evaluation function */
-	stand_pat = Eval();
-	if( stand_pat >= beta )
+    stand_pat = Eval();
+    if( stand_pat >= beta )
         return beta;
     if( alpha < stand_pat )
         alpha = stand_pat;
@@ -1648,6 +1651,8 @@ int Quiescent(int alpha, int beta)
 	/* If we haven't got a cut off we generate the captures and
 	 * store them in cBuf */
 	capscnt = GenCaps(side, cBuf);
+
+    countCapCalls++;
 	
 	for (i = 0; i < capscnt; ++i)
 	{
@@ -1682,6 +1687,7 @@ MOVE ComputerThink(int depth)
 	nodes = 0;
 	count_evaluations = 0;
 	count_MakeMove = 0;
+    countquiesCalls  = 0;
 
 
 	clock_t start;
@@ -1708,9 +1714,9 @@ MOVE ComputerThink(int depth)
 
 	/* After searching, print results */
 	printf(
-			"Search result: move = %c%d%c%d; nodes = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
+            "Search result: move = %c%d%c%d; nodes = %d, countCapCalls = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-			- ROW(m.dest), nodes, count_evaluations, count_MakeMove, depth, decimal_score, t, knps);
+            - ROW(m.dest), nodes, countCapCalls, count_evaluations, count_MakeMove, depth, decimal_score, t, knps);
 	return m;
 }
 
