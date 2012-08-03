@@ -1578,7 +1578,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 			continue;
 		}
 
-		/* If we're here, that means we have a move available */
+        /* If we've reached this far, then we have a move available */
 		havemove = 1;
 
 		/* This 'if' takes us to the deep of the position, the leaf nodes */
@@ -1587,17 +1587,17 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 			value = -Search(-beta, -alpha, depth - 1, &tmpMove);
 		}
 		/* If no depth left (leaf node), we evalute the position
-		and apply the alpha-beta search.
-		In the case of existing a quiescent function, it should be
-		called here instead of Eval() */
+           and apply the alpha-beta search.
+           In the case of existing a quiescent function, it should be
+           called here instead of Eval() */
 		else
 		{
 			value = -Quiescent(-beta, -alpha);
 			// value = -Eval();
 		}
 
-		/* We've evaluated the position, so we return to the previous position
-		 * in such a way that when we take the next move from moveBuf everything is in order */
+        /* We've evaluated the position, so we return to the previous position in such a way
+           that when we take the next move from moveBuf everything is in order */
 		TakeBack();
 
 		/* Once we have an evaluation, we use it in in an alpha-beta search */
@@ -1614,7 +1614,7 @@ int Search(int alpha, int beta, int depth, MOVE * pBestMove)
 		}
 	}
 
-	/* Once we've checked all the moves and we have no legal moves,
+    /* Once we've checked all the moves, if we have no legal moves,
 	 * then that's checkmate or stalemate */
 	if (!havemove)
 	{
@@ -1640,7 +1640,6 @@ int Quiescent(int alpha, int beta)
 
 	/* First we just try the evaluation function */
 	stand_pat = Eval();
-	
 	if( stand_pat >= beta )
         return beta;
     if( alpha < stand_pat )
