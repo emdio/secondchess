@@ -1808,6 +1808,11 @@ int perft(depth)
             continue;
         }
 
+        if (IsInCheck(side))
+        {
+            count_checks++;
+        }
+
         /* This 'if' takes us to the deep of the position */
         nodes += perft(depth - 1);
         TakeBack();
@@ -2065,6 +2070,7 @@ int main()
             scanf("%d", &max_depth);
             int count = perft(max_depth);
             printf("nodes = %d\n", count);
+            printf("checks = %d\n", count_checks);
 
 			continue;
 		}
