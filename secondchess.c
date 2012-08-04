@@ -103,25 +103,47 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 /* Piece in each square */
 int piece[64] = {
-		ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
-		PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		PAWN, PAWN, PAWN, PAWN, PAWN,PAWN, PAWN, PAWN,
-		ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT,ROOK };
+        ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
+        PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        PAWN, PAWN, PAWN, PAWN, PAWN,PAWN, PAWN, PAWN,
+        ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT,ROOK };
 
 /* Color of each square */
 int color[64] = {
-		BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
-		BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
-		WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+        BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
+        BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE,
+        WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
+
+//int piece[64] = {
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, PAWN, EMPTY, EMPTY, EMPTY, EMPTY,
+//        KING, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, ROOK,
+//        EMPTY, ROOK, EMPTY, EMPTY, EMPTY, PAWN, EMPTY, KING,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, PAWN, EMPTY, PAWN, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY };
+
+///* Color of each square */
+//int color[64] = {
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
+//        WHITE, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK,
+//        EMPTY, WHITE, EMPTY, EMPTY, EMPTY, BLACK, EMPTY, BLACK,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, WHITE, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY };
+
 
 int side; /* Side to move, value = BLACK or WHITE */
 int computer_side;
@@ -1725,19 +1747,6 @@ MOVE ComputerThink(int depth)
  * Utilities *
  ****************************************************************************
  */
- 
-int
-addRand (int argc, char *argv[])
-{
-  /* Simple "srand()" seed: just use "time()" */
-  unsigned int iseed = (unsigned int)time(NULL);
-  srand (iseed);
-
-  double randuno = (((double)rand()/RAND_MAX)) * 10;
-  int randunofinal = (int)randuno;
-
-  return randunofinal;
-} 
 
 void PrintBoard()
 {
@@ -1771,76 +1780,41 @@ void PrintBoard()
 			"   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
-void perft(depth)
+
+/* Returns the number of posible positions to a given depth. Based on the
+ perft function on Danasah */
+int perft(depth)
 {
-	int i;
-	int value; /* To store the evaluation */
-	int havemove; /* Either we have or not a legal move available */
-	int movecnt; /* The number of available moves */
+    int i;
+    int movecnt; /* The number of available moves */
+    int nodes = 0;
 
-	MOVE moveBuf[200]; /* List of movements */
-	MOVE tmpMove;
+    if (!depth) return 1;
 
-	nodes++; /* visiting a node, count it */
-	havemove = 0; /* is there a move available? */
+    MOVE moveBuf[200]; /* List of movements */
 
-	/* Generate and count all moves for current position */
+    /* Generate and count all moves for current position */
     movecnt = GenMoves(side, moveBuf);
-	assert (movecnt < 201);
 
-	/* Once we have all the moves available, we loop through the posible
-	 * moves and apply an alpha-beta search */
-	for (i = 0; i < movecnt; ++i)
-	{
-		if (!MakeMove(moveBuf[i]))
-		{
-			/* If the current move isn't legal, we take it back
-			 * and take the next move in the list */
-			TakeBack();
-			continue;
-		}
+    /* Once we have all the moves available, we loop through the posible
+     * moves and apply an alpha-beta search */
+    for (i = 0; i < movecnt; ++i)
+    {
+        if (!MakeMove(moveBuf[i]))
+        {
+            TakeBack();
+            continue;
+        }
 
-		/* Checks? */
-		if (IsInCheck(side) || IsInCheck(!side))
-		{
-			count_checks++;
-		}
+        /* This 'if' takes us to the deep of the position */
+        nodes += perft(depth - 1);
+        TakeBack();
+    }
 
-
-		/* If we're here, that means we have a move available */
-		havemove = 1;
-
-		/* This 'if' takes us to the deep of the position, the leaf nodes */
-		if (depth - 1 > 0)
-		{
-			if (IsInCheck(side))
-			{
-				count_evaluations--;
-			}
-			perft(depth - 1);
-		}
-		else
-		{
-			count_evaluations++;
-		}
-
-		TakeBack();
-
-	}
-
-	/* Once we've checked all the moves and we have no legal moves,
-	 * then that's checkmate or stalemate */
-	if (!havemove)
-	{
-		// if (IsInCheck(side))
-		// return -MATE + ply; /* add ply to find the longest path to lose or shortest path to win */
-		// else
-		// return 0;
-		puts("Check");
-	}
-
-	// printf("nodes = %d, counted evals = %d, depth = %d\n", nodes, count_evaluations, depth);
+    return nodes;
 }
+
+
 /*
  ****************************************************************************
  * Main program *
@@ -1942,7 +1916,7 @@ void xboard()
 		{
 			sscanf(line, "sd %d", &max_depth);
 			continue;
-		}
+        }
 		if (!strcmp(command, "go"))
 		{
 			computer_side = side;
@@ -2074,24 +2048,22 @@ int main()
 			computer_side = side;
 			continue;
 		}
+        if (!strcmp(s, "pass"))
+        {
+            side = (WHITE + BLACK) - side;
+            continue;
+        }
 		if (!strcmp(s, "sd"))
 		{
 			scanf("%d", &max_depth);
 			continue;
 		}
 		if (!strcmp(s, "perft"))
-		{
-			count_evaluations = 0;
-			count_checks = 0;
-			scanf("%d", &max_depth);
-			perft(max_depth);
-			printf("nodes = %d,"
-					"counted evals = %d,"
-					"checks = %d, depth = %d\n",
-					nodes,
-					count_evaluations,
-					count_checks,
-					max_depth);
+		{;
+            scanf("%d", &max_depth);
+            int count = perft(max_depth);
+            printf("nodes = %d\n", count);
+
 			continue;
 		}
 		if (!strcmp(s, "quit"))
