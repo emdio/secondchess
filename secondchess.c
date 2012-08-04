@@ -1307,9 +1307,9 @@ int MakeMove(MOVE m)
 
     hist[hdp].m = m;
     hist[hdp].cap = piece[m.dest]; /* store in history the piece of the dest square */
-    piece[m.dest] = piece[m.from]; /* dest piece is the original piece */
-    piece[m.from] = EMPTY;/* The original square becomes empty */
+    piece[m.dest] = piece[m.from]; /* dest piece is the one in the original square */
     color[m.dest] = color[m.from]; /* The dest square color is the one of the origin piece */
+    piece[m.from] = EMPTY;/* The original square becomes empty */
     color[m.from] = EMPTY; /* The original color becomes empty */
 	
 	/* en pasant capture */
