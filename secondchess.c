@@ -1482,17 +1482,17 @@ void TakeBack()
 		piece[hist[hdp].m.from] = PAWN;
 	}
 
-    /* If pawn moved two squares in the former move, we have to replace
+    /* If pawn moved two squares in the former move, we have to restore
 	 * the eps square */
 	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
 	{
-		if (side == BLACK)
+        if (side == WHITE)
 		{
-			piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
+            piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
 		}
 		else
 		{
-			piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
+            piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
 		}
 	}
 
@@ -1503,10 +1503,12 @@ void TakeBack()
 		if (side == WHITE)
 		{
 			piece[hist[hdp].m.from - 8] = EMPTY;
+            color[hist[hdp].m.from - 8] = EMPTY;
 		}
 		else
 		{
 			piece[hist[hdp].m.from + 8] = EMPTY;
+            color[hist[hdp].m.from + 8] = EMPTY;
 		}
 	}
 	
@@ -1533,28 +1535,28 @@ void TakeBack()
 	if (hist[hdp].m.type == MOVE_TYPE_CASTLE)
 	{
 		/* Take the tower to its poriginal place */
-		if (hist[hdp].m.dest == G1)
+        if (hist[hdp].m.dest == G1 && side == WHITE)
 		{
 			piece[H1] = ROOK;
 			color[H1] = WHITE;
 			piece[F1] = EMPTY;
 			color[F1] = EMPTY;
 		}
-		else if (hist[hdp].m.dest == C1)
+        else if (hist[hdp].m.dest == C1 && side == WHITE)
 		{
 			piece[A1] = ROOK;
 			color[A1] = WHITE;
 			piece[D1] = EMPTY;
 			color[D1] = EMPTY;
 		}
-		else if (hist[hdp].m.dest == G8)
+        else if (hist[hdp].m.dest == G8 && side == BLACK)
 		{
 			piece[H8] = ROOK;
 			color[H8] = BLACK;
 			piece[F8] = EMPTY;
 			color[F8] = EMPTY;
 		}
-		else if (hist[hdp].m.dest == C8)
+        else if (hist[hdp].m.dest == C8 && side == BLACK)
 		{
 			piece[A8] = ROOK;
 			color[A8] = BLACK;
