@@ -906,8 +906,8 @@ int Eval()
  ****************************************************************************
  */
 
-/* Check and return 1 if side is in check, 0 otherwise. Necesary in order to
- check if castle is allowed, and the legality of a move done*/
+/* Check if current side is in check. Necesary in order to check legality of moves
+ and check if castle is allowed */
 int IsInCheck(int current_side)
 {
 	int k; /* The square where the king is placed */
@@ -917,6 +917,7 @@ int IsInCheck(int current_side)
         if ((piece[k] == KING) && color[k] == current_side)
             break;
 
+    /* Use IsAttacked in order to know if current_side is under check */
     return IsAttacked(current_side, k);
 }
 
@@ -961,13 +962,13 @@ int IsAttacked(int current_side, int k)
 		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
 				|| piece[y] == ROOK))
 			return 1;
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y += 8; y < 64; y += 8)
 			{
 				if (color[y] == xside
 						&& (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -979,13 +980,13 @@ int IsAttacked(int current_side, int k)
 		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
 				|| piece[y] == ROOK))
 			return 1;
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y--; y >= h; y--)
 			{
 				if (color[y] == xside
 						&& (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -997,13 +998,13 @@ int IsAttacked(int current_side, int k)
 		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
 				|| piece[y] == ROOK))
 			return 1;
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y++; y <= h; y++)
 			{
 				if (color[y] == xside
 						&& (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -1014,13 +1015,13 @@ int IsAttacked(int current_side, int k)
 		if (color[y] == xside && (piece[y] == KING || piece[y] == QUEEN
 				|| piece[y] == ROOK))
 			return 1;
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y -= 8; y >= 0; y -= 8)
 			{
 				if (color[y] == xside
 						&& (piece[y] == QUEEN || piece[y] == ROOK))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -1036,13 +1037,13 @@ int IsAttacked(int current_side, int k)
 			if (current_side == BLACK && piece[y] == PAWN)
 				return 1;
 		}
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y += 9; y < 64 && COL(y) != 0; y += 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
 				                                                     == BISHOP))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -1057,13 +1058,13 @@ int IsAttacked(int current_side, int k)
 			if (current_side == BLACK && piece[y] == PAWN)
 				return 1;
 		}
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y += 7; y < 64 && COL(y) != 7; y += 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
 				                                                     == BISHOP))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 
 			}
@@ -1079,13 +1080,13 @@ int IsAttacked(int current_side, int k)
 			if (current_side == WHITE && piece[y] == PAWN)
 				return 1;
 		}
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y -= 9; y >= 0 && COL(y) != 7; y -= 9)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
 				                                                     == BISHOP))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 
 			}
@@ -1101,13 +1102,13 @@ int IsAttacked(int current_side, int k)
 			if (current_side == WHITE && piece[y] == PAWN)
 				return 1;
 		}
-		if (piece[y] == EMPTY)
+        if (piece[y] == EMPTY || piece[y] == EPS_SQUARE)
 			for (y -= 7; y >= 0 && COL(y) != 0; y -= 7)
 			{
 				if (color[y] == xside && (piece[y] == QUEEN || piece[y]
 				                                                     == BISHOP))
 					return 1;
-				if (piece[y] != EMPTY)
+                if (piece[y] != EMPTY && piece[y] != EPS_SQUARE)
 					break;
 			}
 	}
@@ -1203,10 +1204,12 @@ int MakeMove(MOVE m)
 		if (side == BLACK)
 		{
 			piece[m.from + 8] = EPS_SQUARE;
+            color[m.from + 8] = EMPTY;
 		}
 		else if (side == WHITE)
 		{
 			piece[m.from - 8] = EPS_SQUARE;
+            color[m.from - 8] = EMPTY;
 		}
 	}
 
@@ -1305,10 +1308,12 @@ void TakeBack()
         if (side == WHITE)
 		{
             piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
+            color[hist[hdp-1].m.dest - 8] = EMPTY;
 		}
-		else
+        else if (side == BLACK)
 		{
             piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
+            color[hist[hdp-1].m.dest + 8] = EMPTY;
 		}
 	}
 
@@ -1338,12 +1343,16 @@ void TakeBack()
 			color[hist[hdp].m.dest + 8] = BLACK;
 			/* The eps square */
 			piece[hist[hdp].m.dest] = EPS_SQUARE;
+            color[hist[hdp].m.dest] = EMPTY;
 		}
 		else
 		{
+            /* The pawn */
 			piece[hist[hdp].m.dest - 8] = PAWN;
 			color[hist[hdp].m.dest - 8] = WHITE;
-			piece[hist[hdp].m.dest] = EPS_SQUARE;
+            /* The eps square */
+            piece[hist[hdp].m.dest] = EPS_SQUARE;
+            color[hist[hdp].m.dest] = EMPTY;
 		}
 	}
 
@@ -1601,7 +1610,7 @@ void PrintBoard()
 
 /* Returns the number of posible positions to a given depth. Based on the
  perft function on Danasah */
-int perft(depth)
+unsigned long int perft(depth)
 {
     int i;
     int movecnt; /* The number of available moves */
@@ -1624,10 +1633,10 @@ int perft(depth)
             continue;
         }
 
-        if (IsInCheck(side))
-        {
-            count_checks++;
-        }
+//        if (IsInCheck(side))
+//        {
+//            count_checks++;
+//        }
 
         /* This 'if' takes us to the deep of the position */
         nodes += perft(depth - 1);
