@@ -124,25 +124,25 @@ int color[64] = {
         WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 //int piece[64] = {
+//        KNIGHT, EMPTY, KNIGHT, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        PAWN, PAWN, PAWN, KING, EMPTY, EMPTY, EMPTY, EMPTY,
 //        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, PAWN, EMPTY, EMPTY, EMPTY, EMPTY,
-//        KING, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, ROOK,
-//        EMPTY, ROOK, EMPTY, EMPTY, EMPTY, PAWN, EMPTY, KING,
 //        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, PAWN, EMPTY, PAWN, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY };
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, KING, PAWN, PAWN, PAWN,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY, KNIGHT};
 
 ///* Color of each square */
 //int color[64] = {
+//        BLACK, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        WHITE, WHITE, WHITE, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
 //        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
-//        WHITE, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK,
-//        EMPTY, WHITE, EMPTY, EMPTY, EMPTY, BLACK, EMPTY, BLACK,
 //        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, WHITE, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY };
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, WHITE, BLACK, BLACK, BLACK,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, WHITE };
 
 
 int side; /* Side to move, value = BLACK or WHITE */
@@ -642,7 +642,7 @@ int GenCaps(int current_side, MOVE * pBuf)
                 row = ROW(i);
 				if (current_side == BLACK)
 				{
-					/* This isn't a capture, but it's necesary in order to
+                    /* This isn't a capture, but it's necesary in order to
 					 * not oversee promotions */
                     if (row > 7 && color[i + 8] == EMPTY)
                         /* Pawn advances one square.
@@ -1183,7 +1183,7 @@ int MakeMove(MOVE m)
 				piece[i] = EMPTY;
 				/* this seems unnecesary, but otherwise a bug occurs:
 				 * after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
-				color[i] = EMPTY;
+                color[i] = EMPTY;
 				break;
 			}
 		}
@@ -1308,12 +1308,12 @@ void TakeBack()
         if (side == WHITE)
 		{
             piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
-            color[hist[hdp-1].m.dest - 8] = EMPTY;
+//            color[hist[hdp-1].m.dest - 8] = EMPTY;
 		}
         else if (side == BLACK)
 		{
             piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
-            color[hist[hdp-1].m.dest + 8] = EMPTY;
+//            color[hist[hdp-1].m.dest + 8] = EMPTY;
 		}
 	}
 
@@ -1343,7 +1343,7 @@ void TakeBack()
 			color[hist[hdp].m.dest + 8] = BLACK;
 			/* The eps square */
 			piece[hist[hdp].m.dest] = EPS_SQUARE;
-            color[hist[hdp].m.dest] = EMPTY;
+//            color[hist[hdp].m.dest] = EMPTY;
 		}
 		else
 		{
@@ -1352,7 +1352,7 @@ void TakeBack()
 			color[hist[hdp].m.dest - 8] = WHITE;
             /* The eps square */
             piece[hist[hdp].m.dest] = EPS_SQUARE;
-            color[hist[hdp].m.dest] = EMPTY;
+//            color[hist[hdp].m.dest] = EMPTY;
 		}
 	}
 
@@ -1610,11 +1610,11 @@ void PrintBoard()
 
 /* Returns the number of posible positions to a given depth. Based on the
  perft function on Danasah */
-unsigned long int perft(depth)
+unsigned long long perft(depth)
 {
     int i;
     int movecnt; /* The number of available moves */
-    int nodes = 0;
+    unsigned long long nodes = 0;
 
     if (!depth) return 1;
 
@@ -1891,12 +1891,19 @@ int main()
 			continue;
 		}
 		if (!strcmp(s, "perft"))
-		{;
+        {
             scanf("%d", &max_depth);
-            int count = perft(max_depth);
-            printf("nodes = %d\n", count);
-            printf("checks = %d\n", count_checks);
-
+            clock_t start;
+            clock_t stop;
+            double t = 0.0;
+            /* Start timer */
+            start = clock();
+            unsigned long long count = perft(max_depth);
+            /* Stop timer */
+            stop = clock();
+            t = (double) (stop - start) / CLOCKS_PER_SEC;
+            printf("nodes = %llu\n", count);
+            printf("time = %f\n", t);
 			continue;
 		}
 		if (!strcmp(s, "quit"))
