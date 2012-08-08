@@ -31,6 +31,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <locale.h>
+
 
 //#define NDEBUG
 #include <assert.h>
@@ -124,26 +126,24 @@ int color[64] = {
         WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 //int piece[64] = {
-//        KNIGHT, EMPTY, KNIGHT, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        PAWN, PAWN, PAWN, KING, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, KING, PAWN, PAWN, PAWN,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY, KNIGHT};
-
+//        ROOK, EMPTY, EMPTY, EMPTY, KING, EMPTY, EMPTY, ROOK,
+//        PAWN, PAWN, PAWN, PAWN, EMPTY, PAWN, PAWN, PAWN,
+//        EMPTY, BISHOP, EMPTY, EMPTY, EMPTY, KNIGHT, BISHOP, KNIGHT,
+//        KNIGHT, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        BISHOP, BISHOP, PAWN, EMPTY, PAWN, EMPTY, EMPTY, EMPTY,
+//        QUEEN, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY, EMPTY,
+//        PAWN, PAWN, EMPTY, PAWN, EMPTY, EMPTY, PAWN, PAWN,
+//        ROOK, EMPTY, EMPTY, QUEEN, EMPTY, ROOK, KING, EMPTY };
 ///* Color of each square */
 //int color[64] = {
-//        BLACK, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        WHITE, WHITE, WHITE, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        EMPTY, EMPTY, EMPTY, EMPTY, WHITE, BLACK, BLACK, BLACK,
-//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, WHITE };
-
+//        BLACK, EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, BLACK,
+//        WHITE,  BLACK, BLACK, BLACK, EMPTY, BLACK, BLACK, BLACK,
+//        EMPTY, BLACK, EMPTY, EMPTY, EMPTY, BLACK, BLACK, WHITE,
+//        BLACK, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        WHITE, WHITE, WHITE, EMPTY, WHITE, EMPTY, EMPTY, EMPTY,
+//        BLACK, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY,
+//        WHITE, BLACK, EMPTY, WHITE, EMPTY, EMPTY, WHITE, WHITE,
+//        WHITE, EMPTY, EMPTY, WHITE, EMPTY, WHITE, WHITE, EMPTY};
 
 int side; /* Side to move, value = BLACK or WHITE */
 int computer_side;
@@ -206,7 +206,7 @@ int castle_mask[64] = {
 		13, 15, 15, 15, 12, 15, 15, 14 };
 
 int hdp; /* Current move order */
-int allmoves = 0;
+//int allmoves = 0;
 
 /* For searching */
 int nodes; /* Count all visited nodes when searching */
@@ -1488,7 +1488,6 @@ int Quiescent(int alpha, int beta)
 	MOVE cBuf[200];
 
     countquiesCalls++;
-	nodes++;
 
 	/* First we just try the evaluation function */
     stand_pat = Eval();
@@ -1537,7 +1536,7 @@ MOVE ComputerThink(int depth)
 	count_evaluations = 0;
 	count_MakeMove = 0;
     countquiesCalls  = 0;
-
+    countCapCalls = 0;
 
 	clock_t start;
 	clock_t stop;
@@ -1555,6 +1554,8 @@ MOVE ComputerThink(int depth)
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
 	knps = (nodes / t)/1000.;
 
+    double ratio_Qsearc_Capcalls = (double)countquiesCalls/(double)countCapCalls;
+
 	double decimal_score = ((double)score)/100.;
 	if (side == BLACK)
 	{
@@ -1563,9 +1564,9 @@ MOVE ComputerThink(int depth)
 
 	/* After searching, print results */
 	printf(
-            "Search result: move = %c%d%c%d; nodes = %d, countCapCalls = %d, evaluations = %d, moves made = %d, depth = %d, score = %.2f, time = %.2fs, knps = %.2f\n",
+            "Search result: move = %c%d%c%d; depth = %d, score = %.2f, time = %.2fs knps = %.2f\n countCapCalls = %'d\n countQSearch = %'d\n moves made = %'d\n ratio_Qsearc_Capcalls = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
-            - ROW(m.dest), nodes, countCapCalls, count_evaluations, count_MakeMove, depth, decimal_score, t, knps);
+            - ROW(m.dest), depth, decimal_score, t, knps, countCapCalls, countquiesCalls, count_MakeMove, ratio_Qsearc_Capcalls);
 	return m;
 }
 
@@ -1623,16 +1624,17 @@ unsigned long long perft(depth)
     /* Generate and count all moves for current position */
     movecnt = GenMoves(side, moveBuf);
 
-    /* Once we have all the moves available, we loop through the posible
-     * moves and apply an alpha-beta search */
+    /* Once we have all the moves available, we loop through them */
     for (i = 0; i < movecnt; ++i)
     {
+        /* Not a legal move? Then we unmake it and continue to the next one in the list */
         if (!MakeMove(moveBuf[i]))
         {
             TakeBack();
             continue;
         }
 
+        /* Just in case we want to count for checks */
 //        if (IsInCheck(side))
 //        {
 //            count_checks++;
@@ -1815,6 +1817,8 @@ void xboard()
 int main()
 {
 
+    setlocale(LC_ALL,"");
+
 	/* It mainly calls ComputerThink(maxdepth) to the desired ply */
 
 	char s[256];
@@ -1825,7 +1829,7 @@ int main()
 
 	startgame();
 
-	max_depth = 5; /* max depth to search */
+    max_depth = 4; /* max depth to search */
 	MOVE moveBuf[200];
 	int movecnt;
 
@@ -1902,8 +1906,8 @@ int main()
             /* Stop timer */
             stop = clock();
             t = (double) (stop - start) / CLOCKS_PER_SEC;
-            printf("nodes = %llu\n", count);
-            printf("time = %f\n", t);
+            printf("nodes = %'llu\n", count);
+            printf("time = %'.2f s\n", t);
 			continue;
 		}
 		if (!strcmp(s, "quit"))
