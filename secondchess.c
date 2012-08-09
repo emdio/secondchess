@@ -126,24 +126,25 @@ int color[64] = {
         WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE };
 
 //int piece[64] = {
-//        ROOK, EMPTY, EMPTY, EMPTY, KING, EMPTY, EMPTY, ROOK,
-//        PAWN, PAWN, PAWN, PAWN, EMPTY, PAWN, PAWN, PAWN,
-//        EMPTY, BISHOP, EMPTY, EMPTY, EMPTY, KNIGHT, BISHOP, KNIGHT,
-//        KNIGHT, PAWN, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        BISHOP, BISHOP, PAWN, EMPTY, PAWN, EMPTY, EMPTY, EMPTY,
-//        QUEEN, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY, EMPTY,
-//        PAWN, PAWN, EMPTY, PAWN, EMPTY, EMPTY, PAWN, PAWN,
-//        ROOK, EMPTY, EMPTY, QUEEN, EMPTY, ROOK, KING, EMPTY };
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, ROOK, PAWN, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, PAWN, KING, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, PAWN, EMPTY, EMPTY, PAWN, PAWN,
+//        EMPTY, EMPTY, EMPTY, EMPTY, KING, EMPTY, EMPTY, ROOK };
 ///* Color of each square */
 //int color[64] = {
-//        BLACK, EMPTY, EMPTY, EMPTY, BLACK, EMPTY, EMPTY, BLACK,
-//        WHITE,  BLACK, BLACK, BLACK, EMPTY, BLACK, BLACK, BLACK,
-//        EMPTY, BLACK, EMPTY, EMPTY, EMPTY, BLACK, BLACK, WHITE,
-//        BLACK, WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
-//        WHITE, WHITE, WHITE, EMPTY, WHITE, EMPTY, EMPTY, EMPTY,
-//        BLACK, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY,
-//        WHITE, BLACK, EMPTY, WHITE, EMPTY, EMPTY, WHITE, WHITE,
-//        WHITE, EMPTY, EMPTY, WHITE, EMPTY, WHITE, WHITE, EMPTY};
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY,  EMPTY, EMPTY, EMPTY, BLACK, WHITE, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, BLACK, BLACK, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+//        EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY, WHITE, WHITE,
+//        EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY, EMPTY, WHITE };
+
 
 int side; /* Side to move, value = BLACK or WHITE */
 int computer_side;
@@ -1135,41 +1136,12 @@ int MakeMove(MOVE m)
 		if (side == WHITE)
 		{
 			piece[m.dest + 8] = EMPTY;
-			color[m.dest + 8] = EMPTY;
+            color[m.dest + 8] = EMPTY;
 		}
 		else
 		{
 			piece[m.dest - 8] = EMPTY;
-			color[m.dest - 8] = EMPTY;
-		}
-	}
-
-
-	/* Once the move is done we check either this is a promotion */
-	if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
-	{
-		/* In this case we put in the destiny sq the chosen piece */
-		switch (m.type)
-		{
-		case MOVE_TYPE_PROMOTION_TO_QUEEN:
-			piece[m.dest] = QUEEN;
-			break;
-
-		case MOVE_TYPE_PROMOTION_TO_ROOK:
-			piece[m.dest] = ROOK;
-			break;
-
-		case MOVE_TYPE_PROMOTION_TO_BISHOP:
-			piece[m.dest] = BISHOP;
-			break;
-
-		case MOVE_TYPE_PROMOTION_TO_KNIGHT:
-			piece[m.dest] = KNIGHT;
-			break;
-
-		default:
-			puts("Impossible to get here...");
-			assert(false);
+            color[m.dest - 8] = EMPTY;
 		}
 	}
 
@@ -1183,7 +1155,7 @@ int MakeMove(MOVE m)
 				piece[i] = EMPTY;
 				/* this seems unnecesary, but otherwise a bug occurs:
 				 * after: a3 Nc6 d4 e6, white isn't allowed to play e4 */
-                color[i] = EMPTY;
+//                color[i] = EMPTY;
 				break;
 			}
 		}
@@ -1192,7 +1164,7 @@ int MakeMove(MOVE m)
 			if (piece[i] == EPS_SQUARE)
 			{
 				piece[i] = EMPTY;
-				color[i] = EMPTY;
+//				color[i] = EMPTY;
 				break;
 			}
 		}
@@ -1212,6 +1184,34 @@ int MakeMove(MOVE m)
             color[m.from - 8] = EMPTY;
 		}
 	}
+
+    /* Once the move is done we check either this is a promotion */
+    if (m.type >= MOVE_TYPE_PROMOTION_TO_QUEEN)
+    {
+        /* In this case we put in the destiny sq the chosen piece */
+        switch (m.type)
+        {
+        case MOVE_TYPE_PROMOTION_TO_QUEEN:
+            piece[m.dest] = QUEEN;
+            break;
+
+        case MOVE_TYPE_PROMOTION_TO_ROOK:
+            piece[m.dest] = ROOK;
+            break;
+
+        case MOVE_TYPE_PROMOTION_TO_BISHOP:
+            piece[m.dest] = BISHOP;
+            break;
+
+        case MOVE_TYPE_PROMOTION_TO_KNIGHT:
+            piece[m.dest] = KNIGHT;
+            break;
+
+        default:
+            puts("Impossible to get here...");
+            assert(false);
+        }
+    }
 
 	if (m.type == MOVE_TYPE_CASTLE)
 	{
@@ -1286,7 +1286,7 @@ void TakeBack()
 	castle = hist[hdp].m.castle;
 
 	/* Return the captured material */
-	if (hist[hdp].cap != EMPTY)
+    if (hist[hdp].cap != EMPTY && hist[hdp].cap != EPS_SQUARE)
 	{
 		color[hist[hdp].m.dest] = (WHITE + BLACK) - side;
 	}
@@ -1590,8 +1590,13 @@ void PrintBoard()
 				printf(" %d |", 8 - (((unsigned) i) >> 3));
 			}
 		}
-		if (piece[i] == EMPTY)
-			printf("   |");
+
+        if (piece[i] == EMPTY && ((((unsigned)i)>>3)%2 == 0 && i%2==0))
+            printf("   |");
+        else if (piece[i] == EMPTY && ((((unsigned)i)>>3)%2 != 0 && i%2!=0))
+                printf("   |");
+        else if (piece[i] == EMPTY)
+            printf(" · |");
 		else if (piece[i] == EPS_SQUARE)
 			printf(" * |");
 		else
