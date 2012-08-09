@@ -1174,13 +1174,13 @@ int MakeMove(MOVE m)
 	if (m.type == MOVE_TYPE_PAWN_TWO)
 	{
 		if (side == BLACK)
-		{
-			piece[m.from + 8] = EPS_SQUARE;
+        {
+            piece[m.from + 8] = EPS_SQUARE;
             color[m.from + 8] = EMPTY;
 		}
 		else if (side == WHITE)
-		{
-			piece[m.from - 8] = EPS_SQUARE;
+        {
+            piece[m.from - 8] = EPS_SQUARE;
             color[m.from - 8] = EMPTY;
 		}
 	}
@@ -1303,19 +1303,19 @@ void TakeBack()
 
     /* If pawn moved two squares in the former move, we have to restore
 	 * the eps square */
-	if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
-	{
+    if (hist[hdp-1].m.type == MOVE_TYPE_PAWN_TWO)
+    {
         if (side == WHITE)
-		{
+        {
             piece[hist[hdp-1].m.dest - 8] = EPS_SQUARE;
 //            color[hist[hdp-1].m.dest - 8] = EMPTY;
-		}
+        }
         else if (side == BLACK)
-		{
+        {
             piece[hist[hdp-1].m.dest + 8] = EPS_SQUARE;
 //            color[hist[hdp-1].m.dest + 8] = EMPTY;
-		}
-	}
+        }
+    }
 
 	/* To remove the eps square after unmaking a pawn
 	 * moving two squares*/
