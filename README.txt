@@ -1,6 +1,6 @@
 -secondchess is a derivative of firstchess
 
--Its main goal is to add the neccesary code to firstchess in order
+-Its main aim is to add the neccesary code to firstchess in order
 to make it play real chess, especially adding the rules for castle and en 
 passant capture, focusing in an easy to read code.
 
@@ -17,7 +17,4 @@ passant capture, focusing in an easy to read code.
  -Jonatan Pettersson, author of mediocre chess
  -Graham Banks and Dusan Stamenkovic for their logos
  -Many more...
- 
--TODO
-  -Finish perft function
-  -Implement qsearch 
+
