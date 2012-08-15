@@ -1552,7 +1552,7 @@ MOVE ComputerThink(int depth)
 	/* Stop timer */
 	stop = clock();
 	t = (double) (stop - start) / CLOCKS_PER_SEC;
-	knps = (nodes / t)/1000.;
+	knps = ((double)countquiesCalls / t) / 1000.;
 
     double ratio_Qsearc_Capcalls = (double)countquiesCalls/(double)countCapCalls;
 
