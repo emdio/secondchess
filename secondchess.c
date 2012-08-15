@@ -1910,8 +1910,8 @@ int main()
             /* Stop timer */
             stop = clock();
             t = (double) (stop - start) / CLOCKS_PER_SEC;
-            printf("nodes = %'llu\n", count);
-            printf("time = %'.2f s\n", t);
+            printf("nodes = %llu\n", count);
+            printf("time = %.2f s\n", t);
 			continue;
 		}
 		if (!strcmp(s, "quit"))
