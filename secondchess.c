@@ -1564,7 +1564,7 @@ MOVE ComputerThink(int depth)
 
 	/* After searching, print results */
 	printf(
-            "Search result: move = %c%d%c%d; depth = %d, score = %.2f, time = %.2fs knps = %.2f\n countCapCalls = %'d\n countQSearch = %'d\n moves made = %'d\n ratio_Qsearc_Capcalls = %.2f\n",
+            "Search result: move = %c%d%c%d; depth = %d, score = %.2f, time = %.2fs knps = %.2f\n countCapCalls = %d\n countQSearch = %d\n moves made = %d\n ratio_Qsearc_Capcalls = %.2f\n",
 			'a' + COL(m.from), 8 - ROW(m.from), 'a' + COL(m.dest), 8
             - ROW(m.dest), depth, decimal_score, t, knps, countCapCalls, countquiesCalls, count_MakeMove, ratio_Qsearc_Capcalls);
 	return m;
@@ -1596,7 +1596,7 @@ void PrintBoard()
         else if (piece[i] == EMPTY && ((((unsigned)i)>>3)%2 != 0 && i%2!=0))
                 printf("   |");
         else if (piece[i] == EMPTY)
-            printf(" · |");
+            printf("   |");
 		else if (piece[i] == EPS_SQUARE)
 			printf(" * |");
 		else
@@ -1609,8 +1609,7 @@ void PrintBoard()
 		if ((i & 7) == 7)
 			printf("\n");
 	}
-	printf(
-			"   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
+	printf("   +---+---+---+---+---+---+---+---+\n     a   b   c   d   e   f   g   h\n");
 }
 
 
