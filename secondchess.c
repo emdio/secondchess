@@ -156,7 +156,7 @@ typedef struct tag_MOVE
 {
 	int from;
 	int dest;
-	int castle;
+//	int castle;
 	int type;
 } MOVE;
 
@@ -164,6 +164,7 @@ typedef struct tag_MOVE
 typedef struct tag_HIST
 {
 	MOVE m;
+	int castle;
 	int cap;
 } HIST;
 
@@ -305,7 +306,7 @@ void Gen_Push(int from, int dest, int type, MOVE * pBuf, int *pMCount)
 	move.from = from;
 	move.dest = dest;
 	move.type = type;
-	move.castle = castle;
+//	move.castle = castle;
 	pBuf[*pMCount] = move;
 	*pMCount = *pMCount + 1;
 }
@@ -1125,6 +1126,8 @@ int MakeMove(MOVE m)
 
     hist[hdp].m = m;
     hist[hdp].cap = piece[m.dest]; /* store in history the piece of the dest square */
+    hist[hdp].castle = castle;
+    
     piece[m.dest] = piece[m.from]; /* dest piece is the one in the original square */
     color[m.dest] = color[m.from]; /* The dest square color is the one of the origin piece */
     piece[m.from] = EMPTY;/* The original square becomes empty */
@@ -1283,7 +1286,7 @@ void TakeBack()
 	color[hist[hdp].m.from] = side;
 
 	/* Update castle rights */
-	castle = hist[hdp].m.castle;
+	castle = hist[hdp].castle;
 
 	/* Return the captured material */
     if (hist[hdp].cap != EMPTY && hist[hdp].cap != EPS_SQUARE)
