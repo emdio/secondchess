@@ -1445,6 +1445,9 @@ Search (int alpha, int beta, int depth, MOVE * pBestMove)
      * moves and apply an alpha-beta search */
     for (i = 0; i < movecnt; ++i)
     {
+		
+		if (IsInCheck(side))
+			max_depth++;
 
         if (!MakeMove (moveBuf[i]))
         {
