@@ -102,9 +102,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
  ****************************************************************************
  */
 /* Board representation */
+int piece[64];
+int color[64];
 
 /* Piece in each square */
-int piece[64] = {
+int init_piece[64] = {
   ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK,
   PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN, PAWN,
   EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
@@ -116,7 +118,7 @@ int piece[64] = {
 };
 
 /* Color of each square */
-int color[64] = {
+int init_color[64] = {
   BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
   BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK,
   EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
@@ -1698,13 +1700,14 @@ startgame ()
   int i;
   for (i = 0; i < 64; ++i)
     {
-      piece[i] = piece[i];
-      color[i] = color[i];
+      piece[i] = init_piece[i];
+      color[i] = init_color[i];
     }
 
   side = WHITE;
   computer_side = BLACK;	/* Human is white side */
   hdp = 0;
+  castle = 15;
 }
 
 void
