@@ -6,6 +6,8 @@ passant capture, focusing in an easy to read code.
 
 -To compile under linux just "gcc secondchess.c -o secondchess -Ofast"
 
+-To compile under windows try tcc, geany+gcc, lcc. More info on the topic on http://www.chess2u.com/t5750-secondchess
+
 -Acknowledgments:
  -Pham Hong Nguyen, author of firstchess
  -Pedro Castro, author of danasah
