@@ -1649,7 +1649,7 @@ PrintBoard ()
 /* Returns the number of posible positions to a given depth. Based on the
  perft function on Danasah */
 unsigned long long
-perft (depth)
+perft (int depth)
 {
   int i;
   int movecnt;			/* The number of available moves */
