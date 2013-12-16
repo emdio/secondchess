@@ -1844,7 +1844,7 @@ xboard ()
 				if (command[4] != 'q' && command[4] != 'r' && command[4] != 'b' && command[4] != 'n')
 				{
 					printf ("Illegal move. Bad letter for promo\n");
-					goto continuar;
+					goto goon;
 				}
 				switch (command[4])
 				{
@@ -1865,17 +1865,17 @@ xboard ()
 		
 	    	if (MakeMove (moveBuf[i]))
 	    	{
-				goto continuar;	/* legal move */
+				goto goon;	/* legal move */
 			}
 			else {
 				printf ("Illegal move. King is in check\n");
-				goto continuar;
+				goto goon;
 			}	
 		}
 	  }
       printf ("Illegal move.\n");  /* illegal move */
       
-continuar:
+goon:
 	  continue;
 	}
 }
