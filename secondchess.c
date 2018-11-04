@@ -1,5 +1,5 @@
 /*
-secondchess - gpl, by Emilio Díaz, based on firstchess by Pham Hong Nguyen
+secondchess - gpl, by Emilio Dï¿½az, based on firstchess by Pham Hong Nguyen
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ HIST hist[6000];		/* Game length < 6000 */
  * 15 = 1111 = 1*2^3 + 1*2^2 + 1*2^1 + 1*2^0
  *
  */
-int castle = 15;		/* At start position all castle types ar available */
+int castle_rights = 15;		/* At start position all castle types ar available */
 
 
 /* This mask is applied like this
@@ -221,8 +221,8 @@ int ply;			/* ply of search */
 int count_evaluations;
 int count_checks;
 int count_MakeMove;
-int countquiesCalls;
-int countCapCalls;
+int count_quies_calls;
+int count_cap_calls;
 
 /* The values of the pieces in centipawns */
 int value_piece[6] =
@@ -567,7 +567,7 @@ GenMoves (int current_side, MOVE * pBuf)
 	    if (current_side == WHITE)
 	      {
 		/* Can white short castle? */
-		if (castle & 1)
+		if (castle_rights & 1)
 		  {
 		    /* If white can castle the white king has to be in square 60 */
 		    if (col &&
@@ -582,7 +582,7 @@ GenMoves (int current_side, MOVE * pBuf)
 		  }
 
 		/* Can white long castle? */
-		if (castle & 2)
+		if (castle_rights & 2)
 		  {
 		    if (col &&
 			color[i - 1] == EMPTY &&
@@ -599,7 +599,7 @@ GenMoves (int current_side, MOVE * pBuf)
 	    else if (current_side == BLACK)
 	      {
 		/* Can black short castle? */
-		if (castle & 4)
+		if (castle_rights & 4)
 		  {
 		    /* If white can castle the white king has to be in square 60 */
 		    if (col &&
@@ -614,7 +614,7 @@ GenMoves (int current_side, MOVE * pBuf)
 		      }
 		  }
 		/* Can black long castle? */
-		if (castle & 8)
+		if (castle_rights & 8)
 		  {
 		    if (col &&
 			color[i - 1] == EMPTY &&
@@ -946,15 +946,15 @@ IsInCheck (int current_side)
   return IsAttacked (current_side, k);
 }
 
-/* Check and return 1 if square k is attacked by current_side, 0 otherwise. Necesary, vg, to check
+/* Returns 1 if square k is attacked by current_side, 0 otherwise. Necesary, v.g., to check
  * castle rules (if king goes from e1 to g1, f1 can't be attacked by an enemy piece) */
 int
 IsAttacked (int current_side, int k)
 {
   int h;
   int y;
-  int row;			/* Row where the square is placed */
-  int col;			/* Col where the square is placed */
+  int row;			/* Row where the square k is placed */
+  int col;			/* Col where the square k is placed */
   int xside;
   xside = (WHITE + BLACK) - current_side;	/* opposite current_side, who may be attacking */
 
@@ -1147,7 +1147,7 @@ MakeMove (MOVE m)
 
   hist[hdp].m = m;
   hist[hdp].cap = piece[m.dest];	/* store in history the piece of the dest square */
-  hist[hdp].castle = castle;
+  hist[hdp].castle = castle_rights;
 
   piece[m.dest] = piece[m.from];	/* dest piece is the one in the original square */
   color[m.dest] = color[m.from];	/* The dest square color is the one of the origin piece */
@@ -1282,7 +1282,7 @@ MakeMove (MOVE m)
   hdp++;
 
   /* Update the castle rights */
-  castle &= castle_mask[m.from] & castle_mask[m.dest];
+  castle_rights &= castle_mask[m.from] & castle_mask[m.dest];
 
   /* Checking if after making the move we're in check */
   r = !IsInCheck (side);
@@ -1308,7 +1308,7 @@ TakeBack ()
   color[hist[hdp].m.from] = side;
 
   /* Update castle rights */
-  castle = hist[hdp].castle;
+  castle_rights = hist[hdp].castle;
 
   /* Return the captured material */
   if (hist[hdp].cap != EMPTY && hist[hdp].cap != EPS_SQUARE)
@@ -1514,7 +1514,7 @@ Quiescent (int alpha, int beta)
   int score;
   MOVE cBuf[200];
 
-  countquiesCalls++;
+  count_quies_calls++;
 
   /* First we just try the evaluation function */
   stand_pat = Eval ();
@@ -1527,7 +1527,7 @@ Quiescent (int alpha, int beta)
    * store them in cBuf */
   capscnt = GenCaps (side, cBuf);
 
-  countCapCalls++;
+  count_cap_calls++;
 
   for (i = 0; i < capscnt; ++i)
     {
@@ -1563,8 +1563,8 @@ ComputerThink (int depth)
   nodes = 0;
   count_evaluations = 0;
   count_MakeMove = 0;
-  countquiesCalls = 0;
-  countCapCalls = 0;
+  count_quies_calls = 0;
+  count_cap_calls = 0;
 
   clock_t start;
   clock_t stop;
@@ -1580,10 +1580,10 @@ ComputerThink (int depth)
   /* Stop timer */
   stop = clock ();
   t = (double) (stop - start) / CLOCKS_PER_SEC;
-  knps = ((double) countquiesCalls / t) / 1000.;
+  knps = ((double) count_quies_calls / t) / 1000.;
 
   double ratio_Qsearc_Capcalls =
-    (double) countquiesCalls / (double) countCapCalls;
+    (double) count_quies_calls / (double) count_cap_calls;
 
   double decimal_score = ((double) score) / 100.;
   if (side == BLACK)
@@ -1595,8 +1595,8 @@ ComputerThink (int depth)
   printf
     ("Search result: move = %c%d%c%d; depth = %d, score = %.2f, time = %.2fs knps = %.2f\n countCapCalls = %d\n countQSearch = %d\n moves made = %d\n ratio_Qsearc_Capcalls = %.2f\n",
      'a' + COL (m.from), 8 - ROW (m.from), 'a' + COL (m.dest),
-     8 - ROW (m.dest), depth, decimal_score, t, knps, countCapCalls,
-     countquiesCalls, count_MakeMove, ratio_Qsearc_Capcalls);
+     8 - ROW (m.dest), depth, decimal_score, t, knps, count_cap_calls,
+     count_quies_calls, count_MakeMove, ratio_Qsearc_Capcalls);
   return m;
 }
 
@@ -1707,7 +1707,7 @@ startgame ()
   side = WHITE;
   computer_side = BLACK;	/* Human is white side */
   hdp = 0;
-  castle = 15;
+  castle_rights = 15;
 }
 
 void
@@ -1906,7 +1906,7 @@ main ()
   puts (" MOVE: make a move (e.g. b1c3, a7a8q, e1g1)");
   puts (" on: force computer to move");
   puts (" quit: exit");
-  puts (" sd n: set engine depth to n plies");
+  puts (" sd n: set engine depth to n plies (default 4)");
   puts (" undo: take back last move");
 
   side = WHITE;
@@ -1921,7 +1921,7 @@ main ()
 	  MOVE bestMove = ComputerThink (max_depth);
 	  MakeMove (bestMove);
 	  PrintBoard ();
-	  printf ("CASTLE: %d\n", castle);
+	  printf ("CASTLE: %d\n", castle_rights);
 	  continue;
 	}
 
@@ -1975,6 +1975,8 @@ main ()
 	  t = (double) (stop - start) / CLOCKS_PER_SEC;
 	  printf ("nodes = %llu\n", count);
 	  printf ("time = %.2f s\n", t);
+          double Mnps = (count/t)/1000000;
+          printf ("nodes/second = %.2f nps\n", Mnps);
 	  continue;
 	}
       if (!strcmp (s, "quit"))
