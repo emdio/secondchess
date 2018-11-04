@@ -1976,7 +1976,7 @@ main ()
 	  printf ("nodes = %llu\n", count);
 	  printf ("time = %.2f s\n", t);
           double Mnps = (count/t)/1000000;
-          printf ("MegaNodes/second = %.2f nps\n", Mnps);
+          printf ("MegaNodes/second = %.2f Mnps\n", Mnps);
 	  continue;
 	}
       if (!strcmp (s, "quit"))
