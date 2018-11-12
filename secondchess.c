@@ -80,20 +80,68 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 /* Some useful squares */
 #define A1 56
-#define B1 57
-#define C1 58
-#define D1 59
-#define E1 60
-#define F1 61
-#define G1 62
-#define H1 63
+#define A2 48
+#define A3 40
+#define A4 32
+#define A5 24
+#define A6 16
+#define A7 8
 #define A8 0
+#define B1 57
+#define B2 49
+#define B3 41
+#define B4 33
+#define B5 25
+#define B6 17
+#define B7 9
 #define B8 1
+#define C1 58
+#define C2 50
+#define C3 42
+#define C4 34
+#define C5 26
+#define C6 18
+#define C7 10
 #define C8 2
+#define D1 59
+#define D2 51
+#define D3 43
+#define D4 35
+#define D5 27
+#define D6 19
+#define D7 11
 #define D8 3
+#define E1 60
+#define E2 52
+#define E3 44
+#define E4 36
+#define E5 28
+#define E6 20
+#define E7 12
 #define E8 4
+#define F1 61
+#define F2 53
+#define F3 45
+#define F4 37
+#define F5 29
+#define F6 21
+#define F7 13
 #define F8 5
+#define G1 62
+#define G2 54
+#define G3 46
+#define G4 38
+#define G5 30
+#define G6 22
+#define G7 14
 #define G8 6
+#define H1 63
+#define H2 55
+#define H3 47
+#define H4 39
+#define H5 31
+#define H6 23
+#define H7 15
 #define H8 7
 
 /*
@@ -515,32 +563,542 @@ GenMoves (int current_side, MOVE * pBuf)
 	    break;
 
 	  case KNIGHT:
-	    col = COL (i);
-	    y = i - 6;
-	    if (y >= 0 && col < 6 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i - 10;
-	    if (y >= 0 && col > 1 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i - 15;
-	    if (y >= 0 && col < 7 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i - 17;
-	    if (y >= 0 && col > 0 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i + 6;
-	    if (y < 64 && col > 1 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i + 10;
-	    if (y < 64 && col < 6 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i + 15;
-	    if (y < 64 && col > 0 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
-	    y = i + 17;
-	    if (y < 64 && col < 7 && color[y] != current_side)
-	      Gen_PushNormal (i, y, pBuf, &movecount);
+              switch(i)
+              {
+                  case A8:
+                      if (color[B6] != current_side)
+                      Gen_PushNormal(A8, B6, pBuf, &movecount);
+                      if (color[C7] != current_side)
+                      Gen_PushNormal(A8, C7, pBuf, &movecount);
+                      break;
+                  case B8:
+                      if (color[A6] != current_side)
+                      Gen_PushNormal(B8, A6, pBuf, &movecount);
+                      if (color[C6] != current_side)
+                      Gen_PushNormal(B8, C6, pBuf, &movecount);
+                      if (color[D7] != current_side)
+                      Gen_PushNormal(B8, D7, pBuf, &movecount);
+                      break;
+                  case C8:
+                      if (color[A7] != current_side)
+                      Gen_PushNormal(C8, A7, pBuf, &movecount);
+                      if (color[B6] != current_side)
+                      Gen_PushNormal(C8, B6, pBuf, &movecount);
+                      if (color[D6] != current_side)
+                      Gen_PushNormal(C8, D6, pBuf, &movecount);
+                      if (color[E7] != current_side)
+                      Gen_PushNormal(C8, E7, pBuf, &movecount);
+                      break;
+                  case D8:
+                      if (color[B7] != current_side)
+                      Gen_PushNormal(D8, B7, pBuf, &movecount);
+                      if (color[C6] != current_side)
+                      Gen_PushNormal(D8, C6, pBuf, &movecount);
+                      if (color[E6] != current_side)
+                      Gen_PushNormal(D8, E6, pBuf, &movecount);
+                      if (color[F7] != current_side)
+                      Gen_PushNormal(D8, F7, pBuf, &movecount);
+                      break;
+                  case E8:
+                      if (color[C7] != current_side)
+                      Gen_PushNormal(E8, C7, pBuf, &movecount);
+                      if (color[D6] != current_side)
+                      Gen_PushNormal(E8, D6, pBuf, &movecount);
+                      if (color[F6] != current_side)
+                      Gen_PushNormal(E8, F6, pBuf, &movecount);
+                      if (color[G7] != current_side)
+                      Gen_PushNormal(E8, G7, pBuf, &movecount);
+                      break;
+                  case F8:
+                      if (color[D7] != current_side)
+                      Gen_PushNormal(F8, D7, pBuf, &movecount);
+                      if (color[E6] != current_side)
+                      Gen_PushNormal(F8, E6, pBuf, &movecount);
+                      if (color[G6] != current_side)
+                      Gen_PushNormal(F8, G6, pBuf, &movecount);
+                      if (color[H7] != current_side)
+                      Gen_PushNormal(F8, H7, pBuf, &movecount);
+                      break;
+                  case G8:
+                      if (color[E7] != current_side)
+                      Gen_PushNormal(G8, E7, pBuf, &movecount);
+                      if (color[F6] != current_side)
+                      Gen_PushNormal(G8, F6, pBuf, &movecount);
+                      if (color[H6] != current_side)
+                      Gen_PushNormal(G8, H6, pBuf, &movecount);
+                      break;
+                  case H8:
+                      if (color[F7] != current_side)
+                      Gen_PushNormal(G8, F7, pBuf, &movecount);
+                      if (color[G6] != current_side)
+                      Gen_PushNormal(G8, G6, pBuf, &movecount);
+                      break;
+                  case A7:
+                      if (color[C8] != current_side)
+                      Gen_PushNormal(A7, C8, pBuf, &movecount);
+                      if (color[C6] != current_side)
+                      Gen_PushNormal(A7, C6, pBuf, &movecount);
+                      if (color[B5] != current_side)
+                      Gen_PushNormal(A7, B5, pBuf, &movecount);
+                      break;
+                  case B7:
+                      if (color[D8] != current_side)
+                      Gen_PushNormal(B7, D8, pBuf, &movecount);
+                      if (color[D6] != current_side)
+                      Gen_PushNormal(B7, D6, pBuf, &movecount);
+                      if (color[A5] != current_side)
+                      Gen_PushNormal(B7, A5, pBuf, &movecount);
+                      if (color[C5] != current_side)
+                      Gen_PushNormal(B7, C5, pBuf, &movecount);
+                      break;
+                  case C7:
+                      if (color[A8] != current_side)
+                      Gen_PushNormal(C7, A8, pBuf, &movecount);
+                      if (color[A6] != current_side)
+                      Gen_PushNormal(C7, A6, pBuf, &movecount);
+                      if (color[B5] != current_side)
+                      Gen_PushNormal(C7, B5, pBuf, &movecount);
+                      if (color[D5] != current_side)
+                      Gen_PushNormal(C7, D5, pBuf, &movecount);
+                      if (color[E6] != current_side)
+                      Gen_PushNormal(C7, E6, pBuf, &movecount);
+                      if (color[E8] != current_side)
+                      Gen_PushNormal(C7, E8, pBuf, &movecount);
+                      break;
+                  case D7:
+                      if (color[B8] != current_side)
+                      Gen_PushNormal(D7, B8, pBuf, &movecount);
+                      if (color[B6] != current_side)
+                      Gen_PushNormal(D7, B6, pBuf, &movecount);
+                      if (color[C5] != current_side)
+                      Gen_PushNormal(D7, C5, pBuf, &movecount);
+                      if (color[E5] != current_side)
+                      Gen_PushNormal(D7, E5, pBuf, &movecount);
+                      if (color[F6] != current_side)
+                      Gen_PushNormal(D7, F6, pBuf, &movecount);
+                      if (color[F8] != current_side)
+                      Gen_PushNormal(D7, F8, pBuf, &movecount);
+                      break;
+                  case E7:
+                      if (color[C8] != current_side)
+                      Gen_PushNormal(E7, C8, pBuf, &movecount);
+                      if (color[C6] != current_side)
+                      Gen_PushNormal(E7, C6, pBuf, &movecount);
+                      if (color[D5] != current_side)
+                      Gen_PushNormal(E7, D5, pBuf, &movecount);
+                      if (color[F5] != current_side)
+                      Gen_PushNormal(E7, F5, pBuf, &movecount);
+                      if (color[G6] != current_side)
+                      Gen_PushNormal(E7, G6, pBuf, &movecount);
+                      if (color[G8] != current_side)
+                      Gen_PushNormal(E7, G8, pBuf, &movecount);
+                      break;
+                  case F7:
+                      if (color[D8] != current_side)
+                      Gen_PushNormal(F7, D8, pBuf, &movecount);
+                      if (color[D6] != current_side)
+                      Gen_PushNormal(F7, D6, pBuf, &movecount);
+                      if (color[E5] != current_side)
+                      Gen_PushNormal(F7, E5, pBuf, &movecount);
+                      if (color[G5] != current_side)
+                      Gen_PushNormal(F7, G5, pBuf, &movecount);
+                      if (color[H6] != current_side)
+                      Gen_PushNormal(F7, H6, pBuf, &movecount);
+                      if (color[H8] != current_side)
+                      Gen_PushNormal(F7, H8, pBuf, &movecount);
+                      break;
+                  case G7:
+                      if (color[E8] != current_side)
+                      Gen_PushNormal(G7, E8, pBuf, &movecount);
+                      if (color[E6] != current_side)
+                      Gen_PushNormal(G7, E6, pBuf, &movecount);
+                      if (color[F5] != current_side)
+                      Gen_PushNormal(G7, F5, pBuf, &movecount);
+                      if (color[H5] != current_side)
+                      Gen_PushNormal(G7, H5, pBuf, &movecount);
+                      break;
+                  case H7:
+                      Gen_PushNormal(H7, F8, pBuf, &movecount);
+                      Gen_PushNormal(H7, F6, pBuf, &movecount);
+                      Gen_PushNormal(H7, G5, pBuf, &movecount);
+                      break;
+                  case A6:
+                      Gen_PushNormal(A6, B8, pBuf, &movecount);
+                      Gen_PushNormal(A6, B4, pBuf, &movecount);
+                      Gen_PushNormal(A6, C7, pBuf, &movecount);
+                      Gen_PushNormal(A6, C5, pBuf, &movecount);
+                      break;
+                  case B6:
+                      Gen_PushNormal(B6, A8, pBuf, &movecount);
+                      Gen_PushNormal(B6, A4, pBuf, &movecount);
+                      Gen_PushNormal(B6, C8, pBuf, &movecount);
+                      Gen_PushNormal(B6, C4, pBuf, &movecount);
+                      Gen_PushNormal(B6, D7, pBuf, &movecount);
+                      Gen_PushNormal(B6, D5,pBuf, &movecount);
+                      break;
+                  case C6:
+                      Gen_PushNormal(C6, A7, pBuf, &movecount);
+                      Gen_PushNormal(C6, A5, pBuf, &movecount);
+                      Gen_PushNormal(C6, B8, pBuf, &movecount);
+                      Gen_PushNormal(C6, B4, pBuf, &movecount);
+                      Gen_PushNormal(C6, D8, pBuf, &movecount);
+                      Gen_PushNormal(C6, D4, pBuf, &movecount);
+                      Gen_PushNormal(C6, E7, pBuf, &movecount);
+                      Gen_PushNormal(C6, E5, pBuf, &movecount);
+                      break;
+                  case D6:
+                      Gen_PushNormal(D6, B7, pBuf, &movecount);
+                      Gen_PushNormal(D6, B5, pBuf, &movecount);
+                      Gen_PushNormal(D6, C8, pBuf, &movecount);
+                      Gen_PushNormal(D6, C4, pBuf, &movecount);
+                      Gen_PushNormal(D6, D7, pBuf, &movecount);
+                      Gen_PushNormal(D6, D5, pBuf, &movecount);
+                      Gen_PushNormal(D6, F7, pBuf, &movecount);
+                      Gen_PushNormal(D6, F5, pBuf, &movecount);
+                      break;
+                  case E6:
+                      Gen_PushNormal(E6, C7, pBuf, &movecount);
+                      Gen_PushNormal(E6, C5, pBuf, &movecount);
+                      Gen_PushNormal(E6, D8, pBuf, &movecount);
+                      Gen_PushNormal(E6, D4, pBuf, &movecount);
+                      Gen_PushNormal(E6, F7, pBuf, &movecount);
+                      Gen_PushNormal(E6, F4, pBuf, &movecount);
+                      Gen_PushNormal(E6, G7, pBuf, &movecount);
+                      Gen_PushNormal(E6, G5, pBuf, &movecount);
+                      break;
+                  case F6:
+                      Gen_PushNormal(F6, D7, pBuf, &movecount);
+                      Gen_PushNormal(F6, D5, pBuf, &movecount);
+                      Gen_PushNormal(F6, E8, pBuf, &movecount);
+                      Gen_PushNormal(F6, E4, pBuf, &movecount);
+                      Gen_PushNormal(F6, G8, pBuf, &movecount);
+                      Gen_PushNormal(F6, G4, pBuf, &movecount);
+                      Gen_PushNormal(F6, H7, pBuf, &movecount);
+                      Gen_PushNormal(F6, H5, pBuf, &movecount);
+                      break;
+                  case G6:
+                      Gen_PushNormal(G6, E7, pBuf, &movecount);
+                      Gen_PushNormal(G6, E5, pBuf, &movecount);
+                      Gen_PushNormal(G6, F8, pBuf, &movecount);
+                      Gen_PushNormal(G6, F4, pBuf, &movecount);
+                      Gen_PushNormal(G6, H4, pBuf, &movecount);
+                      Gen_PushNormal(G6, H8, pBuf, &movecount);
+                      break;
+                  case H6:
+                      Gen_PushNormal(H6, F7, pBuf, &movecount);
+                      Gen_PushNormal(H6, F5, pBuf, &movecount);
+                      Gen_PushNormal(H6, G8, pBuf, &movecount);
+                      Gen_PushNormal(H6, G4, pBuf, &movecount);
+                      break;
+                  case A5:
+                      Gen_PushNormal(A5, B7, pBuf, &movecount);
+                      Gen_PushNormal(A5, B3, pBuf, &movecount);
+                      Gen_PushNormal(A5, C4, pBuf, &movecount);
+                      Gen_PushNormal(A5, C6, pBuf, &movecount);
+                      break;
+                  case B5:
+                      Gen_PushNormal(B5, A7, pBuf, &movecount);
+                      Gen_PushNormal(B5, A3, pBuf, &movecount);
+                      Gen_PushNormal(B5, C7, pBuf, &movecount);
+                      Gen_PushNormal(B5, C3, pBuf, &movecount);
+                      Gen_PushNormal(B5, D6, pBuf, &movecount);
+                      Gen_PushNormal(B5, D4, pBuf, &movecount);
+                      break;
+                  case C5:
+                      Gen_PushNormal(C5, A6, pBuf, &movecount);
+                      Gen_PushNormal(C5, A4, pBuf, &movecount);
+                      Gen_PushNormal(C5, B7, pBuf, &movecount);
+                      Gen_PushNormal(C5, B3, pBuf, &movecount);
+                      Gen_PushNormal(C5, D7, pBuf, &movecount);
+                      Gen_PushNormal(C5, D3, pBuf, &movecount);
+                      Gen_PushNormal(C5, E6, pBuf, &movecount);
+                      Gen_PushNormal(C5, E4, pBuf, &movecount);
+                      break;
+                  case D5:
+                      Gen_PushNormal(D5, B6, pBuf, &movecount);
+                      Gen_PushNormal(D5, B4, pBuf, &movecount);
+                      Gen_PushNormal(D5, C7, pBuf, &movecount);
+                      Gen_PushNormal(D5, C3, pBuf, &movecount);
+                      Gen_PushNormal(D5, E7, pBuf, &movecount);
+                      Gen_PushNormal(D5, E3, pBuf, &movecount);
+                      Gen_PushNormal(D5, F6, pBuf, &movecount);
+                      Gen_PushNormal(D5, F4, pBuf, &movecount);
+                      break;
+                  case E5:
+                      Gen_PushNormal(E5, C6, pBuf, &movecount);
+                      Gen_PushNormal(E5, C4, pBuf, &movecount);
+                      Gen_PushNormal(E5, D7, pBuf, &movecount);
+                      Gen_PushNormal(E5, D3, pBuf, &movecount);
+                      Gen_PushNormal(E5, F7, pBuf, &movecount);
+                      Gen_PushNormal(E5, F3, pBuf, &movecount);
+                      Gen_PushNormal(E5, G6, pBuf, &movecount);
+                      Gen_PushNormal(E5, G4, pBuf, &movecount);
+                      break;
+                  case F5:
+                      Gen_PushNormal(F5, D6, pBuf, &movecount);
+                      Gen_PushNormal(F5, D4, pBuf, &movecount);
+                      Gen_PushNormal(F5, E7, pBuf, &movecount);
+                      Gen_PushNormal(F5, E3, pBuf, &movecount);
+                      Gen_PushNormal(F5, G7, pBuf, &movecount);
+                      Gen_PushNormal(F5, G3, pBuf, &movecount);
+                      Gen_PushNormal(F5, H6, pBuf, &movecount);
+                      Gen_PushNormal(F5, H4, pBuf, &movecount);
+                      break;
+                  case G5:
+                      Gen_PushNormal(G5, E6, pBuf, &movecount);
+                      Gen_PushNormal(G5, E4, pBuf, &movecount);
+                      Gen_PushNormal(G5, F7, pBuf, &movecount);
+                      Gen_PushNormal(G5, F3, pBuf, &movecount);
+                      Gen_PushNormal(G5, H7, pBuf, &movecount);
+                      Gen_PushNormal(G5, H3, pBuf, &movecount);
+                      break;
+                  case H5:
+                      Gen_PushNormal(H5, F6, pBuf, &movecount);
+                      Gen_PushNormal(H5, F4, pBuf, &movecount);
+                      Gen_PushNormal(H5, G7, pBuf, &movecount);
+                      Gen_PushNormal(H5, G3, pBuf, &movecount);
+                      break;
+                  case A4:
+                      Gen_PushNormal(A4, B6, pBuf, &movecount);
+                      Gen_PushNormal(A4, B2, pBuf, &movecount);
+                      Gen_PushNormal(A4, C5, pBuf, &movecount);
+                      Gen_PushNormal(A4, C3, pBuf, &movecount);
+                      break;
+                  case B4:
+                      Gen_PushNormal(B4, A6, pBuf, &movecount);
+                      Gen_PushNormal(B4, A2, pBuf, &movecount);
+                      Gen_PushNormal(B4, C6, pBuf, &movecount);
+                      Gen_PushNormal(B4, C2, pBuf, &movecount);
+                      Gen_PushNormal(B4, D5, pBuf, &movecount);
+                      Gen_PushNormal(B4, D3, pBuf, &movecount);
+                      break;
+                  case C4:
+                      Gen_PushNormal(C4, A5, pBuf, &movecount);
+                      Gen_PushNormal(C4, A3, pBuf, &movecount);
+                      Gen_PushNormal(C4, B6, pBuf, &movecount);
+                      Gen_PushNormal(C4, B2, pBuf, &movecount);
+                      Gen_PushNormal(C4, D6, pBuf, &movecount);
+                      Gen_PushNormal(C4, D2, pBuf, &movecount);
+                      Gen_PushNormal(C4, E5, pBuf, &movecount);
+                      Gen_PushNormal(C4, E3, pBuf, &movecount);
+                      break;
+                  case D4:
+                      Gen_PushNormal(D4, B5, pBuf, &movecount);
+                      Gen_PushNormal(D4, B3, pBuf, &movecount);
+                      Gen_PushNormal(D4, C6, pBuf, &movecount);
+                      Gen_PushNormal(D4, C2, pBuf, &movecount);
+                      Gen_PushNormal(D4, E6, pBuf, &movecount);
+                      Gen_PushNormal(D4, E2, pBuf, &movecount);
+                      Gen_PushNormal(D4, F5, pBuf, &movecount);
+                      Gen_PushNormal(D4, F3, pBuf, &movecount);
+                      break;
+                  case E4:
+                      Gen_PushNormal(E4, C5, pBuf, &movecount);
+                      Gen_PushNormal(E4, C3, pBuf, &movecount);
+                      Gen_PushNormal(E4, D6, pBuf, &movecount);
+                      Gen_PushNormal(E4, D2, pBuf, &movecount);
+                      Gen_PushNormal(E4, F6, pBuf, &movecount);
+                      Gen_PushNormal(E4, F2, pBuf, &movecount);
+                      Gen_PushNormal(E4, G5, pBuf, &movecount);
+                      Gen_PushNormal(E4, G3, pBuf, &movecount);
+                      break;
+                  case F4:
+                      Gen_PushNormal(F4, D5, pBuf, &movecount);
+                      Gen_PushNormal(F4, D3, pBuf, &movecount);
+                      Gen_PushNormal(F4, E6, pBuf, &movecount);
+                      Gen_PushNormal(F4, E2, pBuf, &movecount);
+                      Gen_PushNormal(F4, G6, pBuf, &movecount);
+                      Gen_PushNormal(F4, G2, pBuf, &movecount);
+                      Gen_PushNormal(F4, H5, pBuf, &movecount);
+                      Gen_PushNormal(F4, H3, pBuf, &movecount);
+                      break;
+                  case G4:
+                      Gen_PushNormal(G4, E5, pBuf, &movecount);
+                      Gen_PushNormal(G4, E3, pBuf, &movecount);
+                      Gen_PushNormal(G4, F6, pBuf, &movecount);
+                      Gen_PushNormal(G4, F2, pBuf, &movecount);
+                      Gen_PushNormal(G4, H6, pBuf, &movecount);
+                      Gen_PushNormal(G4, H2, pBuf, &movecount);
+                      break;
+                  case H4:
+                      Gen_PushNormal(H4, F5, pBuf, &movecount);
+                      Gen_PushNormal(H4, F3, pBuf, &movecount);
+                      Gen_PushNormal(H4, G6, pBuf, &movecount);
+                      Gen_PushNormal(H4, G2, pBuf, &movecount);
+                      break;
+                  case A3:
+                      Gen_PushNormal(A3, B5, pBuf, &movecount);
+                      Gen_PushNormal(A3, B1, pBuf, &movecount);
+                      Gen_PushNormal(A3, C4, pBuf, &movecount);
+                      Gen_PushNormal(A3, C2, pBuf, &movecount);
+                      break;
+                  case B3:
+                      Gen_PushNormal(B3, A5, pBuf, &movecount);
+                      Gen_PushNormal(B3, A1, pBuf, &movecount);
+                      Gen_PushNormal(B3, C5, pBuf, &movecount);
+                      Gen_PushNormal(B3, C1, pBuf, &movecount);
+                      Gen_PushNormal(B3, D4, pBuf, &movecount);
+                      Gen_PushNormal(B3, D2, pBuf, &movecount);
+                      break;
+                  case C3:
+                      Gen_PushNormal(C3, A4, pBuf, &movecount);
+                      Gen_PushNormal(C3, A2, pBuf, &movecount);
+                      Gen_PushNormal(C3, B5, pBuf, &movecount);
+                      Gen_PushNormal(C3, B1, pBuf, &movecount);
+                      Gen_PushNormal(C3, D5, pBuf, &movecount);
+                      Gen_PushNormal(C3, D1, pBuf, &movecount);
+                      Gen_PushNormal(C3, E4, pBuf, &movecount);
+                      Gen_PushNormal(C3, E2, pBuf, &movecount);
+                      break;
+                  case D3:
+                      Gen_PushNormal(D3, B4, pBuf, &movecount);
+                      Gen_PushNormal(D3, B2, pBuf, &movecount);
+                      Gen_PushNormal(D3, C5, pBuf, &movecount);
+                      Gen_PushNormal(D3, C1, pBuf, &movecount);
+                      Gen_PushNormal(D3, E5, pBuf, &movecount);
+                      Gen_PushNormal(D3, E1, pBuf, &movecount);
+                      Gen_PushNormal(D3, F4, pBuf, &movecount);
+                      Gen_PushNormal(D3, F2, pBuf, &movecount);
+                      break;
+                  case E3:
+                      Gen_PushNormal(E3, C4 , pBuf, &movecount);
+                      Gen_PushNormal(E3, C2, pBuf, &movecount);
+                      Gen_PushNormal(E3, D5, pBuf, &movecount);
+                      Gen_PushNormal(E3, D1, pBuf, &movecount);
+                      Gen_PushNormal(E3, F5, pBuf, &movecount);
+                      Gen_PushNormal(E3, F1, pBuf, &movecount);
+                      Gen_PushNormal(E3, G4, pBuf, &movecount);
+                      Gen_PushNormal(E3, G2, pBuf, &movecount);
+                      break;
+                  case F3:
+                      Gen_PushNormal(F3, D4, pBuf, &movecount);
+                      Gen_PushNormal(F3, D2, pBuf, &movecount);
+                      Gen_PushNormal(F3, E5, pBuf, &movecount);
+                      Gen_PushNormal(F3, E1, pBuf, &movecount);
+                      Gen_PushNormal(F3, G5, pBuf, &movecount);
+                      Gen_PushNormal(F3, G1, pBuf, &movecount);
+                      Gen_PushNormal(F3, H4, pBuf, &movecount);
+                      Gen_PushNormal(F3, H2, pBuf, &movecount);
+                      break;
+                  case G3:
+                      Gen_PushNormal(G3, E4, pBuf, &movecount);
+                      Gen_PushNormal(G3, E2, pBuf, &movecount);
+                      Gen_PushNormal(G3, F5, pBuf, &movecount);
+                      Gen_PushNormal(G3, F1, pBuf, &movecount);
+                      Gen_PushNormal(G3, H5, pBuf, &movecount);
+                      Gen_PushNormal(G3, H1, pBuf, &movecount);
+                      break;
+                  case H3:
+                      Gen_PushNormal(H3, F4, pBuf, &movecount);
+                      Gen_PushNormal(H3, F2, pBuf, &movecount);
+                      Gen_PushNormal(H3, G5, pBuf, &movecount);
+                      Gen_PushNormal(H3, G1, pBuf, &movecount);
+                      break;
+                  case A2:
+                      Gen_PushNormal(A2, B4, pBuf, &movecount);
+                      Gen_PushNormal(A2, C3, pBuf, &movecount);
+                      Gen_PushNormal(A2, C1, pBuf, &movecount);
+                      break;
+                  case B2:
+                      Gen_PushNormal(B2, A4, pBuf, &movecount);
+                      Gen_PushNormal(B2, C4, pBuf, &movecount);
+                      Gen_PushNormal(B2, D3, pBuf, &movecount);
+                      Gen_PushNormal(B2, D1, pBuf, &movecount);
+                      break;
+                  case C2:
+                      Gen_PushNormal(C2, A3, pBuf, &movecount);
+                      Gen_PushNormal(C2, A1, pBuf, &movecount);
+                      Gen_PushNormal(C2, B4, pBuf, &movecount);
+                      Gen_PushNormal(C2, D4, pBuf, &movecount);
+                      Gen_PushNormal(C2, E3, pBuf, &movecount);
+                      Gen_PushNormal(C2, E1, pBuf, &movecount);
+                      break;
+                  case D2:
+                      Gen_PushNormal(D2, B3, pBuf, &movecount);
+                      Gen_PushNormal(D2, B1, pBuf, &movecount);
+                      Gen_PushNormal(D2, C4, pBuf, &movecount);
+                      Gen_PushNormal(D2, E4, pBuf, &movecount);
+                      Gen_PushNormal(D2, F3, pBuf, &movecount);
+                      Gen_PushNormal(D2, F1, pBuf, &movecount);
+                      break;
+                  case E2:
+                      Gen_PushNormal(E2, C3, pBuf, &movecount);
+                      Gen_PushNormal(E2, C1, pBuf, &movecount);
+                      Gen_PushNormal(E2, D4, pBuf, &movecount);
+                      Gen_PushNormal(E2, F4, pBuf, &movecount);
+                      Gen_PushNormal(E2, G3, pBuf, &movecount);
+                      Gen_PushNormal(E2, G1, pBuf, &movecount);
+                      break;
+                  case F2:
+                      Gen_PushNormal(F2, D3, pBuf, &movecount);
+                      Gen_PushNormal(F2, D1, pBuf, &movecount);
+                      Gen_PushNormal(F2, E4, pBuf, &movecount);
+                      Gen_PushNormal(F2, G4, pBuf, &movecount);
+                      Gen_PushNormal(F2, H3, pBuf, &movecount);
+                      Gen_PushNormal(F2, H1, pBuf, &movecount);
+                      break;
+                  case G2:
+                      Gen_PushNormal(G2, E3, pBuf, &movecount);
+                      Gen_PushNormal(G2, E1, pBuf, &movecount);
+                      Gen_PushNormal(G2, F4, pBuf, &movecount);
+                      Gen_PushNormal(G2, H4, pBuf, &movecount);
+                      break;
+                  case H2:
+                      Gen_PushNormal(H2, F3, pBuf, &movecount);
+                      Gen_PushNormal(H2, F1, pBuf, &movecount);
+                      Gen_PushNormal(H2, G4, pBuf, &movecount);
+                      break;
+                  case A1:
+                      Gen_PushNormal(A1, B3, pBuf, &movecount);
+                      Gen_PushNormal(A1, C2, pBuf, &movecount);
+                      break;
+                  case B1:
+                      if (color[A3] != current_side)
+                      Gen_PushNormal(B1, A3, pBuf, &movecount);
+                      if (color[C3] != current_side)
+                      Gen_PushNormal(B1, C3, pBuf, &movecount);
+                      if (color[D2] != current_side)
+                      Gen_PushNormal(B1, D2, pBuf, &movecount);
+                      break;
+                  case C1:
+                      Gen_PushNormal(C1, A2, pBuf, &movecount);
+                      Gen_PushNormal(C1, B3, pBuf, &movecount);
+                      Gen_PushNormal(C1, D3, pBuf, &movecount);
+                      Gen_PushNormal(C1, E2, pBuf, &movecount);
+                      break;
+                  case D1:
+                      Gen_PushNormal(D1, B2, pBuf, &movecount);
+                      Gen_PushNormal(D1, C3, pBuf, &movecount);
+                      Gen_PushNormal(D1, E3, pBuf, &movecount);
+                      Gen_PushNormal(D1, F2, pBuf, &movecount);
+                      break;
+                  case E1:
+                      Gen_PushNormal(E1, C2, pBuf, &movecount);
+                      Gen_PushNormal(E1, D3, pBuf, &movecount);
+                      Gen_PushNormal(E1, F3, pBuf, &movecount);
+                      Gen_PushNormal(E1, G2, pBuf, &movecount);
+                      break;
+                  case F1:
+                      Gen_PushNormal(F1, D2, pBuf, &movecount);
+                      Gen_PushNormal(F1, E3, pBuf, &movecount);
+                      Gen_PushNormal(F1, G3, pBuf, &movecount);
+                      Gen_PushNormal(F1, H2, pBuf, &movecount);
+                      break;
+                  case G1:
+                      if (color[E2] != current_side)
+                      Gen_PushNormal(G1, E2, pBuf, &movecount);
+                      if (color[F3] != current_side)
+                      Gen_PushNormal(G1, F3, pBuf, &movecount);
+                      if (color[H3] != current_side)
+                      Gen_PushNormal(G1, H3, pBuf, &movecount);
+                      break;
+                  case H1:
+                      Gen_PushNormal(H1, F2, pBuf, &movecount);
+                      Gen_PushNormal(H1, G3, pBuf, &movecount);
+                      break;
+              }
 	    break;
+            
 
 	  case KING:
 	    /* the column and rank checks are to make sure it is on the board */
