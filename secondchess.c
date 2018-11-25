@@ -629,9 +629,9 @@ GenMoves (int current_side, MOVE * pBuf)
                       break;
                   case H8:
                       if (color[F7] != current_side)
-                      Gen_PushNormal(G8, F7, pBuf, &movecount);
+                      Gen_PushNormal(H8, F7, pBuf, &movecount);
                       if (color[G6] != current_side)
-                      Gen_PushNormal(G8, G6, pBuf, &movecount);
+                      Gen_PushNormal(H8, G6, pBuf, &movecount);
                       break;
                   case A7:
                       if (color[C8] != current_side)
@@ -718,338 +718,589 @@ GenMoves (int current_side, MOVE * pBuf)
                       Gen_PushNormal(G7, H5, pBuf, &movecount);
                       break;
                   case H7:
+                      if (color[F8] != current_side)
                       Gen_PushNormal(H7, F8, pBuf, &movecount);
+                      if (color[F6] != current_side)
                       Gen_PushNormal(H7, F6, pBuf, &movecount);
+                      if (color[G5] != current_side)
                       Gen_PushNormal(H7, G5, pBuf, &movecount);
                       break;
                   case A6:
+                      if (color[B8] != current_side)
                       Gen_PushNormal(A6, B8, pBuf, &movecount);
+                      if (color[B4] != current_side)
                       Gen_PushNormal(A6, B4, pBuf, &movecount);
+                      if (color[C7] != current_side)
                       Gen_PushNormal(A6, C7, pBuf, &movecount);
+                      if (color[C5] != current_side)
                       Gen_PushNormal(A6, C5, pBuf, &movecount);
                       break;
                   case B6:
+                      if (color[A8] != current_side)
                       Gen_PushNormal(B6, A8, pBuf, &movecount);
+                      if (color[A4] != current_side)
                       Gen_PushNormal(B6, A4, pBuf, &movecount);
+                      if (color[C8] != current_side)
                       Gen_PushNormal(B6, C8, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(B6, C4, pBuf, &movecount);
+                      if (color[D7] != current_side)
                       Gen_PushNormal(B6, D7, pBuf, &movecount);
+                      if (color[D5] != current_side)
                       Gen_PushNormal(B6, D5,pBuf, &movecount);
                       break;
                   case C6:
+                      if (color[A7] != current_side)
                       Gen_PushNormal(C6, A7, pBuf, &movecount);
+                      if (color[A5] != current_side)
                       Gen_PushNormal(C6, A5, pBuf, &movecount);
+                      if (color[B8] != current_side)
                       Gen_PushNormal(C6, B8, pBuf, &movecount);
+                      if (color[B4] != current_side)
                       Gen_PushNormal(C6, B4, pBuf, &movecount);
+                      if (color[D8] != current_side)
                       Gen_PushNormal(C6, D8, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(C6, D4, pBuf, &movecount);
+                      if (color[E7] != current_side)
                       Gen_PushNormal(C6, E7, pBuf, &movecount);
+                      if (color[E5] != current_side)
                       Gen_PushNormal(C6, E5, pBuf, &movecount);
                       break;
                   case D6:
+                      if (color[B7] != current_side)
                       Gen_PushNormal(D6, B7, pBuf, &movecount);
+                      if (color[B5] != current_side)
                       Gen_PushNormal(D6, B5, pBuf, &movecount);
+                      if (color[C8] != current_side)
                       Gen_PushNormal(D6, C8, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(D6, C4, pBuf, &movecount);
-                      Gen_PushNormal(D6, D7, pBuf, &movecount);
-                      Gen_PushNormal(D6, D5, pBuf, &movecount);
+                      if (color[E8] != current_side)
+                      Gen_PushNormal(D6, E8, pBuf, &movecount);
+                      if (color[E4] != current_side)
+                      Gen_PushNormal(D6, E4, pBuf, &movecount);
+                      if (color[F7] != current_side)
                       Gen_PushNormal(D6, F7, pBuf, &movecount);
+                      if (color[F5] != current_side)
                       Gen_PushNormal(D6, F5, pBuf, &movecount);
                       break;
                   case E6:
+                      if (color[C7] != current_side)
                       Gen_PushNormal(E6, C7, pBuf, &movecount);
+                      if (color[C5] != current_side)
                       Gen_PushNormal(E6, C5, pBuf, &movecount);
+                      if (color[D8] != current_side)
                       Gen_PushNormal(E6, D8, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(E6, D4, pBuf, &movecount);
-                      Gen_PushNormal(E6, F7, pBuf, &movecount);
+                      if (color[F8] != current_side)
+                      Gen_PushNormal(E6, F8, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(E6, F4, pBuf, &movecount);
+                      if (color[G7] != current_side)
                       Gen_PushNormal(E6, G7, pBuf, &movecount);
+                      if (color[G5] != current_side)
                       Gen_PushNormal(E6, G5, pBuf, &movecount);
                       break;
                   case F6:
+                      if (color[D7] != current_side)
                       Gen_PushNormal(F6, D7, pBuf, &movecount);
+                      if (color[D5] != current_side)
                       Gen_PushNormal(F6, D5, pBuf, &movecount);
+                      if (color[E8] != current_side)
                       Gen_PushNormal(F6, E8, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(F6, E4, pBuf, &movecount);
+                      if (color[G8] != current_side)
                       Gen_PushNormal(F6, G8, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(F6, G4, pBuf, &movecount);
+                      if (color[H7] != current_side)
                       Gen_PushNormal(F6, H7, pBuf, &movecount);
+                      if (color[H5] != current_side)
                       Gen_PushNormal(F6, H5, pBuf, &movecount);
                       break;
                   case G6:
+                      if (color[E7] != current_side)
                       Gen_PushNormal(G6, E7, pBuf, &movecount);
+                      if (color[E5] != current_side)
                       Gen_PushNormal(G6, E5, pBuf, &movecount);
+                      if (color[F8] != current_side)
                       Gen_PushNormal(G6, F8, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(G6, F4, pBuf, &movecount);
+                      if (color[H4] != current_side)
                       Gen_PushNormal(G6, H4, pBuf, &movecount);
+                      if (color[H8] != current_side)
                       Gen_PushNormal(G6, H8, pBuf, &movecount);
                       break;
                   case H6:
+                      if (color[F7] != current_side)
                       Gen_PushNormal(H6, F7, pBuf, &movecount);
+                      if (color[F5] != current_side)
                       Gen_PushNormal(H6, F5, pBuf, &movecount);
+                      if (color[G8] != current_side)
                       Gen_PushNormal(H6, G8, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(H6, G4, pBuf, &movecount);
                       break;
                   case A5:
+                      if (color[B7] != current_side)
                       Gen_PushNormal(A5, B7, pBuf, &movecount);
+                      if (color[B3] != current_side)
                       Gen_PushNormal(A5, B3, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(A5, C4, pBuf, &movecount);
+                      if (color[C6] != current_side)
                       Gen_PushNormal(A5, C6, pBuf, &movecount);
                       break;
                   case B5:
+                      if (color[A7] != current_side)
                       Gen_PushNormal(B5, A7, pBuf, &movecount);
+                      if (color[A3] != current_side)
                       Gen_PushNormal(B5, A3, pBuf, &movecount);
+                      if (color[C7] != current_side)
                       Gen_PushNormal(B5, C7, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(B5, C3, pBuf, &movecount);
+                      if (color[D6] != current_side)
                       Gen_PushNormal(B5, D6, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(B5, D4, pBuf, &movecount);
                       break;
                   case C5:
+                      if (color[A6] != current_side)
                       Gen_PushNormal(C5, A6, pBuf, &movecount);
+                      if (color[A4] != current_side)
                       Gen_PushNormal(C5, A4, pBuf, &movecount);
+                      if (color[B7] != current_side)
                       Gen_PushNormal(C5, B7, pBuf, &movecount);
+                      if (color[B3] != current_side)
                       Gen_PushNormal(C5, B3, pBuf, &movecount);
+                      if (color[D7] != current_side)
                       Gen_PushNormal(C5, D7, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(C5, D3, pBuf, &movecount);
+                      if (color[E6] != current_side)
                       Gen_PushNormal(C5, E6, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(C5, E4, pBuf, &movecount);
                       break;
                   case D5:
+                      if (color[B6] != current_side)
                       Gen_PushNormal(D5, B6, pBuf, &movecount);
+                      if (color[B4] != current_side)
                       Gen_PushNormal(D5, B4, pBuf, &movecount);
+                      if (color[C7] != current_side)
                       Gen_PushNormal(D5, C7, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(D5, C3, pBuf, &movecount);
+                      if (color[E7] != current_side)
                       Gen_PushNormal(D5, E7, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(D5, E3, pBuf, &movecount);
+                      if (color[F6] != current_side)
                       Gen_PushNormal(D5, F6, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(D5, F4, pBuf, &movecount);
                       break;
                   case E5:
+                      if (color[C6] != current_side)
                       Gen_PushNormal(E5, C6, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(E5, C4, pBuf, &movecount);
+                      if (color[D7] != current_side)
                       Gen_PushNormal(E5, D7, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(E5, D3, pBuf, &movecount);
+                      if (color[F7] != current_side)
                       Gen_PushNormal(E5, F7, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(E5, F3, pBuf, &movecount);
+                      if (color[G6] != current_side)
                       Gen_PushNormal(E5, G6, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(E5, G4, pBuf, &movecount);
                       break;
                   case F5:
+                      if (color[D6] != current_side)
                       Gen_PushNormal(F5, D6, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(F5, D4, pBuf, &movecount);
+                      if (color[E7] != current_side)
                       Gen_PushNormal(F5, E7, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(F5, E3, pBuf, &movecount);
+                      if (color[G7] != current_side)
                       Gen_PushNormal(F5, G7, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(F5, G3, pBuf, &movecount);
+                      if (color[H6] != current_side)
                       Gen_PushNormal(F5, H6, pBuf, &movecount);
+                      if (color[H4] != current_side)
                       Gen_PushNormal(F5, H4, pBuf, &movecount);
                       break;
                   case G5:
+                      if (color[E6] != current_side)
                       Gen_PushNormal(G5, E6, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(G5, E4, pBuf, &movecount);
+                      if (color[F7] != current_side)
                       Gen_PushNormal(G5, F7, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(G5, F3, pBuf, &movecount);
+                      if (color[H7] != current_side)
                       Gen_PushNormal(G5, H7, pBuf, &movecount);
+                      if (color[H3] != current_side)
                       Gen_PushNormal(G5, H3, pBuf, &movecount);
                       break;
                   case H5:
+                      if (color[F6] != current_side)
                       Gen_PushNormal(H5, F6, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(H5, F4, pBuf, &movecount);
+                      if (color[G7] != current_side)
                       Gen_PushNormal(H5, G7, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(H5, G3, pBuf, &movecount);
                       break;
                   case A4:
+                      if (color[B6] != current_side)
                       Gen_PushNormal(A4, B6, pBuf, &movecount);
+                      if (color[B2] != current_side)
                       Gen_PushNormal(A4, B2, pBuf, &movecount);
+                      if (color[C5] != current_side)
                       Gen_PushNormal(A4, C5, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(A4, C3, pBuf, &movecount);
                       break;
                   case B4:
+                      if (color[A6] != current_side)
                       Gen_PushNormal(B4, A6, pBuf, &movecount);
+                      if (color[A2] != current_side)
                       Gen_PushNormal(B4, A2, pBuf, &movecount);
+                      if (color[C6] != current_side)
                       Gen_PushNormal(B4, C6, pBuf, &movecount);
+                      if (color[C2] != current_side)
                       Gen_PushNormal(B4, C2, pBuf, &movecount);
+                      if (color[D5] != current_side)
                       Gen_PushNormal(B4, D5, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(B4, D3, pBuf, &movecount);
                       break;
                   case C4:
+                      if (color[A5] != current_side)
                       Gen_PushNormal(C4, A5, pBuf, &movecount);
+                      if (color[A3] != current_side)
                       Gen_PushNormal(C4, A3, pBuf, &movecount);
+                      if (color[B6] != current_side)
                       Gen_PushNormal(C4, B6, pBuf, &movecount);
+                      if (color[B2] != current_side)
                       Gen_PushNormal(C4, B2, pBuf, &movecount);
+                      if (color[D6] != current_side)
                       Gen_PushNormal(C4, D6, pBuf, &movecount);
+                      if (color[D2] != current_side)
                       Gen_PushNormal(C4, D2, pBuf, &movecount);
+                      if (color[E5] != current_side)
                       Gen_PushNormal(C4, E5, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(C4, E3, pBuf, &movecount);
                       break;
                   case D4:
+                      if (color[B5] != current_side)
                       Gen_PushNormal(D4, B5, pBuf, &movecount);
+                      if (color[B3] != current_side)
                       Gen_PushNormal(D4, B3, pBuf, &movecount);
+                      if (color[C6] != current_side)
                       Gen_PushNormal(D4, C6, pBuf, &movecount);
+                      if (color[C2] != current_side)
                       Gen_PushNormal(D4, C2, pBuf, &movecount);
+                      if (color[E6] != current_side)
                       Gen_PushNormal(D4, E6, pBuf, &movecount);
+                      if (color[E2] != current_side)
                       Gen_PushNormal(D4, E2, pBuf, &movecount);
+                      if (color[F5] != current_side)
                       Gen_PushNormal(D4, F5, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(D4, F3, pBuf, &movecount);
                       break;
                   case E4:
+                      if (color[C5] != current_side)
                       Gen_PushNormal(E4, C5, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(E4, C3, pBuf, &movecount);
+                      if (color[D6] != current_side)
                       Gen_PushNormal(E4, D6, pBuf, &movecount);
+                      if (color[D2] != current_side)
                       Gen_PushNormal(E4, D2, pBuf, &movecount);
+                      if (color[F6] != current_side)
                       Gen_PushNormal(E4, F6, pBuf, &movecount);
+                      if (color[F2] != current_side)
                       Gen_PushNormal(E4, F2, pBuf, &movecount);
+                      if (color[G5] != current_side)
                       Gen_PushNormal(E4, G5, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(E4, G3, pBuf, &movecount);
                       break;
                   case F4:
+                      if (color[D5] != current_side)
                       Gen_PushNormal(F4, D5, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(F4, D3, pBuf, &movecount);
+                      if (color[E6] != current_side)
                       Gen_PushNormal(F4, E6, pBuf, &movecount);
+                      if (color[E2] != current_side)
                       Gen_PushNormal(F4, E2, pBuf, &movecount);
+                      if (color[G6] != current_side)
                       Gen_PushNormal(F4, G6, pBuf, &movecount);
+                      if (color[G2] != current_side)
                       Gen_PushNormal(F4, G2, pBuf, &movecount);
+                      if (color[H5] != current_side)
                       Gen_PushNormal(F4, H5, pBuf, &movecount);
+                      if (color[H3] != current_side)
                       Gen_PushNormal(F4, H3, pBuf, &movecount);
                       break;
                   case G4:
+                      if (color[E5] != current_side)
                       Gen_PushNormal(G4, E5, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(G4, E3, pBuf, &movecount);
+                      if (color[F6] != current_side)
                       Gen_PushNormal(G4, F6, pBuf, &movecount);
+                      if (color[F2] != current_side)
                       Gen_PushNormal(G4, F2, pBuf, &movecount);
+                      if (color[H6] != current_side)
                       Gen_PushNormal(G4, H6, pBuf, &movecount);
+                      if (color[H2] != current_side)
                       Gen_PushNormal(G4, H2, pBuf, &movecount);
                       break;
                   case H4:
+                      if (color[F5] != current_side)
                       Gen_PushNormal(H4, F5, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(H4, F3, pBuf, &movecount);
+                      if (color[G6] != current_side)
                       Gen_PushNormal(H4, G6, pBuf, &movecount);
+                      if (color[G2] != current_side)
                       Gen_PushNormal(H4, G2, pBuf, &movecount);
                       break;
                   case A3:
+                      if (color[B5] != current_side)
                       Gen_PushNormal(A3, B5, pBuf, &movecount);
+                      if (color[B1] != current_side)
                       Gen_PushNormal(A3, B1, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(A3, C4, pBuf, &movecount);
+                      if (color[C2] != current_side)
                       Gen_PushNormal(A3, C2, pBuf, &movecount);
                       break;
                   case B3:
+                      if (color[A5] != current_side)
                       Gen_PushNormal(B3, A5, pBuf, &movecount);
+                      if (color[A1] != current_side)
                       Gen_PushNormal(B3, A1, pBuf, &movecount);
+                      if (color[C5] != current_side)
                       Gen_PushNormal(B3, C5, pBuf, &movecount);
+                      if (color[C1] != current_side)
                       Gen_PushNormal(B3, C1, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(B3, D4, pBuf, &movecount);
+                      if (color[D2] != current_side)
                       Gen_PushNormal(B3, D2, pBuf, &movecount);
                       break;
                   case C3:
+                      if (color[A4] != current_side)
                       Gen_PushNormal(C3, A4, pBuf, &movecount);
+                      if (color[A2] != current_side)
                       Gen_PushNormal(C3, A2, pBuf, &movecount);
+                      if (color[B5] != current_side)
                       Gen_PushNormal(C3, B5, pBuf, &movecount);
+                      if (color[B1] != current_side)
                       Gen_PushNormal(C3, B1, pBuf, &movecount);
+                      if (color[D5] != current_side)
                       Gen_PushNormal(C3, D5, pBuf, &movecount);
+                      if (color[D1] != current_side)
                       Gen_PushNormal(C3, D1, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(C3, E4, pBuf, &movecount);
+                      if (color[E2] != current_side)
                       Gen_PushNormal(C3, E2, pBuf, &movecount);
                       break;
                   case D3:
+                      if (color[B4] != current_side)
                       Gen_PushNormal(D3, B4, pBuf, &movecount);
+                      if (color[B2] != current_side)
                       Gen_PushNormal(D3, B2, pBuf, &movecount);
+                      if (color[C5] != current_side)
                       Gen_PushNormal(D3, C5, pBuf, &movecount);
+                      if (color[C1] != current_side)
                       Gen_PushNormal(D3, C1, pBuf, &movecount);
+                      if (color[E5] != current_side)
                       Gen_PushNormal(D3, E5, pBuf, &movecount);
+                      if (color[E1] != current_side)
                       Gen_PushNormal(D3, E1, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(D3, F4, pBuf, &movecount);
+                      if (color[F2] != current_side)
                       Gen_PushNormal(D3, F2, pBuf, &movecount);
                       break;
                   case E3:
+                      if (color[C4] != current_side)
                       Gen_PushNormal(E3, C4 , pBuf, &movecount);
+                      if (color[C2] != current_side)
                       Gen_PushNormal(E3, C2, pBuf, &movecount);
+                      if (color[D5] != current_side)
                       Gen_PushNormal(E3, D5, pBuf, &movecount);
+                      if (color[D1] != current_side)
                       Gen_PushNormal(E3, D1, pBuf, &movecount);
+                      if (color[F5] != current_side)
                       Gen_PushNormal(E3, F5, pBuf, &movecount);
+                      if (color[F1] != current_side)
                       Gen_PushNormal(E3, F1, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(E3, G4, pBuf, &movecount);
+                      if (color[G2] != current_side)
                       Gen_PushNormal(E3, G2, pBuf, &movecount);
                       break;
                   case F3:
+                      if (color[D4] != current_side)
                       Gen_PushNormal(F3, D4, pBuf, &movecount);
+                      if (color[D2] != current_side)
                       Gen_PushNormal(F3, D2, pBuf, &movecount);
+                      if (color[E5] != current_side)
                       Gen_PushNormal(F3, E5, pBuf, &movecount);
+                      if (color[E1] != current_side)
                       Gen_PushNormal(F3, E1, pBuf, &movecount);
+                      if (color[G5] != current_side)
                       Gen_PushNormal(F3, G5, pBuf, &movecount);
+                      if (color[G1] != current_side)
                       Gen_PushNormal(F3, G1, pBuf, &movecount);
+                      if (color[H4] != current_side)
                       Gen_PushNormal(F3, H4, pBuf, &movecount);
+                      if (color[H2] != current_side)
                       Gen_PushNormal(F3, H2, pBuf, &movecount);
                       break;
                   case G3:
+                      if (color[E4] != current_side)
                       Gen_PushNormal(G3, E4, pBuf, &movecount);
+                      if (color[E2] != current_side)
                       Gen_PushNormal(G3, E2, pBuf, &movecount);
+                      if (color[F5] != current_side)
                       Gen_PushNormal(G3, F5, pBuf, &movecount);
+                      if (color[F1] != current_side)
                       Gen_PushNormal(G3, F1, pBuf, &movecount);
+                      if (color[H5] != current_side)
                       Gen_PushNormal(G3, H5, pBuf, &movecount);
+                      if (color[H1] != current_side)
                       Gen_PushNormal(G3, H1, pBuf, &movecount);
                       break;
                   case H3:
+                      if (color[F4] != current_side)
                       Gen_PushNormal(H3, F4, pBuf, &movecount);
+                      if (color[F2] != current_side)
                       Gen_PushNormal(H3, F2, pBuf, &movecount);
+                      if (color[G5] != current_side)
                       Gen_PushNormal(H3, G5, pBuf, &movecount);
+                      if (color[G1] != current_side)
                       Gen_PushNormal(H3, G1, pBuf, &movecount);
                       break;
                   case A2:
+                      if (color[B4] != current_side)
                       Gen_PushNormal(A2, B4, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(A2, C3, pBuf, &movecount);
+                      if (color[C1] != current_side)
                       Gen_PushNormal(A2, C1, pBuf, &movecount);
                       break;
                   case B2:
+                      if (color[A4] != current_side)
                       Gen_PushNormal(B2, A4, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(B2, C4, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(B2, D3, pBuf, &movecount);
+                      if (color[D1] != current_side)
                       Gen_PushNormal(B2, D1, pBuf, &movecount);
                       break;
                   case C2:
+                      if (color[A3] != current_side)
                       Gen_PushNormal(C2, A3, pBuf, &movecount);
+                      if (color[A1] != current_side)
                       Gen_PushNormal(C2, A1, pBuf, &movecount);
+                      if (color[B4] != current_side)
                       Gen_PushNormal(C2, B4, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(C2, D4, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(C2, E3, pBuf, &movecount);
+                      if (color[E1] != current_side)
                       Gen_PushNormal(C2, E1, pBuf, &movecount);
                       break;
                   case D2:
+                      if (color[B3] != current_side)
                       Gen_PushNormal(D2, B3, pBuf, &movecount);
+                      if (color[B1] != current_side)
                       Gen_PushNormal(D2, B1, pBuf, &movecount);
+                      if (color[C4] != current_side)
                       Gen_PushNormal(D2, C4, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(D2, E4, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(D2, F3, pBuf, &movecount);
+                      if (color[F1] != current_side)
                       Gen_PushNormal(D2, F1, pBuf, &movecount);
                       break;
                   case E2:
+                      if (color[C3] != current_side)
                       Gen_PushNormal(E2, C3, pBuf, &movecount);
+                      if (color[C1] != current_side)
                       Gen_PushNormal(E2, C1, pBuf, &movecount);
+                      if (color[D4] != current_side)
                       Gen_PushNormal(E2, D4, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(E2, F4, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(E2, G3, pBuf, &movecount);
+                      if (color[G1] != current_side)
                       Gen_PushNormal(E2, G1, pBuf, &movecount);
                       break;
                   case F2:
+                      if (color[D3] != current_side)
                       Gen_PushNormal(F2, D3, pBuf, &movecount);
+                      if (color[D1] != current_side)
                       Gen_PushNormal(F2, D1, pBuf, &movecount);
+                      if (color[E4] != current_side)
                       Gen_PushNormal(F2, E4, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(F2, G4, pBuf, &movecount);
+                      if (color[H3] != current_side)
                       Gen_PushNormal(F2, H3, pBuf, &movecount);
+                      if (color[H1] != current_side)
                       Gen_PushNormal(F2, H1, pBuf, &movecount);
                       break;
                   case G2:
+                      if (color[E3] != current_side)
                       Gen_PushNormal(G2, E3, pBuf, &movecount);
+                      if (color[E1] != current_side)
                       Gen_PushNormal(G2, E1, pBuf, &movecount);
+                      if (color[F4] != current_side)
                       Gen_PushNormal(G2, F4, pBuf, &movecount);
+                      if (color[H4] != current_side)
                       Gen_PushNormal(G2, H4, pBuf, &movecount);
                       break;
                   case H2:
+                      if (color[F3] != current_side)
                       Gen_PushNormal(H2, F3, pBuf, &movecount);
+                      if (color[F1] != current_side)
                       Gen_PushNormal(H2, F1, pBuf, &movecount);
+                      if (color[G4] != current_side)
                       Gen_PushNormal(H2, G4, pBuf, &movecount);
                       break;
                   case A1:
+                      if (color[B3] != current_side)
                       Gen_PushNormal(A1, B3, pBuf, &movecount);
+                      if (color[C2] != current_side)
                       Gen_PushNormal(A1, C2, pBuf, &movecount);
                       break;
                   case B1:
@@ -1061,27 +1312,43 @@ GenMoves (int current_side, MOVE * pBuf)
                       Gen_PushNormal(B1, D2, pBuf, &movecount);
                       break;
                   case C1:
+                      if (color[A2] != current_side)
                       Gen_PushNormal(C1, A2, pBuf, &movecount);
+                      if (color[B3] != current_side)
                       Gen_PushNormal(C1, B3, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(C1, D3, pBuf, &movecount);
+                      if (color[E2] != current_side)
                       Gen_PushNormal(C1, E2, pBuf, &movecount);
                       break;
                   case D1:
+                      if (color[B2] != current_side)
                       Gen_PushNormal(D1, B2, pBuf, &movecount);
+                      if (color[C3] != current_side)
                       Gen_PushNormal(D1, C3, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(D1, E3, pBuf, &movecount);
+                      if (color[F2] != current_side)
                       Gen_PushNormal(D1, F2, pBuf, &movecount);
                       break;
                   case E1:
+                      if (color[C2] != current_side)
                       Gen_PushNormal(E1, C2, pBuf, &movecount);
+                      if (color[D3] != current_side)
                       Gen_PushNormal(E1, D3, pBuf, &movecount);
+                      if (color[F3] != current_side)
                       Gen_PushNormal(E1, F3, pBuf, &movecount);
+                      if (color[G2] != current_side)
                       Gen_PushNormal(E1, G2, pBuf, &movecount);
                       break;
                   case F1:
+                      if (color[D2] != current_side)
                       Gen_PushNormal(F1, D2, pBuf, &movecount);
+                      if (color[E3] != current_side)
                       Gen_PushNormal(F1, E3, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(F1, G3, pBuf, &movecount);
+                      if (color[H2] != current_side)
                       Gen_PushNormal(F1, H2, pBuf, &movecount);
                       break;
                   case G1:
@@ -1093,11 +1360,41 @@ GenMoves (int current_side, MOVE * pBuf)
                       Gen_PushNormal(G1, H3, pBuf, &movecount);
                       break;
                   case H1:
+                      if (color[F2] != current_side)
                       Gen_PushNormal(H1, F2, pBuf, &movecount);
+                      if (color[G3] != current_side)
                       Gen_PushNormal(H1, G3, pBuf, &movecount);
                       break;
               }
 	    break;
+            
+                          //case KNIGHT:
+                //col = COL(i);
+                //y = i - 6;
+                //if (y >= 0 && col < 6 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i - 10;
+                //if (y >= 0 && col > 1 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i - 15;
+                //if (y >= 0 && col < 7 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i - 17;
+                //if (y >= 0 && col > 0 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i + 6;
+                //if (y < 64 && col > 1 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i + 10;
+                //if (y < 64 && col < 6 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i + 15;
+                //if (y < 64 && col > 0 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+                //y = i + 17;
+                //if (y < 64 && col < 7 && color[y] != current_side)
+                    //Gen_PushNormal(i, y, pBuf, &movecount);
+//break;
             
 
 	  case KING:
@@ -2483,7 +2780,7 @@ main ()
 	  continue;
 	}
 
-      /* Get user input */
+      
       printf ("sc> ");
       if (scanf ("%s", s) == EOF)	/* close program */
 	return 0;
@@ -2504,6 +2801,13 @@ main ()
 	  xboard ();
 	  return 0;
 	}
+      /* Get user input */
+      if (!strcmp (s, "test9"))
+        {
+            test9 ();
+            PrintBoard();
+            continue;
+        }
       if (!strcmp (s, "on"))
 	{
 	  computer_side = side;
@@ -2591,4 +2895,50 @@ main ()
 	  }
       PrintBoard ();
     }
+}
+
+void test9()
+{
+    puts ("A position with many knights");
+    //puts ("q7/1p1P2p1/2p1R3/5p1k/1P1p4/6Q1/P5PP/7K w - - 1 41");
+    /* Piece in each square */
+    int piece_test[64] =
+    {
+        KNIGHT, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, KNIGHT, EMPTY, KNIGHT, EMPTY, EMPTY, KNIGHT, EMPTY,
+        EMPTY, EMPTY, KNIGHT, EMPTY, KNIGHT, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY, KING,
+        EMPTY, KNIGHT, EMPTY, KNIGHT, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, EMPTY,
+        KNIGHT, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KNIGHT, KNIGHT,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, KING
+    };
+    /* Color of each square */
+    int color_test[64] =
+    {
+        BLACK, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, BLACK, EMPTY, WHITE, EMPTY, EMPTY, BLACK, EMPTY,
+        EMPTY, EMPTY, BLACK, EMPTY, WHITE, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, BLACK, EMPTY, BLACK,
+        EMPTY, WHITE, EMPTY, BLACK, EMPTY, EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, EMPTY,
+        WHITE, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE, WHITE,
+        EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, WHITE
+    };
+
+    int i;
+    for (i = 0; i < 64; ++i)
+        {
+            piece[i] = piece_test[i];
+            color[i] = color_test[i];
+        }
+
+//    /*setDistToKing*/();
+
+    side = WHITE;
+    computer_side = BLACK;	/* Human is white side */
+    hdp = 0;
+    castle_rights = 0;
+    //fifty = 0;
+    //hashKeyPosition(); /* hash of the initial position */
 }
